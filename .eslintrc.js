@@ -23,8 +23,11 @@ module.exports = {
     'import/resolver': {
       'babel-module': {
         extensions: ['.ts', '.js'],
+        alias: {
+          '~server': './src/server',
+          '~test': './test',
+        }
       },
-      typescript: {},
     },
   },
 };

@@ -9,8 +9,10 @@
   "devDependencies": {
     "@babel/cli": "^7.12.13",
     "@babel/core": "^7.12.13",
+    "@babel/preset-env": "^7.12.13",
     "@babel/preset-typescript": "^7.12.13",
     "@types/jest": "^26.0.20",
+    "@types/mongodb": "^3.6.5",
     "@types/node": "^14.14.22",
     "babel-plugin-module-resolver": "^4.1.0",
     "eslint": "^7.19.0",
@@ -19,13 +21,25 @@
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-simple-import-sort": "^7.0.0",
     "jest": "^26.6.3",
+    "nodemon": "^2.0.7",
+    "npm-run-all": "^4.1.5",
     "prettier": "^2.2.1",
+    "rimraf": "^3.0.2",
     "typescript": "^4.1.3"
   },
   "engines": {
     "node": "~14.14.0"
   },
   "scripts": {
+    "dev:db": "mongod --bind_ip 0.0.0.0 --dbpath /mongo/db",
+    "dev:prepare": "rimraf .build/* && touch .build/.keep && babel --out-dir .build --copy-files --extensions .js,.ts src",
+    "dev:watch": "babel --watch --out-dir .build --copy-files --extensions .js,.ts src",
+    "dev:serve": "nodemon .build/server/index.js",
+    "dev": "npm run dev:prepare && npm-run-all --parallel dev:db dev:watch dev:serve",
     "test": "jest"
+  },
+  "dependencies": {
+    "mongodb": "^3.6.4",
+    "music-metadata": "^7.6.6"
   }
 }

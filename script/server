@@ -1,0 +1,17 @@
+#!/bin/sh -e
+
+cd "$(dirname "$0")/.."
+
+script/setup
+
+docker run \
+  --rm \
+  --interactive \
+  --tty \
+  --publish 6451:8080 \
+  --publish 27451:27017 \
+  --publish 28451:28017 \
+  --volume "$(pwd)":/usr/src/audiobook-catalog \
+  --volume audiobook-catalog-mongodb:/mongo/db \
+  audiobook-catalog:latest \
+  yarn dev

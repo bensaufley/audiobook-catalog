@@ -1,0 +1,11 @@
+{
+  "restartable": "rs",
+  "ignore": [
+    ".keep"
+  ],
+  "verbose": true,
+  "watch": [
+    ".build/"
+  ],
+  "ext": "js,json"
+}
