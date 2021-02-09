@@ -13,8 +13,7 @@ const importFiles = async (dir: AsyncGenerator<string, void, void>) => {
 
     const md = await parseFile(file);
 
-    // if (md.common.picture) {
-    // }
+    console.log(md.common.picture);
   }
 };
 

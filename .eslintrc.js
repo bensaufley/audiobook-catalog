@@ -22,12 +22,16 @@ module.exports = {
     },
     'import/resolver': {
       'babel-module': {
-        extensions: ['.ts', '.js'],
+        extensions: ['.ts', '.js', '.tsx', '.jsx'],
         alias: {
+          '~client': './src/client',
           '~server': './src/server',
           '~test': './test',
-        }
+        },
       },
+    },
+    react: {
+      pragma: 'h',
     },
   },
 };

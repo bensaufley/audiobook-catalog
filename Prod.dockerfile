@@ -1,18 +1,21 @@
 FROM node:14.14.0-slim AS builder
 LABEL maintainer="Ben Saufley<contact@bensaufley.com>"
 
+ENV NODE_ENV=development
+
 WORKDIR /tmp/
 
 COPY package.json yarn.lock /
 RUN yarn install
 
-RUN yarn build
+RUN NODE_ENV=production yarn build
 
 RUN npm prune --production
 
 FROM node:14.14.0-slim
 
 ENV NODE_ENV=production
+ENV ROOT_DIR=/usr/src/audiobook-catalog
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 

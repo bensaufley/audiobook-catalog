@@ -3,7 +3,7 @@ import { IncomingMessage, ServerResponse } from 'http';
 import { Book } from '~server/books';
 import getClient from '~server/db/getClient';
 
-const render = async (req: IncomingMessage, res: ServerResponse) => {
+const render = async (_: IncomingMessage, res: ServerResponse) => {
   try {
     const client = await getClient();
 

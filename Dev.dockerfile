@@ -1,6 +1,8 @@
 FROM node:14.14.0-buster-slim
 LABEL maintainer="Ben Saufley<contact@bensaufley.com>"
 
+ENV NODE_ENV=development
+
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 WORKDIR /mongo/
@@ -9,6 +11,7 @@ WORKDIR /mongo/
 RUN apt-get update \
   && apt-get install -y --no-install-recommends \
     ca-certificates \
+    git \
     gnupg \
     libcurl4 \
     liblzma5  \

@@ -5,7 +5,7 @@
   ],
   "verbose": true,
   "watch": [
-    ".build/"
+    ".build/server/"
   ],
   "ext": "js,json"
 }

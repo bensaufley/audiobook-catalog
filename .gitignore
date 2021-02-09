@@ -1,4 +1,7 @@
 node_modules
 
-.build/*
-!.build/.keep
+.build/client/*
+.build/server/*
+!.build/client/.keep
+!.build/server/.keep
+yarn-error.log

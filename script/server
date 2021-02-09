@@ -13,5 +13,5 @@ docker run \
   --publish 28451:28017 \
   --volume "$(pwd)":/usr/src/audiobook-catalog \
   --volume audiobook-catalog-mongodb:/mongo/db \
-  audiobook-catalog:latest \
+  audiobook-catalog:dev \
   yarn dev
