@@ -8,6 +8,7 @@ import koaSend from 'koa-send';
 import koaStatic from 'koa-static';
 import type koaWebpack from 'koa-webpack';
 import { resolve } from 'path';
+import { rawListeners } from 'process';
 
 import Audiobook from '~graphql/Audiobook.graphqls';
 import Author from '~graphql/Author.graphqls';
@@ -75,17 +76,24 @@ const setUpServer = async (): Promise<Koa> => {
   return app;
 };
 
-getClient()
-  .then((client) => {
+/* eslint-disable-next-line consistent-return */
+const start = async () => {
+  try {
+    const client = await getClient();
     client.close();
-  })
-  .then(async () => {
     const app = await setUpServer();
     const port = process.env.PORT || '8080';
     console.log(`Listening on port ${port}`);
     app.listen(port);
-  })
-  .catch((err) => {
+    return app;
+  } catch (err) {
     console.error('Error starting server:', err);
     process.exit(1);
-  });
+  }
+};
+
+start();
+
+if (module.hot) {
+  module.hot.accept();
+}
