@@ -8,13 +8,14 @@ import koaSend from 'koa-send';
 import koaStatic from 'koa-static';
 import type koaWebpack from 'koa-webpack';
 import { resolve } from 'path';
-import { rawListeners } from 'process';
 
 import Audiobook from '~graphql/Audiobook.graphqls';
 import Author from '~graphql/Author.graphqls';
 import Query from '~graphql/Query.graphqls';
 import getClient from '~server/db/getClient';
 import resolvers from '~server/graphql/resolvers';
+import importFiles from '~server/importFiles';
+import walk from '~server/importFiles/walk';
 
 import type { clientConfig } from '../../webpack.config';
 
@@ -76,6 +77,21 @@ const setUpServer = async (): Promise<Koa> => {
   return app;
 };
 
+const checkForImports = async () => {
+  if (!process.env.IMPORTS_PATH) {
+    console.warn('No IMPORTS_PATH set');
+    return null;
+  }
+
+  try {
+    await importFiles(walk(process.env.IMPORTS_PATH));
+  } catch (err) {
+    console.error('Error importing from', process.env.IMPORTS_PATH, '-', err);
+  }
+
+  return setTimeout(checkForImports, 60_000);
+};
+
 /* eslint-disable-next-line consistent-return */
 const start = async () => {
   try {
@@ -92,8 +108,14 @@ const start = async () => {
   }
 };
 
+let importProcess = checkForImports();
 start();
 
 if (module.hot) {
-  module.hot.accept();
+  module.hot.accept('./index.ts', () => {
+    importProcess.then((timeout) => {
+      if (timeout) clearTimeout(timeout);
+      importProcess = checkForImports();
+    });
+  });
 }

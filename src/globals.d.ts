@@ -16,6 +16,7 @@ declare module '*.graphqls' {
 
 declare namespace NodeJS {
   export interface ProcessEnv {
+    IMPORTS_PATH?: string;
     NODE_ENV: 'development' | 'production';
     ROOT_DIR: string;
   }

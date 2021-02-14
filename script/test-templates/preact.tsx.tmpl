@@ -1,0 +1,14 @@
+import { h } from 'preact';
+import { render, RenderResult } from '@testing-library/preact';
+
+import %%PRIMARY_IMPORT%% from '%%FILENAME%%';
+
+describe('%%FILENAME%%', () => {
+  let wrapper: RenderResult;
+
+  beforeEach(() => {
+    wrapper = render(<%%PRIMARY_IMPORT%% />);
+  });
+
+  it.todo('needs tests');
+});

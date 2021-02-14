@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+
+set -e
+
+cd "$(dirname "$0")/.."
+
+shopt -s globstar
+
+# entrypoints call code on load. Most of the code they
+# call should be extracted to testable sub-files.
+skiplist=(
+  ./src/server/index.ts
+  ./src/client/index.tsx
+)
+
+for f in ./src/**/*.{ts,tsx}; do
+  if [[ "$f" =~ \.d\.ts ]]; then continue; fi
+
+  skip=false
+  for skipped in "${skiplist[@]}"; do
+    if [ "$skipped" = "$f" ]; then
+      skip=true
+      break
+    fi
+  done
+
+  if [ $skip = true ]; then continue; fi
+
+  test_file="${f/\.\/src\//spec/}"
+  test_file="${test_file/\.ts/.spec.ts}"
+
+  if [ -f "$test_file" ]; then
+    echo "$test_file exists. Skipping."
+    continue
+  fi
+
+  dir="${test_file%/*}"
+  mkdir -p "$dir"
+
+  filename_without_extension="${f%.*}"
+  filename_without_extension="${filename_without_extension/\.\/src\//\~}"
+  primary_import="${filename_without_extension##*/}"
+
+  if [ "$primary_import" = "index" ]; then
+    primary_import="${f%/*}"
+    primary_import="${primary_import##*/}"
+    filename_without_extension="${filename_without_extension/\/index/}"
+  fi
+
+  cat "script/test-templates/$([[ "$test_file" =~ \.tsx ]] && echo preact.tsx || echo plain.ts).tmpl" | \
+    sed -e "s|%%FILENAME%%|$filename_without_extension|g" | \
+    sed -e "s|%%PRIMARY_IMPORT%%|$primary_import|g" \
+  > "$test_file"
+done
+
+for t in ./spec/**/*.spec.*; do
+  original_file="${t/\.\/spec/src}"
+  original_file="${original_file/\.spec/}"
+
+  if [ ! -f "$original_file" ]; then
+    printf '\x1b[33mWarning:\x1b[0m test file %s has no corresponding file (looked at %s)\n' "$t" "$original_file" >&2
+  fi
+done
