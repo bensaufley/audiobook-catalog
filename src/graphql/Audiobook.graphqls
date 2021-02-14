@@ -1,0 +1,9 @@
+type Audiobook @entity(
+  additionalFields: [
+    { path: "meta.checksum", type: "string" }
+  ]
+) {
+  id: ID! @id
+  name: String! @column
+  authors: [Author!]! @link
+}

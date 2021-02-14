@@ -9,8 +9,8 @@ docker run \
   --interactive \
   --tty \
   --publish 6451:8080 \
+  --publish 6452:8081 \
   --publish 27451:27017 \
-  --publish 28451:28017 \
   --volume "$(pwd)":/usr/src/audiobook-catalog \
   --volume audiobook-catalog-mongodb:/mongo/db \
   audiobook-catalog:dev \

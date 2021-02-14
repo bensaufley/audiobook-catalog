@@ -1,0 +1,11 @@
+query getAudiobooks($startId: ID) {
+  getAudiobooks(start: $startId) {
+    id
+    name
+    authors {
+      id
+      lastName
+      firstName
+    }
+  }
+}

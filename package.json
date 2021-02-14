@@ -1,16 +1,34 @@
 {
-  "name": "audiobook-catalog",
-  "version": "0.1.0",
-  "description": "UI to list audiobooks by cover with limited organization",
-  "main": ".build/server/index.js",
-  "repository": "https://github.com/bensaufley/audiobook-catalog",
   "author": "Ben Saufley <contact@bensaufley.com>",
-  "license": "MIT",
+  "dependencies": {
+    "@graphql-codegen/typescript-mongodb": "^1.18.0",
+    "apollo-server-koa": "^2.20.0",
+    "core-js": "^3.8.3",
+    "graphql": "^15.5.0",
+    "graphql-tag": "^2.11.0",
+    "koa": "^2.13.1",
+    "koa-compress": "^5.0.1",
+    "koa-mount": "^4.0.0",
+    "koa-send": "^5.0.1",
+    "koa-static": "^5.0.0",
+    "mongodb": "^3.6.4",
+    "music-metadata": "^7.6.6"
+  },
+  "description": "UI to list audiobooks by cover with limited organization",
   "devDependencies": {
     "@babel/core": "^7.12.13",
     "@babel/preset-env": "^7.12.13",
     "@babel/preset-react": "^7.12.13",
     "@babel/preset-typescript": "^7.12.13",
+    "@graphql-codegen/cli": "^1.20.1",
+    "@graphql-codegen/import-types-preset": "^1.18.1",
+    "@graphql-codegen/near-operation-file-preset": "^1.17.13",
+    "@graphql-codegen/plugin-helpers": "^1.18.2",
+    "@graphql-codegen/typescript": "^1.21.0",
+    "@graphql-codegen/typescript-operations": "^1.17.14",
+    "@graphql-codegen/typescript-resolvers": "^1.18.2",
+    "@graphql-codegen/typescript-urql": "^2.0.3",
+    "@types/graphql": "^14.5.0",
     "@types/html-webpack-plugin": "^3.2.4",
     "@types/jest": "^26.0.20",
     "@types/koa": "^2.11.7",
@@ -22,6 +40,7 @@
     "@types/mongodb": "^3.6.5",
     "@types/node": "^14.14.22",
     "@types/webpack": "^4.41.26",
+    "@types/webpack-env": "^1.16.0",
     "@types/webpack-node-externals": "^2.5.0",
     "@urql/preact": "1.4.4",
     "babel-loader": "^8.2.2",
@@ -50,30 +69,27 @@
   "engines": {
     "node": "~14.14.0"
   },
+  "license": "MIT",
+  "main": ".build/server/index.js",
+  "name": "audiobook-catalog",
+  "repository": "https://github.com/bensaufley/audiobook-catalog",
   "resolutions": {
     "webpack-hot-client": "https://github.com/mvattuone/webpack-hot-client#eb1465e278b854ba17cf83796a4f0ff1d24a57cd"
   },
   "scripts": {
-    "build": "rimraf .build/{client,server}/* && ROOT_DIR=\"$(pwd)\" TS_NODE_TRANSPILE_ONLY=true webpack --mode none",
+    "build": "ROOT_DIR=\"$(pwd)\" TS_NODE_TRANSPILE_ONLY=true webpack --mode none",
+    "build:prep": "rimraf .build/{client,server}/*",
+    "codegen": "graphql-codegen --config .graphql-codegen.yml",
+    "codegen:watch": "yarn codegen --watch",
+    "dev": "npm-run-all --sequential build:prep codegen build --parallel dev:db codegen:watch dev:watch start",
     "dev:db": "mongod --bind_ip 0.0.0.0 --dbpath /mongo/db",
-    "dev:watch": "ROOT_DIR=\"$(pwd)\" TS_NODE_TRANSPILE_ONLY=true webpack --watch --mode none",
-    "dev:serve": "nodemon .build/server/index.js",
-    "dev": "npm run build && npm-run-all --parallel dev:db dev:watch dev:serve",
+    "dev:watch": "yarn build --watch",
+    "format": "eslint --fix .",
+    "lint": "npm-run-all --parallel --aggregate-output --continue-on-error lint:es lint:ts",
     "lint:es": "eslint .",
     "lint:ts": "tsc --noEmit",
-    "lint": "npm-run-all --parallel --aggregate-output --continue-on-error lint:es lint:ts",
-    "format": "eslint --fix .",
+    "start": "node .build/server/index.js",
     "test": "jest"
   },
-  "dependencies": {
-    "core-js": "^3.8.3",
-    "graphql": "^15.0.0",
-    "koa": "^2.13.1",
-    "koa-compress": "^5.0.1",
-    "koa-mount": "^4.0.0",
-    "koa-send": "^5.0.1",
-    "koa-static": "^5.0.0",
-    "mongodb": "^3.6.4",
-    "music-metadata": "^7.6.6"
-  }
+  "version": "0.1.0"
 }

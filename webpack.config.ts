@@ -1,7 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import { resolve } from 'path';
-import { Configuration, DefinePlugin, RuleSetRule } from 'webpack';
+import { Configuration, DefinePlugin, HotModuleReplacementPlugin, RuleSetRule } from 'webpack';
 import webpackNodeExternals from 'webpack-node-externals';
 
 const extensions = ['.ts', '.tsx', '.js', '.jsx', '.json', '.mjs'];
@@ -26,8 +26,14 @@ const babelLoaderRule: RuleSetRule = {
   },
 };
 
+const graphqlLoaderRule: RuleSetRule = {
+  test: /\.graphqls?$/,
+  use: ['babel-loader', 'graphql-tag/loader'],
+};
+
 const alias = {
   '~client': resolve(process.env.ROOT_DIR, 'src/client/'),
+  '~graphql': resolve(process.env.ROOT_DIR, 'src/graphql/'),
   '~server': resolve(process.env.ROOT_DIR, 'src/server/'),
   '~spec': resolve(process.env.ROOT_DIR, 'spec/'),
 };
@@ -46,13 +52,14 @@ export const serverConfig: Configuration = {
   externals: [webpackNodeExternals()],
   mode,
   module: {
-    rules: [moduleHackRule, babelLoaderRule],
+    rules: [moduleHackRule, babelLoaderRule, graphqlLoaderRule],
   },
   optimization,
   plugins: [
     new DefinePlugin({
       'process.env.ROOT_DIR': JSON.stringify(process.env.ROOT_DIR),
     }),
+    ...(mode === 'development' ? [new HotModuleReplacementPlugin()] : []),
   ],
   resolve: { alias },
   target: 'node',
@@ -61,14 +68,14 @@ export const serverConfig: Configuration = {
 export const clientConfig: Configuration = {
   entry: () => ['./src/client/index.tsx'], // https://github.com/webpack-contrib/webpack-hot-client/issues/11
   output: {
-    filename: 'bundle-[hash].js',
+    filename: 'bundle-[contenthash].js',
     path: resolve(process.env.ROOT_DIR, '.build/client'),
     publicPath: '/static/',
   },
 
   mode,
   module: {
-    rules: [moduleHackRule, babelLoaderRule],
+    rules: [moduleHackRule, babelLoaderRule, graphqlLoaderRule],
   },
   optimization,
   plugins: [

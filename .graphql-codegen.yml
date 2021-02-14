@@ -1,0 +1,36 @@
+schema: 
+  - src/graphql/*.graphqls
+documents: 
+  - src/**/*.graphql
+config:
+  avoidOptionals: true
+  useTypeImports: true
+hooks:
+  afterOneFileWrite:
+    - eslint --fix
+overwrite: true
+generates:
+  src/graphql/schema.d.ts:
+    plugins:
+      - typescript
+      - typescript-mongodb
+  src/server/graphql/resolverTypes.d.ts:
+    preset: import-types
+    presetConfig:
+      importTypesNamespace: SchemaTypes
+      typesPath:  ~graphql/schema
+    plugins:
+      - typescript-resolvers
+  src/:
+    preset: near-operation-file
+    presetConfig:
+      baseTypesPath: ~~graphql/schema
+      extension: '.ts'
+      importTypesNamespace: SchemaTypes
+    config:
+      urqlImportFrom: '@urql/preact'
+      onlyOperationTypes: true
+      preResolveTypes: true
+    plugins:
+      - typescript-operations
+      - typescript-urql

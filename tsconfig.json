@@ -48,6 +48,7 @@
     "baseUrl": "./",                       /* Base directory to resolve non-absolute module names. */
     "paths": {
       "~client/*": ["./src/client/*"],
+      "~graphql/*": ["./src/graphql/*"],
       "~server/*": ["./src/server/*"],
       "~spec/*": ["./spec/*"]
     },  
