@@ -62,8 +62,10 @@ for t in ./spec/**/*.spec.*; do
 
   if [ ! -f "$original_file" ]; then
     printf '\x1b[33mWarning:\x1b[0m test file %s has no corresponding file (looked at %s)\n' "$t" "$original_file" >&2
+    continue
   fi
   if [ "$(head -1 < "$original_file" | grep -c 'Generated file')" -gt 0 ]; then
     printf '\x1b[33mWarning:\x1b[0m test file %s for generated file %s\n' "$t" "$original_file" >&2
+    continue
   fi 
 done

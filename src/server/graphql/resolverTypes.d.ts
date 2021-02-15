@@ -1,13 +1,13 @@
 // Generated file. Do not edit!
 
-import type { GraphQLResolveInfo } from 'graphql';
-
 import type * as SchemaTypes from '~graphql/schema';
 
-export type RequireFields<T, K extends keyof T> = { [X in Exclude<keyof T, K>]?: T[X] } &
-  { [P in K]-?: NonNullable<T[P]> };
+import type { GraphQLResolveInfo } from 'graphql';
+export type RequireFields<T, K extends keyof T> = { [X in Exclude<keyof T, K>]?: T[X] } & { [P in K]-?: NonNullable<T[P]> };
+
 
 export type ResolverTypeWrapper<T> = Promise<T> | T;
+
 
 export type LegacyStitchingResolver<TResult, TParent, TContext, TArgs> = {
   fragment: string;
@@ -18,9 +18,7 @@ export type NewStitchingResolver<TResult, TParent, TContext, TArgs> = {
   selectionSet: string;
   resolve: ResolverFn<TResult, TParent, TContext, TArgs>;
 };
-export type StitchingResolver<TResult, TParent, TContext, TArgs> =
-  | LegacyStitchingResolver<TResult, TParent, TContext, TArgs>
-  | NewStitchingResolver<TResult, TParent, TContext, TArgs>;
+export type StitchingResolver<TResult, TParent, TContext, TArgs> = LegacyStitchingResolver<TResult, TParent, TContext, TArgs> | NewStitchingResolver<TResult, TParent, TContext, TArgs>;
 export type Resolver<TResult, TParent = {}, TContext = {}, TArgs = {}> =
   | ResolverFn<TResult, TParent, TContext, TArgs>
   | StitchingResolver<TResult, TParent, TContext, TArgs>;
@@ -46,13 +44,7 @@ export type SubscriptionResolveFn<TResult, TParent, TContext, TArgs> = (
   info: GraphQLResolveInfo
 ) => TResult | Promise<TResult>;
 
-export interface SubscriptionSubscriberObject<
-  TResult,
-  TKey extends string,
-  TParent,
-  TContext,
-  TArgs
-> {
+export interface SubscriptionSubscriberObject<TResult, TKey extends string, TParent, TContext, TArgs> {
   subscribe: SubscriptionSubscribeFn<{ [key in TKey]: TResult }, TParent, TContext, TArgs>;
   resolve?: SubscriptionResolveFn<TResult, { [key in TKey]: TResult }, TContext, TArgs>;
 }
@@ -66,13 +58,7 @@ export type SubscriptionObject<TResult, TKey extends string, TParent, TContext, 
   | SubscriptionSubscriberObject<TResult, TKey, TParent, TContext, TArgs>
   | SubscriptionResolverObject<TResult, TParent, TContext, TArgs>;
 
-export type SubscriptionResolver<
-  TResult,
-  TKey extends string,
-  TParent = {},
-  TContext = {},
-  TArgs = {}
-> =
+export type SubscriptionResolver<TResult, TKey extends string, TParent = {}, TContext = {}, TArgs = {}> =
   | ((...args: any[]) => SubscriptionObject<TResult, TKey, TParent, TContext, TArgs>)
   | SubscriptionObject<TResult, TKey, TParent, TContext, TArgs>;
 
@@ -82,11 +68,7 @@ export type TypeResolveFn<TTypes, TParent = {}, TContext = {}> = (
   info: GraphQLResolveInfo
 ) => SchemaTypes.Maybe<TTypes> | Promise<SchemaTypes.Maybe<TTypes>>;
 
-export type IsTypeOfResolverFn<T = {}, TContext = {}> = (
-  obj: T,
-  context: TContext,
-  info: GraphQLResolveInfo
-) => boolean | Promise<boolean>;
+export type IsTypeOfResolverFn<T = {}, TContext = {}> = (obj: T, context: TContext, info: GraphQLResolveInfo) => boolean | Promise<boolean>;
 
 export type NextResolverFn<T> = () => Promise<T>;
 
@@ -118,20 +100,14 @@ export type ResolversParentTypes = {
   Boolean: SchemaTypes.Scalars['Boolean'];
 };
 
-export type AudiobookResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['Audiobook'] = ResolversParentTypes['Audiobook']
-> = {
+export type AudiobookResolvers<ContextType = any, ParentType extends ResolversParentTypes['Audiobook'] = ResolversParentTypes['Audiobook']> = {
   id: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   authors: Resolver<Array<ResolversTypes['Author']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type AuthorResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['Author'] = ResolversParentTypes['Author']
-> = {
+export type AuthorResolvers<ContextType = any, ParentType extends ResolversParentTypes['Author'] = ResolversParentTypes['Author']> = {
   id: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   audiobooks: Resolver<Array<ResolversTypes['Audiobook']>, ParentType, ContextType>;
   firstName: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -139,22 +115,9 @@ export type AuthorResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type QueryResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']
-> = {
-  getAudiobooks: Resolver<
-    Array<ResolversTypes['Audiobook']>,
-    ParentType,
-    ContextType,
-    RequireFields<SchemaTypes.QueryGetAudiobooksArgs, never>
-  >;
-  findAudiobooks: Resolver<
-    Array<ResolversTypes['Audiobook']>,
-    ParentType,
-    ContextType,
-    RequireFields<SchemaTypes.QueryFindAudiobooksArgs, 'str'>
-  >;
+export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  getAudiobooks: Resolver<Array<ResolversTypes['Audiobook']>, ParentType, ContextType, RequireFields<SchemaTypes.QueryGetAudiobooksArgs, never>>;
+  findAudiobooks: Resolver<Array<ResolversTypes['Audiobook']>, ParentType, ContextType, RequireFields<SchemaTypes.QueryFindAudiobooksArgs, 'str'>>;
 };
 
 export type Resolvers<ContextType = any> = {
@@ -162,6 +125,7 @@ export type Resolvers<ContextType = any> = {
   Author: AuthorResolvers<ContextType>;
   Query: QueryResolvers<ContextType>;
 };
+
 
 /**
  * @deprecated

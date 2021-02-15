@@ -19,6 +19,7 @@ declare namespace NodeJS {
     IMPORTS_PATH?: string;
     NODE_ENV: 'development' | 'production';
     POLL_PERIOD?: string;
+    STORAGE_PATH: string;
     ROOT_DIR: string;
   }
 }

@@ -1,0 +1,9 @@
+#!/bin/bash -e
+
+script/setup
+
+docker run --rm \
+  --tty \
+  --volume "$(pwd)":/usr/src/audiobook-catalog \
+  audiobook-catalog:dev \
+  yarn test "${@}"

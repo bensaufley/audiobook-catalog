@@ -1,7 +1,5 @@
 // Generated file. Do not edit!
 
-import { ObjectID } from 'mongodb';
-
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
@@ -14,6 +12,14 @@ export type Scalars = {
   Int: number;
   Float: number;
 };
+
+
+
+
+
+
+
+
 
 export type Audiobook = {
   __typename?: 'Audiobook';
@@ -36,9 +42,11 @@ export type Query = {
   findAudiobooks: Array<Audiobook>;
 };
 
+
 export type QueryGetAudiobooksArgs = {
   start: Maybe<Scalars['ID']>;
 };
+
 
 export type QueryFindAudiobooksArgs = {
   str: Scalars['String'];
@@ -48,18 +56,20 @@ export type AdditionalEntityFields = {
   path: Maybe<Scalars['String']>;
   type: Maybe<Scalars['String']>;
 };
+
+import { ObjectID } from 'mongodb';
 export type AudiobookDbObject = {
-  _id: ObjectID;
-  name: string;
-  authors: Array<AuthorDbObject['_id']>;
+  _id: ObjectID,
+  name: string,
+  authors: Array<AuthorDbObject['_id']>,
   meta: {
-    checksum: string;
-  };
+    checksum: string,
+  },
 };
 
 export type AuthorDbObject = {
-  _id: ObjectID;
-  audiobooks: Array<AudiobookDbObject['_id']>;
-  firstName: string;
-  lastName: string;
+  _id: ObjectID,
+  audiobooks: Array<AudiobookDbObject['_id']>,
+  firstName: string,
+  lastName: string,
 };
