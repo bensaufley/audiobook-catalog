@@ -1,14 +1,12 @@
+import { render } from '@testing-library/preact';
 import { h } from 'preact';
-import { render, RenderResult } from '@testing-library/preact';
 
 import %%PRIMARY_IMPORT%% from '%%FILENAME%%';
 
 describe('%%FILENAME%%', () => {
-  let wrapper: RenderResult;
+  it('renders without exploding', () => {
+    const { container } = render(<%%PRIMARY_IMPORT%% />);
 
-  beforeEach(() => {
-    wrapper = render(<%%PRIMARY_IMPORT%% />);
+    expect(container).not.toBeEmptyDOMElement();
   });
-
-  it.todo('needs tests');
 });

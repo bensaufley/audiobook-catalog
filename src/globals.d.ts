@@ -18,6 +18,7 @@ declare namespace NodeJS {
   export interface ProcessEnv {
     IMPORTS_PATH?: string;
     NODE_ENV: 'development' | 'production';
+    POLL_PERIOD?: string;
     ROOT_DIR: string;
   }
 }

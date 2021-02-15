@@ -1,121 +1,34 @@
 import 'core-js/stable';
 
-import { DIRECTIVES } from '@graphql-codegen/typescript-mongodb';
-import { ApolloServer } from 'apollo-server-koa';
-import Koa from 'koa';
-import koaMount from 'koa-mount';
-import koaSend from 'koa-send';
-import koaStatic from 'koa-static';
-import type koaWebpack from 'koa-webpack';
-import { resolve } from 'path';
-
-import Audiobook from '~graphql/Audiobook.graphqls';
-import Author from '~graphql/Author.graphqls';
-import Query from '~graphql/Query.graphqls';
-import getClient from '~server/db/getClient';
-import resolvers from '~server/graphql/resolvers';
-import importFiles from '~server/importFiles';
-import walk from '~server/importFiles/walk';
-
-import type { clientConfig } from '../../webpack.config';
-
-const isDev = process.env.NODE_ENV === 'development';
-
-const setUpServer = async (): Promise<Koa> => {
-  const app = new Koa();
-
-  let webpackMiddleware: ReturnType<typeof koaWebpack> extends Promise<infer T> ? T : void;
-  if (isDev) {
-    /* eslint-disable global-require, import/no-extraneous-dependencies, @typescript-eslint/no-var-requires */
-    const kw: typeof koaWebpack = require('koa-webpack');
-    const { clientConfig: config } = require('../../webpack.config') as {
-      clientConfig: typeof clientConfig;
-    };
-
-    webpackMiddleware = await kw({
-      config,
-      hotClient: {
-        port: 8081,
-      },
-    });
-    app.use(webpackMiddleware);
-    /* eslint-enable global-require, import/no-extraneous-dependencies, @typescript-eslint/no-var-requires */
-  }
-
-  app.use(
-    koaMount(
-      '/static',
-      koaStatic(resolve(process.env.ROOT_DIR, '.build/client'), {
-        gzip: true,
-      })
-    )
-  );
-
-  const apolloServer = new ApolloServer({
-    resolvers,
-    typeDefs: [DIRECTIVES, Audiobook, Author, Query],
-    playground: isDev,
-    introspection: isDev,
-  });
-
-  apolloServer.applyMiddleware({
-    app,
-    path: '/graphql',
-  });
-
-  app.use(async (ctx) => {
-    if (isDev) {
-      ctx.response.type = 'html';
-      ctx.response.body = webpackMiddleware.devMiddleware.fileSystem.createReadStream(
-        resolve(process.env.ROOT_DIR, '.build/client/index.html')
-      );
-    } else {
-      await koaSend(ctx, resolve(process.env.ROOT_DIR, '.build/client/index.html'));
-    }
-  });
-
-  return app;
-};
-
-const checkForImports = async () => {
-  if (!process.env.IMPORTS_PATH) {
-    console.warn('No IMPORTS_PATH set');
-    return null;
-  }
-
-  try {
-    await importFiles(walk(process.env.IMPORTS_PATH));
-  } catch (err) {
-    console.error('Error importing from', process.env.IMPORTS_PATH, '-', err);
-  }
-
-  return setTimeout(checkForImports, 60_000);
-};
+import getClient from '~server/components/db/getClient';
+import poll from '~server/components/files/poll';
+import create from '~server/create';
 
 /* eslint-disable-next-line consistent-return */
 const start = async () => {
   try {
+    const importProcess = await poll();
     const client = await getClient();
     client.close();
-    const app = await setUpServer();
+    const app = await create();
     const port = process.env.PORT || '8080';
     console.log(`Listening on port ${port}`);
-    app.listen(port);
-    return app;
+    const server = app.listen(port);
+    return { importProcess, server };
   } catch (err) {
     console.error('Error starting server:', err);
     process.exit(1);
   }
 };
 
-let importProcess = checkForImports();
-start();
+let processes = start();
 
 if (module.hot) {
   module.hot.accept('./index.ts', () => {
-    importProcess.then((timeout) => {
-      if (timeout) clearTimeout(timeout);
-      importProcess = checkForImports();
+    processes.then(({ importProcess, server }) => {
+      if (importProcess) clearTimeout(importProcess);
+      server.close();
+      processes = start();
     });
   });
 }

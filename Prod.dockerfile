@@ -3,16 +3,20 @@ LABEL maintainer="Ben Saufley<contact@bensaufley.com>"
 
 ENV NODE_ENV=development
 
-WORKDIR /tmp/
-
 # hadolint ignore=DL3008,DL3009
 RUN apt-get update \
-  && apt-get install -y --no-install-recommends git
+  && apt-get install -y --no-install-recommends \
+    git \
+    ca-certificates
 
-COPY package.json yarn.lock script/docker /
+WORKDIR /usr/src/audiobook-catalog
+
+COPY package.json yarn.lock script/docker ./
 RUN yarn install
 
-RUN NODE_ENV=production yarn codegen
+COPY . .
+RUN yarn codegen
+
 RUN NODE_ENV=production yarn build
 
 RUN npm prune --production
@@ -29,10 +33,10 @@ RUN scripts/mongo-setup && rm -rf scripts
 WORKDIR /usr/src/audiobook-catalog
 
 COPY --from=builder \
-  /tmp/package.json \
-  /tmp/yarn.lock \
-  /tmp/node_modules \
-  /tmp/.build \
+  /usr/src/audiobook-catalog/package.json \
+  /usr/src/audiobook-catalog/yarn.lock \
+  /usr/src/audiobook-catalog/node_modules \
+  /usr/src/audiobook-catalog/.build \
   /usr/src/audiobook-catalog/
 
 EXPOSE 8080

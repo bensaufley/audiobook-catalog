@@ -1,3 +1,5 @@
+// Generated file. Do not edit!
+
 import { ObjectID } from 'mongodb';
 
 export type Maybe<T> = T | null;

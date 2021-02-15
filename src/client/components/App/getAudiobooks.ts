@@ -1,3 +1,5 @@
+// Generated file. Do not edit!
+
 import * as Urql from '@urql/preact';
 import gql from 'graphql-tag';
 

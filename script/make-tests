@@ -7,14 +7,17 @@ cd "$(dirname "$0")/.."
 shopt -s globstar
 
 # entrypoints call code on load. Most of the code they
-# call should be extracted to testable sub-files.
+# call should be extracted to testable sub-files. Dev
+# helper file(s) are not necessary to test
 skiplist=(
+  ./src/server/dev.ts
   ./src/server/index.ts
   ./src/client/index.tsx
 )
 
 for f in ./src/**/*.{ts,tsx}; do
   if [[ "$f" =~ \.d\.ts ]]; then continue; fi
+  if [ "$(head -1 < "$f" | grep -c 'Generated file')" -gt 0 ]; then continue; fi
 
   skip=false
   for skipped in "${skiplist[@]}"; do
@@ -30,7 +33,7 @@ for f in ./src/**/*.{ts,tsx}; do
   test_file="${test_file/\.ts/.spec.ts}"
 
   if [ -f "$test_file" ]; then
-    echo "$test_file exists. Skipping."
+    if [ "$DEBUG" != "" ]; then echo "$test_file exists. Skipping."; fi
     continue
   fi
 
@@ -60,4 +63,7 @@ for t in ./spec/**/*.spec.*; do
   if [ ! -f "$original_file" ]; then
     printf '\x1b[33mWarning:\x1b[0m test file %s has no corresponding file (looked at %s)\n' "$t" "$original_file" >&2
   fi
+  if [ "$(head -1 < "$original_file" | grep -c 'Generated file')" -gt 0 ]; then
+    printf '\x1b[33mWarning:\x1b[0m test file %s for generated file %s\n' "$t" "$original_file" >&2
+  fi 
 done

@@ -1,3 +1,5 @@
+// Generated file. Do not edit!
+
 import type { GraphQLResolveInfo } from 'graphql';
 
 import type * as SchemaTypes from '~graphql/schema';

@@ -12,6 +12,8 @@ overwrite: true
 generates:
   src/graphql/schema.d.ts:
     plugins:
+      - add:
+          content: "// Generated file. Do not edit!\n"
       - typescript
       - typescript-mongodb
   src/server/graphql/resolverTypes.d.ts:
@@ -20,6 +22,8 @@ generates:
       importTypesNamespace: SchemaTypes
       typesPath:  ~graphql/schema
     plugins:
+      - add:
+          content: "// Generated file. Do not edit!\n"
       - typescript-resolvers
   src/:
     preset: near-operation-file
@@ -32,5 +36,7 @@ generates:
       onlyOperationTypes: true
       preResolveTypes: true
     plugins:
+      - add:
+          content: "// Generated file. Do not edit!\n"
       - typescript-operations
       - typescript-urql
