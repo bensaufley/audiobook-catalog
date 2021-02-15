@@ -1,12 +1,13 @@
 import { render } from '@testing-library/preact';
 import { Client, Provider } from '@urql/preact';
 import { h, VNode } from 'preact';
+import { never } from 'wonka';
 
 export const mockClient = (c: Partial<Client> = {}) =>
   ({
-    executeQuery: jest.fn(() => undefined),
-    executeMutation: jest.fn(() => undefined),
-    executeSubscription: jest.fn(() => undefined),
+    executeQuery: jest.fn(() => never),
+    executeMutation: jest.fn(() => never),
+    executeSubscription: jest.fn(() => never),
     ...c,
   } as Client);
 

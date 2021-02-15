@@ -68,7 +68,8 @@
     "webpack-cli": "^4.5.0",
     "webpack-hot-client": "https://github.com/mvattuone/webpack-hot-client#eb1465e278b854ba17cf83796a4f0ff1d24a57cd",
     "webpack-node-externals": "^2.5.2",
-    "whatwg-fetch": "^3.5.0"
+    "whatwg-fetch": "^3.5.0",
+    "wonka": "^4.0.15"
   },
   "engines": {
     "node": "~14.14.0"
