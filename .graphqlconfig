@@ -1,0 +1,9 @@
+{
+  "name": "Audiobook Catalog GraphQL Schema",
+  "schemaPath": "src/graphql/schema.graphqls",
+  "includes": [
+    "src/**/*.graphql",
+    "src/graphql/*.graphqls",
+    "*.graphql"
+  ]
+}

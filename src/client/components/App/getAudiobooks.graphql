@@ -4,8 +4,11 @@ query getAudiobooks($startId: ID) {
     name
     authors {
       id
-      lastName
-      firstName
+      author {
+        lastName
+        firstName
+      }
+      meta
     }
   }
 }

@@ -4,6 +4,9 @@ type Audiobook @entity(
   ]
 ) {
   id: ID! @id
+  authors: [AudiobookAuthor!]!
+  duration: Float! @column
+  genres: [Genre!]! @column
   name: String! @column
-  authors: [Author!]! @link
+  year: Int @column
 }

@@ -86,7 +86,7 @@
     "build:prep": "rimraf .build/{client,server}/*",
     "codegen": "graphql-codegen --config .graphql-codegen.yml",
     "codegen:watch": "yarn codegen --watch",
-    "dev": "npm-run-all --sequential build:prep codegen build --parallel dev:db codegen:watch dev:watch start",
+    "dev": "npm-run-all --sequential build:prep codegen build --parallel dev:db codegen:watch dev:watch \"start --inspect=9229\"",
     "dev:db": "mongod --bind_ip 0.0.0.0 --dbpath /mongo/db",
     "dev:watch": "yarn build --watch",
     "format": "eslint --fix .",

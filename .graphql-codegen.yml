@@ -1,6 +1,6 @@
 schema: 
   - src/graphql/*.graphqls
-documents: 
+documents:
   - src/**/*.graphql
 config:
   avoidOptionals: true

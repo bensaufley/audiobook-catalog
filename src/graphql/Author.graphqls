@@ -1,6 +1,6 @@
 type Author @entity {
   id: ID! @id
-  audiobooks: [Audiobook!]! @link
-  firstName: String! @column
+  audiobooks: [AudiobookAuthor!]!
+  firstName: String @column
   lastName: String! @column
 }

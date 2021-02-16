@@ -43,7 +43,11 @@ const optimization: Configuration['optimization'] = {
 };
 
 export const serverConfig: Configuration = {
-  entry: () => ['./src/server/index.ts'], // https://github.com/webpack-contrib/webpack-hot-client/issues/11
+  // https://github.com/webpack-contrib/webpack-hot-client/issues/11
+  entry: () =>
+    [mode === 'development' ? 'webpack/hot/poll?1000' : '', './src/server/index.ts'].filter(
+      Boolean
+    ),
   output: {
     filename: 'index.js',
     path: resolve(process.env.ROOT_DIR, '.build/server'),

@@ -1,0 +1,11 @@
+type ToImport @entity(
+  additionalFields: [
+    { path: "meta.checksum", type: "string" }
+  ]
+) {
+  id: ID! @id
+  filepath: String! @column
+  name: String! @column
+  lastModified: Date! @column
+  conflict: Boolean! @column
+}

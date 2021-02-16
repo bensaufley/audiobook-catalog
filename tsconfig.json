@@ -82,4 +82,7 @@
     "./.*.ts",
     "./*.ts"
   ],
+  "exclude": [
+    "coverage"
+  ]
 }

@@ -1,0 +1,6 @@
+type AudiobookAuthor @entity {
+  id: ID! @id
+  audiobook: Audiobook! @link
+  author: Author! @link
+  meta: String @column
+}

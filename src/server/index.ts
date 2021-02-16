@@ -1,15 +1,16 @@
 import 'core-js/stable';
 
-import getClient from '~server/components/db/getClient';
+import { pingClient } from '~server/components/db/getClient';
+import init from '~server/components/db/init';
 import poll from '~server/components/files/poll';
 import create from '~server/create';
 
 /* eslint-disable-next-line consistent-return */
 const start = async () => {
   try {
+    await pingClient();
+    await init();
     const importProcess = await poll();
-    const client = await getClient();
-    client.close();
     const app = await create();
     const port = process.env.PORT || '8080';
     console.log(`Listening on port ${port}`);
@@ -24,11 +25,10 @@ const start = async () => {
 let processes = start();
 
 if (module.hot) {
-  module.hot.accept('./index.ts', () => {
-    processes.then(({ importProcess, server }) => {
-      if (importProcess) clearTimeout(importProcess);
-      server.close();
-      processes = start();
-    });
+  module.hot.accept('~server', async () => {
+    const { importProcess, server } = await processes;
+    if (importProcess) clearTimeout(importProcess);
+    server.close();
+    processes = start();
   });
 }
