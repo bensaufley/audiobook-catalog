@@ -31,7 +31,6 @@
     "@graphql-codegen/typescript-urql": "^2.0.3",
     "@testing-library/jest-dom": "^5.11.9",
     "@testing-library/preact": "^2.0.1",
-    "@types/graphql": "^14.5.0",
     "@types/html-webpack-plugin": "^3.2.4",
     "@types/jest": "^26.0.20",
     "@types/koa": "^2.11.7",
@@ -91,8 +90,8 @@
     "dev:watch": "yarn build --watch",
     "format": "eslint --fix .",
     "lint": "npm-run-all --parallel --aggregate-output --continue-on-error lint:es lint:ts",
-    "lint:es": "eslint .",
-    "lint:ts": "tsc --noEmit",
+    "lint:es": "eslint --format unix .",
+    "lint:ts": "tsc --noEmit --pretty false",
     "start": "node .build/server/index.js",
     "test": "jest"
   },

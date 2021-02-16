@@ -1,4 +1,3 @@
-import { render } from '@testing-library/preact';
 import { h } from 'preact';
 
 import Home from '~client/components/Home';
