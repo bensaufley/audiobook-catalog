@@ -2,8 +2,10 @@
  * For a detailed explanation regarding each configuration property and type check, visit:
  * https://jestjs.io/docs/en/configuration.html
  */
+// eslint-disable-next-line import/no-extraneous-dependencies
+import type { Config } from '@jest/types';
 
-export default {
+const baseTestConfig: Config.InitialOptions = {
   // All imported modules in your tests should be mocked automatically
   // automock: false,
 
@@ -15,31 +17,6 @@ export default {
 
   // Automatically clear mock calls and instances between every test
   clearMocks: true,
-
-  // Indicates whether the coverage information should be collected while executing the test
-  // collectCoverage: false,
-
-  // An array of glob patterns indicating a set of files for which coverage information should be collected
-  // collectCoverageFrom: undefined,
-
-  // The directory where Jest should output its coverage files
-  coverageDirectory: 'coverage',
-
-  // An array of regexp pattern strings used to skip coverage collection
-  // coveragePathIgnorePatterns: [
-  //   "/node_modules/"
-  // ],
-
-  // Indicates which provider should be used to instrument code for coverage
-  // coverageProvider: "babel",
-
-  // A list of reporter names that Jest uses when writing coverage reports
-  // coverageReporters: [
-  //   "json",
-  //   "text",
-  //   "lcov",
-  //   "clover"
-  // ],
 
   // An object that configures minimum threshold enforcement for coverage results
   // coverageThreshold: undefined,
@@ -95,9 +72,6 @@ export default {
   // A preset that is used as a base for Jest's configuration
   // preset: undefined,
 
-  // Run tests from one or more projects
-  // projects: undefined,
-
   // Use this configuration option to add custom reporters to Jest
   // reporters: undefined,
 
@@ -136,17 +110,11 @@ export default {
   // A list of paths to snapshot serializer modules Jest should use for snapshot testing
   // snapshotSerializers: [],
 
-  // The test environment that will be used for testing
-  // testEnvironment: 'jsdom',
-
   // Options that will be passed to the testEnvironment
   // testEnvironmentOptions: {},
 
   // Adds a location field to test results
   // testLocationInResults: false,
-
-  // The glob patterns Jest uses to detect test files
-  testMatch: ['<rootDir>/spec/**/*.spec.[jt]s?(x)'],
 
   // An array of regexp pattern strings that are matched against all test paths, matched tests are skipped
   // testPathIgnorePatterns: [
@@ -171,7 +139,7 @@ export default {
   // A map from regular expressions to paths to transformers
   transform: {
     '\\.(gql|graphqls?)$': 'jest-transform-graphql',
-    '.*': 'babel-jest',
+    '\\.[jt]sx?$': 'babel-jest',
   },
 
   // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation
@@ -191,4 +159,56 @@ export default {
 
   // Whether to use watchman for file crawling
   // watchman: true,
+};
+
+const serverTestConfig: Config.InitialOptions = {
+  ...baseTestConfig,
+
+  displayName: {
+    color: 'blue',
+    name: 'server',
+  },
+
+  // The test environment that will be used for testing
+  testEnvironment: 'node',
+
+  // The glob patterns Jest uses to detect test files
+  testMatch: ['<rootDir>/spec/server/**/*.spec.[jt]s?(x)'],
+};
+
+const clientTestConfig: Config.InitialOptions = {
+  ...baseTestConfig,
+
+  displayName: {
+    color: 'green',
+    name: 'client',
+  },
+
+  // The test environment that will be used for testing
+  testEnvironment: 'jsdom',
+
+  // The glob patterns Jest uses to detect test files
+  testMatch: ['<rootDir>/spec/client/**/*.spec.[jt]s?(x)'],
+};
+
+export default <Config.InitialOptions>{
+  // Indicates whether the coverage information should be collected while executing the test
+  collectCoverage: true,
+
+  // An array of glob patterns indicating a set of files for which coverage information should be collected
+  collectCoverageFrom: ['**/src/**/*.{ts,tsx,js,jsx}', '!**/src/**/*.d.ts'],
+
+  // The directory where Jest should output its coverage files
+  coverageDirectory: 'coverage',
+
+  // An array of regexp pattern strings used to skip coverage collection
+  // coveragePathIgnorePatterns: ['/node_modules/', '/\\.d\\.ts/'],
+
+  // Indicates which provider should be used to instrument code for coverage
+  // coverageProvider: "babel",
+
+  // A list of reporter names that Jest uses when writing coverage reports
+  coverageReporters: ['json', 'text', 'lcov', 'clover'],
+
+  projects: [serverTestConfig, clientTestConfig],
 };

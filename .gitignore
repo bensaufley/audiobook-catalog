@@ -6,3 +6,4 @@ node_modules
 !.build/server/.keep
 yarn-error.log
 imports
+/coverage
