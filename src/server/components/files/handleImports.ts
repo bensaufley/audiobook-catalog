@@ -4,13 +4,13 @@ import { resolve } from 'path';
 import { getCollections } from '~server/components/db/getCollection';
 import getAudiobookMetadata from '~server/components/files/utilities/getAudiobookMetadata';
 
-const checkForUpdates = async () => {
+const handleImports = async () => {
   const storagePath = process.env.STORAGE_PATH;
   if (!existsSync(storagePath)) throw new Error('invalid STORAGE_PATH');
   const st = await promises.stat(storagePath);
   if (!st.isDirectory()) throw new Error('invalid STORAGE_PATH');
 
-  console.log('starting checkForUpdates');
+  console.log('starting handleImports');
   const [client, audiobooks, audiobookAuthors, auths, toImport] = await getCollections(
     'audiobooks',
     'audiobookAuthors',
@@ -84,7 +84,7 @@ const checkForUpdates = async () => {
 
   await client.close();
 
-  console.log('done checkForUpdates');
+  console.log('done handleImports');
 };
 
-export default checkForUpdates;
+export default handleImports;

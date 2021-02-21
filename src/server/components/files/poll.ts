@@ -1,11 +1,11 @@
 import checkForImports from '~server/components/files/checkForImports';
-import checkForUpdates from '~server/components/files/checkForUpdates';
+import handleImports from '~server/components/files/handleImports';
 
 const poll = async () => {
   const period = Number(process.env.POLL_PERIOD) || 60_000;
 
   await checkForImports();
-  await checkForUpdates();
+  await handleImports();
 
   return setTimeout(poll, period);
 };
