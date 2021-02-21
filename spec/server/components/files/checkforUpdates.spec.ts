@@ -1,5 +1,5 @@
-import checkforUpdates from '~server/components/files/checkforUpdates';
+import checkForUpdates from '~server/components/files/checkForUpdates';
 
-describe('~server/components/files/checkforUpdates', () => {
+describe('~server/components/files/checkForUpdates', () => {
   it.todo('needs tests');
 });

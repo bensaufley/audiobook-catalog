@@ -9,13 +9,15 @@ docker run \
   --interactive \
   --tty \
   -e IMPORTS_PATH=/imports \
+  -e STORAGE_PATH=/storage \
   --publish 6451:8080 \
   --publish 6452:8081 \
   --publish 6453:9229 \
   --publish 27451:27017 \
   --volume "$(pwd)"/src:/usr/src/audiobook-catalog/src \
   --volume "$(pwd)"/spec:/usr/src/audiobook-catalog/spec \
-  --volume "$(pwd)"/imports:/imports \
+  --volume "${1:-imports}":/imports \
   --volume audiobook-catalog-mongodb:/mongo/db \
+  --volume audiobook-storage:/storage \
   audiobook-catalog:dev \
   yarn dev

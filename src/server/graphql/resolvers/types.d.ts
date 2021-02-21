@@ -1,8 +1,16 @@
 // Generated file. Do not edit!
 
 import type { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
+import type { IPicture } from 'music-metadata';
 
 import type * as SchemaTypes from '~graphql/schema';
+import type {
+  AudiobookAuthorDbObject,
+  AudiobookDbObject,
+  AuthorDbObject,
+  GenreDbObject,
+  ToImportDbObject,
+} from '~server/mongoTypes';
 
 export type RequireFields<T, K extends keyof T> = { [X in Exclude<keyof T, K>]?: T[X] } &
   { [P in K]-?: NonNullable<T[P]> };
@@ -100,35 +108,42 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
-  Audiobook: ResolverTypeWrapper<SchemaTypes.Audiobook>;
+  CoverImage: ResolverTypeWrapper<IPicture>;
+  Audiobook: ResolverTypeWrapper<AudiobookDbObject>;
   ID: ResolverTypeWrapper<SchemaTypes.Scalars['ID']>;
   Float: ResolverTypeWrapper<SchemaTypes.Scalars['Float']>;
   String: ResolverTypeWrapper<SchemaTypes.Scalars['String']>;
   Int: ResolverTypeWrapper<SchemaTypes.Scalars['Int']>;
-  AudiobookAuthor: ResolverTypeWrapper<SchemaTypes.AudiobookAuthor>;
-  Author: ResolverTypeWrapper<SchemaTypes.Author>;
-  Genre: ResolverTypeWrapper<SchemaTypes.Genre>;
+  AudiobookAuthor: ResolverTypeWrapper<AudiobookAuthorDbObject>;
+  Author: ResolverTypeWrapper<AuthorDbObject>;
+  Genre: ResolverTypeWrapper<GenreDbObject>;
   Query: ResolverTypeWrapper<{}>;
-  ToImport: ResolverTypeWrapper<SchemaTypes.ToImport>;
+  ToImport: ResolverTypeWrapper<ToImportDbObject>;
   Boolean: ResolverTypeWrapper<SchemaTypes.Scalars['Boolean']>;
-  Date: ResolverTypeWrapper<SchemaTypes.Scalars['Date']>;
+  Date: ResolverTypeWrapper<number>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
-  Audiobook: SchemaTypes.Audiobook;
+  CoverImage: IPicture;
+  Audiobook: AudiobookDbObject;
   ID: SchemaTypes.Scalars['ID'];
   Float: SchemaTypes.Scalars['Float'];
   String: SchemaTypes.Scalars['String'];
   Int: SchemaTypes.Scalars['Int'];
-  AudiobookAuthor: SchemaTypes.AudiobookAuthor;
-  Author: SchemaTypes.Author;
-  Genre: SchemaTypes.Genre;
+  AudiobookAuthor: AudiobookAuthorDbObject;
+  Author: AuthorDbObject;
+  Genre: GenreDbObject;
   Query: {};
-  ToImport: SchemaTypes.ToImport;
+  ToImport: ToImportDbObject;
   Boolean: SchemaTypes.Scalars['Boolean'];
-  Date: SchemaTypes.Scalars['Date'];
+  Date: number;
 };
+
+export interface CoverImageScalarConfig
+  extends GraphQLScalarTypeConfig<ResolversTypes['CoverImage'], any> {
+  name: 'CoverImage';
+}
 
 export type AudiobookResolvers<
   ContextType = any,
@@ -136,7 +151,9 @@ export type AudiobookResolvers<
 > = {
   id: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   authors: Resolver<Array<ResolversTypes['AudiobookAuthor']>, ParentType, ContextType>;
+  cover: Resolver<SchemaTypes.Maybe<ResolversTypes['CoverImage']>, ParentType, ContextType>;
   duration: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  filepath: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   genres: Resolver<Array<ResolversTypes['Genre']>, ParentType, ContextType>;
   name: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   year: Resolver<SchemaTypes.Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -210,6 +227,7 @@ export interface DateScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
 }
 
 export type Resolvers<ContextType = any> = {
+  CoverImage: GraphQLScalarType;
   Audiobook: AudiobookResolvers<ContextType>;
   AudiobookAuthor: AudiobookAuthorResolvers<ContextType>;
   Author: AuthorResolvers<ContextType>;

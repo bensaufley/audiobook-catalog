@@ -1,7 +1,7 @@
 import { getCollections } from '~server/components/db/getCollection';
 
 const init = async () => {
-  const [audiobooks, audiobookAuthors, authors, genres, toImport] = await getCollections(
+  const [client, audiobooks, audiobookAuthors, authors, genres, toImport] = await getCollections(
     'audiobooks',
     'audiobookAuthors',
     'authors',
@@ -17,6 +17,7 @@ const init = async () => {
   ]);
   await genres.createIndex({ name: 1 }, { unique: true });
   await toImport.createIndex({ filepath: 1 }, { unique: true });
+  await client.close();
 };
 
 export default init;

@@ -1,13 +1,13 @@
-import { Collection } from 'mongodb';
+import { Collection, MongoClient } from 'mongodb';
 
+import getClient from '~server/components/db/getClient';
 import type {
   AudiobookAuthorDbObject,
   AudiobookDbObject,
   AuthorDbObject,
   GenreDbObject,
   ToImportDbObject,
-} from '~graphql/schema';
-import getClient from '~server/components/db/getClient';
+} from '~server/mongoTypes';
 
 type CollectionName = 'audiobooks' | 'audiobookAuthors' | 'authors' | 'genres' | 'toImport';
 type CN = CollectionName;
@@ -27,10 +27,10 @@ type CollectionType<T> = T extends 'audiobooks'
 
 const getCollection = async <T extends CollectionName>(
   collection: T
-): Promise<Collection<CollectionType<T>>> => {
+): Promise<readonly [MongoClient, Collection<CollectionType<T>>]> => {
   const client = await getClient();
   const db = client.db();
-  return db.collection<CollectionType<T>>(collection);
+  return [client, db.collection<CollectionType<T>>(collection)] as const;
 };
 
 export default getCollection;
@@ -48,9 +48,13 @@ export const getCollections = async <
   const client = await getClient();
   const db = client.db();
 
-  return (collections as CN[]).map((collection: CN) =>
-    collection ? db.collection(collection as CN) : undefined
-  ) as [
+  return [
+    client,
+    ...(collections as CN[]).map((collection: CN) =>
+      collection ? db.collection(collection as CN) : undefined
+    ),
+  ] as [
+    MongoClient,
     Collection<CollectionType<A>>,
     B extends undefined ? undefined : Collection<CollectionType<B>>,
     C extends undefined ? undefined : Collection<CollectionType<C>>,

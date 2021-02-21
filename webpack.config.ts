@@ -1,7 +1,13 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import { resolve } from 'path';
-import { Configuration, DefinePlugin, HotModuleReplacementPlugin, RuleSetRule } from 'webpack';
+import {
+  BannerPlugin,
+  Configuration,
+  DefinePlugin,
+  HotModuleReplacementPlugin,
+  RuleSetRule,
+} from 'webpack';
 import webpackNodeExternals from 'webpack-node-externals';
 
 const extensions = ['.ts', '.tsx', '.js', '.jsx', '.json', '.mjs'];
@@ -53,7 +59,12 @@ export const serverConfig: Configuration = {
     path: resolve(process.env.ROOT_DIR, '.build/server'),
   },
 
-  externals: [webpackNodeExternals()],
+  devtool: 'source-map',
+  externals: [
+    webpackNodeExternals({
+      allowlist: ['webpack/hot/poll?1000'],
+    }),
+  ],
   mode,
   module: {
     rules: [moduleHackRule, babelLoaderRule, graphqlLoaderRule],
@@ -63,7 +74,16 @@ export const serverConfig: Configuration = {
     new DefinePlugin({
       'process.env.ROOT_DIR': JSON.stringify(process.env.ROOT_DIR),
     }),
-    ...(mode === 'development' ? [new HotModuleReplacementPlugin()] : []),
+    ...(mode === 'development'
+      ? [
+          new HotModuleReplacementPlugin(),
+          new BannerPlugin({
+            banner: 'require("source-map-support").install();',
+            raw: true,
+            entryOnly: false,
+          }),
+        ]
+      : []),
   ],
   resolve: { alias },
   target: 'node',

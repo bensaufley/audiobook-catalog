@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-var-requires,import/no-extraneous-dependencies */
+const { rules: styleRules } = require('eslint-config-airbnb-base/rules/style');
+
 module.exports = {
   extends: 'airbnb-typescript-prettier',
   plugins: ['simple-import-sort'],
@@ -11,6 +14,14 @@ module.exports = {
     '@typescript-eslint/ban-types': ['off'],
 
     '@typescript-eslint/no-unused-vars': ['off'], // typechecking covers this
+
+    'no-underscore-dangle': [
+      styleRules['no-underscore-dangle'][0],
+      {
+        ...styleRules['no-underscore-dangle'][1],
+        allow: [...styleRules['no-underscore-dangle'][1].allow, '_id'],
+      },
+    ],
 
     // Disable rules made redundant or ineffective by simple-import-sort
     'sort-imports': ['off'],

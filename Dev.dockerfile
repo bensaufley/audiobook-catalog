@@ -20,7 +20,11 @@ RUN yarn install
 WORKDIR /usr/src/audiobook-catalog
 RUN mv /tmp/package.json /tmp/yarn.lock /tmp/node_modules /usr/src/audiobook-catalog/
 
-COPY .graphql-codegen.yml \
+COPY .eslintignore \
+  .eslintrc.js \
+  .gitignore \
+  .graphql-codegen.yml \
+  .prettierrc.js \
   babel.config.js \
   jest.config.ts \
   tsconfig.json \

@@ -13,7 +13,9 @@ const staticFiles = async (app: Koa) => {
       })
     )
   );
+};
 
+export const index = async (app: Koa) => {
   app.use(async (ctx) => {
     await koaSend(ctx, resolve(process.env.ROOT_DIR, '.build/client/index.html'));
   });

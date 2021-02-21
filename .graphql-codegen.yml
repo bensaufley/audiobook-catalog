@@ -15,8 +15,25 @@ generates:
       - add:
           content: "// Generated file. Do not edit!\n"
       - typescript
+  src/server/mongoTypes.d.ts:
+    config:
+      scalars:
+        Date: Date
+        CoverImage: IPicture
+    plugins:
+      - add:
+          content: "// Generated file. Do not edit!\n\nimport type { IPicture } from 'music-metadata';\n"
       - typescript-mongodb
-  src/server/graphql/resolverTypes.d.ts:
+  src/server/graphql/resolvers/types.d.ts:
+    config:
+      mappers:
+        Audiobook: ~server/mongoTypes#AudiobookDbObject
+        AudiobookAuthor: ~server/mongoTypes#AudiobookAuthorDbObject
+        Author: ~server/mongoTypes#AuthorDbObject
+        CoverImage: music-metadata#IPicture
+        Date: number
+        Genre: ~server/mongoTypes#GenreDbObject
+        ToImport: ~server/mongoTypes#ToImportDbObject
     preset: import-types
     presetConfig:
       importTypesNamespace: SchemaTypes

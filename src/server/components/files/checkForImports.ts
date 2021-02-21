@@ -1,7 +1,7 @@
 import { promises } from 'fs';
 import { extname } from 'path';
 
-import getCollection from '~server/components/db/getCollection';
+import { getCollections } from '~server/components/db/getCollection';
 import getAudiobookMetadata from '~server/components/files/utilities/getAudiobookMetadata';
 import walkDirectory from '~server/components/files/utilities/walkDirectory';
 
@@ -13,8 +13,7 @@ const checkForImports = async () => {
     return;
   }
 
-  const audiobooks = await getCollection('audiobooks');
-  const toImport = await getCollection('toImport');
+  const [client, audiobooks, toImport] = await getCollections('audiobooks', 'toImport');
 
   try {
     const files = await walkDirectory(process.env.IMPORTS_PATH);
@@ -34,12 +33,12 @@ const checkForImports = async () => {
           const metadata = await getAudiobookMetadata(file, { stat: st });
 
           const existing = await audiobooks.findOne({
-            name: { $eq: metadata.name },
+            filepath: { $eq: new RegExp(`/${metadata.name}$`) },
           });
 
           const conflict = !!existing;
 
-          await toImport.updateOne(
+          const resp = await toImport.updateOne(
             {
               filepath: { $eq: file },
             },
@@ -57,6 +56,7 @@ const checkForImports = async () => {
               upsert: true,
             }
           );
+          console.log(n, 'imported', file, 'response:', resp.result);
         } catch (err) {
           console.error(n, err);
         }
@@ -65,6 +65,8 @@ const checkForImports = async () => {
   } catch (err) {
     console.error('Error importing from', process.env.IMPORTS_PATH, '-', err);
   }
+  await client.close();
+  console.log('done checkForImports');
 };
 
 export default checkForImports;

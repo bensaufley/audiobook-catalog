@@ -1,3 +1,5 @@
+scalar CoverImage
+
 type Audiobook @entity(
   additionalFields: [
     { path: "meta.checksum", type: "string" }
@@ -5,8 +7,10 @@ type Audiobook @entity(
 ) {
   id: ID! @id
   authors: [AudiobookAuthor!]!
+  cover: CoverImage @column
   duration: Float! @column
-  genres: [Genre!]! @column
+  filepath: String! @column
+  genres: [Genre!]! @link
   name: String! @column
   year: Int @column
 }

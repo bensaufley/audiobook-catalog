@@ -1,7 +1,5 @@
 // Generated file. Do not edit!
 
-import { ObjectID } from 'mongodb';
-
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
@@ -13,6 +11,7 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  CoverImage: any;
   Date: any;
 };
 
@@ -20,7 +19,9 @@ export type Audiobook = {
   __typename?: 'Audiobook';
   id: Scalars['ID'];
   authors: Array<AudiobookAuthor>;
+  cover: Maybe<Scalars['CoverImage']>;
   duration: Scalars['Float'];
+  filepath: Scalars['String'];
   genres: Array<Genre>;
   name: Scalars['String'];
   year: Maybe<Scalars['Int']>;
@@ -70,48 +71,4 @@ export type ToImport = {
   name: Scalars['String'];
   lastModified: Scalars['Date'];
   conflict: Scalars['Boolean'];
-};
-
-export type AdditionalEntityFields = {
-  path: Maybe<Scalars['String']>;
-  type: Maybe<Scalars['String']>;
-};
-export type AudiobookDbObject = {
-  _id: ObjectID;
-  duration: number;
-  genres: Array<Genre>;
-  name: string;
-  year: Maybe<number>;
-  meta: {
-    checksum: string;
-  };
-};
-
-export type AudiobookAuthorDbObject = {
-  _id: ObjectID;
-  audiobook: AudiobookDbObject['_id'];
-  author: AuthorDbObject['_id'];
-  meta: Maybe<string>;
-};
-
-export type AuthorDbObject = {
-  _id: ObjectID;
-  firstName: Maybe<string>;
-  lastName: string;
-};
-
-export type GenreDbObject = {
-  _id: ObjectID;
-  name: string;
-};
-
-export type ToImportDbObject = {
-  _id: ObjectID;
-  filepath: string;
-  name: string;
-  lastModified: any;
-  conflict: boolean;
-  meta: {
-    checksum: string;
-  };
 };

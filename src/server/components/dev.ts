@@ -6,7 +6,7 @@ import { resolve } from 'path';
 import type { clientConfig } from '../../../webpack.config';
 
 const dev = async (app: Koa) => {
-  if (process.env.NODE_ENV === 'development') return false;
+  if (process.env.NODE_ENV !== 'development') return false;
 
   const kw: typeof koaWebpack = require('koa-webpack');
   const { clientConfig: config } = require('../../../webpack.config') as {

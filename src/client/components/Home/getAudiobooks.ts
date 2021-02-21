@@ -12,34 +12,50 @@ export type GetAudiobooksQueryVariables = SchemaTypes.Exact<{
 
 export type GetAudiobooksQuery = {
   __typename?: 'Query';
-  getAudiobooks: Array<{
-    __typename?: 'Audiobook';
+  getAudiobooks: Array<{ __typename?: 'Audiobook' } & AudiobookFragment>;
+};
+
+export type AudiobookFragment = {
+  __typename?: 'Audiobook';
+  id: string;
+  cover: SchemaTypes.Maybe<any>;
+  name: string;
+  year: SchemaTypes.Maybe<number>;
+  genres: Array<{ __typename?: 'Genre'; name: string }>;
+  authors: Array<{
+    __typename?: 'AudiobookAuthor';
     id: string;
-    name: string;
-    authors: Array<{
-      __typename?: 'AudiobookAuthor';
-      id: string;
-      meta: SchemaTypes.Maybe<string>;
-      author: { __typename?: 'Author'; lastName: string; firstName: SchemaTypes.Maybe<string> };
-    }>;
+    meta: SchemaTypes.Maybe<string>;
+    author: { __typename?: 'Author'; lastName: string; firstName: SchemaTypes.Maybe<string> };
   }>;
 };
 
+export const AudiobookFragmentDoc = gql`
+  fragment audiobook on Audiobook {
+    id
+    cover
+    name
+    year
+    genres {
+      name
+    }
+    authors {
+      id
+      author {
+        lastName
+        firstName
+      }
+      meta
+    }
+  }
+`;
 export const GetAudiobooksDocument = gql`
   query getAudiobooks($startId: ID) {
     getAudiobooks(start: $startId) {
-      id
-      name
-      authors {
-        id
-        author {
-          lastName
-          firstName
-        }
-        meta
-      }
+      ...audiobook
     }
   }
+  ${AudiobookFragmentDoc}
 `;
 
 export function useGetAudiobooksQuery(

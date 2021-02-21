@@ -1,0 +1,23 @@
+query getAudiobooks($startId: ID) {
+  getAudiobooks(start: $startId) {
+    ...audiobook
+  }
+}
+
+fragment audiobook on Audiobook {
+  id
+  cover
+  name
+  year
+  genres {
+    name
+  }
+  authors {
+    id
+    author {
+      lastName
+      firstName
+    }
+    meta
+  }
+}

@@ -10,12 +10,12 @@ const start = async () => {
   try {
     await pingClient();
     await init();
-    const importProcess = await poll();
+    const importProcess = poll();
     const app = await create();
     const port = process.env.PORT || '8080';
     console.log(`Listening on port ${port}`);
     const server = app.listen(port);
-    return { importProcess, server };
+    return { importProcess: await importProcess, server };
   } catch (err) {
     console.error('Error starting server:', err);
     process.exit(1);
@@ -31,4 +31,5 @@ if (module.hot) {
     server.close();
     processes = start();
   });
+  module.hot.accept();
 }
