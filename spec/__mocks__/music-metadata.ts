@@ -3,7 +3,7 @@ import type { IAudioMetadata, IOptions } from 'music-metadata';
 
 export const parse = async (
   filename: string,
-  { duration }: IOptions = {}
+  { duration }: IOptions = {},
 ): Promise<IAudioMetadata> => {
   const emptyMetadata: IAudioMetadata = {
     common: {

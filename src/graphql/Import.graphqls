@@ -1,4 +1,11 @@
-type ToImport @entity(
+enum ImportStatus {
+  CONFLICT
+  PENDING
+  ERROR
+  DONE
+}
+
+type Import @entity(
   additionalFields: [
     { path: "meta.checksum", type: "string" }
   ]
@@ -7,5 +14,6 @@ type ToImport @entity(
   filepath: String! @column
   name: String! @column
   lastModified: Date! @column
-  conflict: Boolean! @column
+  status: ImportStatus! @column
+  error: String @column
 }

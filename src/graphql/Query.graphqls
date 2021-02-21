@@ -1,5 +1,5 @@
 type Query {
   getAudiobooks(start: ID): [Audiobook!]!
   findAudiobooks(str: String!): [Audiobook!]!
-  getToImports: [ToImport!]!
+  getImports: [Import!]!
 }

@@ -10,7 +10,7 @@ hooks:
     - eslint --fix
 overwrite: true
 generates:
-  src/graphql/schema.d.ts:
+  src/graphql/schema.ts:
     plugins:
       - add:
           content: "// Generated file. Do not edit!\n"
@@ -26,6 +26,7 @@ generates:
       - typescript-mongodb
   src/server/graphql/resolvers/types.d.ts:
     config:
+      useIndexSignature: true
       mappers:
         Audiobook: ~server/mongoTypes#AudiobookDbObject
         AudiobookAuthor: ~server/mongoTypes#AudiobookAuthorDbObject
@@ -33,7 +34,8 @@ generates:
         CoverImage: music-metadata#IPicture
         Date: number
         Genre: ~server/mongoTypes#GenreDbObject
-        ToImport: ~server/mongoTypes#ToImportDbObject
+        Import: ~server/mongoTypes#ImportDbObject
+        ImportStatus: string
     preset: import-types
     presetConfig:
       importTypesNamespace: SchemaTypes

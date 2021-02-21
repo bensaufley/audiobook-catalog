@@ -11,7 +11,7 @@ const walkDirectory = async (dir: string): Promise<string[]> => {
       const entry = join(dir, d.name);
       if (d.isDirectory()) return walkDirectory(entry);
       return entry;
-    })
+    }),
   );
   return list.reduce<string[]>((arr, e) => [...arr, ...(Array.isArray(e) ? e : [e])], []);
 };

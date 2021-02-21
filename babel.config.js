@@ -4,7 +4,7 @@
 module.exports = (api) => {
   const isNode = api.caller(
     (/** @type {import('@babel/core').TransformCaller & { target?: string }} */ caller) =>
-      !!caller && caller.target === 'node'
+      !!caller && caller.target === 'node',
   );
   return {
     plugins: [

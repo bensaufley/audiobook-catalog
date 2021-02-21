@@ -23,7 +23,7 @@ const dev = async (app: Koa) => {
   app.use(async (ctx) => {
     ctx.response.type = 'html';
     ctx.response.body = webpackMiddleware.devMiddleware.fileSystem.createReadStream(
-      resolve(process.env.ROOT_DIR, '.build/client/index.html')
+      resolve(process.env.ROOT_DIR, '.build/client/index.html'),
     );
   });
 

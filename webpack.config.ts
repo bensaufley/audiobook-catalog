@@ -52,7 +52,7 @@ export const serverConfig: Configuration = {
   // https://github.com/webpack-contrib/webpack-hot-client/issues/11
   entry: () =>
     [mode === 'development' ? 'webpack/hot/poll?1000' : '', './src/server/index.ts'].filter(
-      Boolean
+      Boolean,
     ),
   output: {
     filename: 'index.js',

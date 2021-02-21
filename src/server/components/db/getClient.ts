@@ -12,7 +12,7 @@ const getClient = (dbURL = 'mongodb://localhost:27017/audiobook_catalog?retryWri
         }
 
         resolve(client);
-      }
+      },
     );
   });
 

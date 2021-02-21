@@ -59,7 +59,7 @@ export const GetAudiobooksDocument = gql`
 `;
 
 export function useGetAudiobooksQuery(
-  options: Omit<Urql.UseQueryArgs<GetAudiobooksQueryVariables>, 'query'> = {}
+  options: Omit<Urql.UseQueryArgs<GetAudiobooksQueryVariables>, 'query'> = {},
 ) {
   return Urql.useQuery<GetAudiobooksQuery>({ query: GetAudiobooksDocument, ...options });
 }

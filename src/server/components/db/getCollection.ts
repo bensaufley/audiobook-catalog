@@ -6,7 +6,7 @@ import type {
   AudiobookDbObject,
   AuthorDbObject,
   GenreDbObject,
-  ToImportDbObject,
+  ImportDbObject,
 } from '~server/mongoTypes';
 
 type CollectionName = 'audiobooks' | 'audiobookAuthors' | 'authors' | 'genres' | 'toImport';
@@ -22,11 +22,11 @@ type CollectionType<T> = T extends 'audiobooks'
   : T extends 'genres'
   ? GenreDbObject
   : T extends 'toImport'
-  ? ToImportDbObject
+  ? ImportDbObject
   : never;
 
 const getCollection = async <T extends CollectionName>(
-  collection: T
+  collection: T,
 ): Promise<readonly [MongoClient, Collection<CollectionType<T>>]> => {
   const client = await getClient();
   const db = client.db();
@@ -51,7 +51,7 @@ export const getCollections = async <
   return [
     client,
     ...(collections as CN[]).map((collection: CN) =>
-      collection ? db.collection(collection as CN) : undefined
+      collection ? db.collection(collection as CN) : undefined,
     ),
   ] as [
     MongoClient,
@@ -60,6 +60,6 @@ export const getCollections = async <
     C extends undefined ? undefined : Collection<CollectionType<C>>,
     D extends undefined ? undefined : Collection<CollectionType<D>>,
     E extends undefined ? undefined : Collection<CollectionType<E>>,
-    F extends undefined ? undefined : Collection<CollectionType<F>>
+    F extends undefined ? undefined : Collection<CollectionType<F>>,
   ];
 };

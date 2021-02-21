@@ -7,7 +7,7 @@ import getChecksum from '~server/components/files/utilities/getChecksum';
 const processAuthors = (...vals: (string | string[] | undefined)[]): AuthorMetadata[] => {
   const artist = vals.reduce<string | undefined>(
     (v, val) => v || (Array.isArray(val) ? val![0] : val),
-    undefined
+    undefined,
   );
   if (!artist) return [{ firstName: undefined, lastName: 'Unknown', meta: undefined }];
 
@@ -51,7 +51,7 @@ const getAudiobookMetadata = async <B extends boolean>(
   }: {
     duration?: B;
     stat?: Stats;
-  } = {}
+  } = {},
 ): Promise<AudiobookMetadata<B>> => {
   const st = stat || (await promises.stat(filepath));
   const [{ common, format }, checksum] = await Promise.all([
@@ -64,7 +64,7 @@ const getAudiobookMetadata = async <B extends boolean>(
   const authors = processAuthors(common.artists, common.artist, common.albumartist);
   const filename = `${name.replace(
     /\/\\\?\*%/gi,
-    '_'
+    '_',
   )} by ${authors
     .map(({ firstName, lastName }) => [firstName, lastName].filter(Boolean).join(' '))
     .join(', ')}${extname(filepath)}`;

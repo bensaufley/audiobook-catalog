@@ -10,8 +10,8 @@ const staticFiles = async (app: Koa) => {
       '/static',
       koaStatic(resolve(process.env.ROOT_DIR, '.build/client'), {
         gzip: true,
-      })
-    )
+      }),
+    ),
   );
 };
 

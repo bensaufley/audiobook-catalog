@@ -34,12 +34,13 @@ export type GenreDbObject = {
   name: string;
 };
 
-export type ToImportDbObject = {
+export type ImportDbObject = {
   _id: ObjectID;
   filepath: string;
   name: string;
   lastModified: Date;
-  conflict: boolean;
+  status: string;
+  error: Maybe<string>;
   meta: {
     checksum: string;
   };

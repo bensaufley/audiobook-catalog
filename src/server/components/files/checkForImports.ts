@@ -1,6 +1,7 @@
 import { promises } from 'fs';
 import { extname } from 'path';
 
+import { ImportStatus } from '~graphql/schema';
 import { getCollections } from '~server/components/db/getCollection';
 import getAudiobookMetadata from '~server/components/files/utilities/getAudiobookMetadata';
 import walkDirectory from '~server/components/files/utilities/walkDirectory';
@@ -36,31 +37,29 @@ const checkForImports = async () => {
             filepath: { $eq: new RegExp(`/${metadata.name}$`) },
           });
 
-          const conflict = !!existing;
-
           const resp = await toImport.updateOne(
             {
               filepath: { $eq: file },
             },
             {
               $set: {
-                conflict,
                 filepath: file,
                 name: metadata.name,
                 meta: {
                   checksum: metadata.checksum,
                 },
+                status: !existing ? ImportStatus.Pending : ImportStatus.Conflict,
               },
             },
             {
               upsert: true,
-            }
+            },
           );
           console.log(n, 'imported', file, 'response:', resp.result);
         } catch (err) {
           console.error(n, err);
         }
-      })
+      }),
     );
   } catch (err) {
     console.error('Error importing from', process.env.IMPORTS_PATH, '-', err);

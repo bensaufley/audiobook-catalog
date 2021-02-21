@@ -49,11 +49,28 @@ export type Genre = {
   name: Scalars['String'];
 };
 
+export enum ImportStatus {
+  Conflict = 'CONFLICT',
+  Pending = 'PENDING',
+  Error = 'ERROR',
+  Done = 'DONE',
+}
+
+export type Import = {
+  __typename?: 'Import';
+  id: Scalars['ID'];
+  filepath: Scalars['String'];
+  name: Scalars['String'];
+  lastModified: Scalars['Date'];
+  status: ImportStatus;
+  error: Maybe<Scalars['String']>;
+};
+
 export type Query = {
   __typename?: 'Query';
   getAudiobooks: Array<Audiobook>;
   findAudiobooks: Array<Audiobook>;
-  getToImports: Array<ToImport>;
+  getImports: Array<Import>;
 };
 
 export type QueryGetAudiobooksArgs = {
@@ -62,13 +79,4 @@ export type QueryGetAudiobooksArgs = {
 
 export type QueryFindAudiobooksArgs = {
   str: Scalars['String'];
-};
-
-export type ToImport = {
-  __typename?: 'ToImport';
-  id: Scalars['ID'];
-  filepath: Scalars['String'];
-  name: Scalars['String'];
-  lastModified: Scalars['Date'];
-  conflict: Scalars['Boolean'];
 };

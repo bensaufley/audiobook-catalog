@@ -6,7 +6,7 @@ const init = async () => {
     'audiobookAuthors',
     'authors',
     'genres',
-    'toImport'
+    'toImport',
   );
 
   await audiobooks.createIndex({ genres: 1 });

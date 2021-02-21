@@ -12,5 +12,5 @@ export const mockClient = (c: Partial<Client> = {}) =>
   } as Client);
 
 export const renderWithProviders = ({ client = mockClient() }: { client?: Client } = {}) => (
-  children: VNode
+  children: VNode,
 ) => render(<Provider value={client}>{children}</Provider>);

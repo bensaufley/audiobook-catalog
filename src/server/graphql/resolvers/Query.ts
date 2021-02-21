@@ -44,7 +44,7 @@ const Query: QueryResolvers = {
     client.close();
     return audiobooks;
   },
-  getToImports: async () => {
+  getImports: async () => {
     const [client, collection] = await getCollection('toImport');
     const toImports = await collection.find().sort({ lastModified: 0 }).toArray();
     client.close();
