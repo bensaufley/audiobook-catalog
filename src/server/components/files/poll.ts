@@ -1,11 +1,25 @@
 import checkForImports from '~server/components/files/checkForImports';
+import cleanup from '~server/components/files/cleanup';
 import handleImports from '~server/components/files/handleImports';
+import glob, { supportedFileExtensions } from '~server/components/files/utilities/glob';
 
 const poll = async () => {
-  const period = Number(process.env.POLL_PERIOD) || 60_000;
+  if (!process.env.IMPORTS_PATH) {
+    console.warn('No IMPORTS_PATH set');
+    return undefined;
+  }
 
-  await checkForImports();
+  const filesGlob = `${process.env.IMPORTS_PATH}/**/*{${supportedFileExtensions.join(',')}}`;
+
+  const period = Number(process.env.POLL_PERIOD) || 60_000;
+  const files = await glob(filesGlob);
+
+  await checkForImports(files);
   await handleImports();
+  const dirs = await glob(`${process.env.IMPORTS_PATH}/{*/**,*.*}`, {
+    ignore: [filesGlob, process.env.IMPORTS_PATH],
+  });
+  await cleanup(dirs);
 
   return setTimeout(poll, period);
 };

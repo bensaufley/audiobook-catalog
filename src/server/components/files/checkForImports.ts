@@ -1,23 +1,15 @@
-import { promises } from 'fs';
+import { stat } from 'fs/promises';
 import { extname } from 'path';
 
 import { ImportStatus } from '~graphql/schema';
 import { getCollections } from '~server/components/db/getCollection';
 import getAudiobookMetadata from '~server/components/files/utilities/getAudiobookMetadata';
-import walkDirectory from '~server/components/files/utilities/walkDirectory';
+import { supportedFileExtensions } from '~server/components/files/utilities/glob';
 
-export const supportedFileExtensions = ['.m4a', '.m4b', '.mp4', '.mp3'];
-
-const checkForImports = async () => {
-  if (!process.env.IMPORTS_PATH) {
-    console.warn('No IMPORTS_PATH set');
-    return;
-  }
-
+const checkForImports = async (files: string[]) => {
   const [client, audiobooks, toImport] = await getCollections('audiobooks', 'toImport');
 
   try {
-    const files = await walkDirectory(process.env.IMPORTS_PATH);
     let i = 0;
     await Promise.all(
       files.map(async (file) => {
@@ -26,7 +18,7 @@ const checkForImports = async () => {
         const n = i;
 
         try {
-          const st = await promises.stat(file);
+          const st = await stat(file);
           if (!st.isFile) return;
 
           console.log(n, 'adding to import queue', file);

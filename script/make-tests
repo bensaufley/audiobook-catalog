@@ -13,6 +13,9 @@ skiplist=(
   ./src/server/dev.ts
   ./src/server/index.ts
   ./src/client/index.tsx
+
+  ./src/server/graphql/resolvers/index.ts # just aggregates individual resolvers
+  ./src/server/components/files/utilities/glob.ts # just wraps glob in a promise
 )
 
 for f in ./src/**/*.{ts,tsx}; do

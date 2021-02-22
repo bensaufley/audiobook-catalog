@@ -1,4 +1,5 @@
-import { promises, Stats } from 'fs';
+import type { Stats } from 'fs';
+import { stat } from 'fs/promises';
 import { IPicture, parseFile } from 'music-metadata';
 import { extname } from 'path';
 
@@ -47,13 +48,13 @@ const getAudiobookMetadata = async <B extends boolean>(
   filepath: string,
   {
     duration,
-    stat,
+    stat: cachedStat,
   }: {
     duration?: B;
     stat?: Stats;
   } = {},
 ): Promise<AudiobookMetadata<B>> => {
-  const st = stat || (await promises.stat(filepath));
+  const st = cachedStat || (await stat(filepath));
   const [{ common, format }, checksum] = await Promise.all([
     parseFile(filepath, { duration: !!duration }),
     getChecksum(filepath),

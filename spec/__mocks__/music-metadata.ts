@@ -1,11 +1,14 @@
-import mergeDeep from 'merge-deep';
-import type { IAudioMetadata, IOptions } from 'music-metadata';
+import { existsSync, readFileSync } from 'fs';
+import type MusicMetadata from 'music-metadata';
+import { basename, extname } from 'path';
 
-export const parse = async (
+jest.createMockFromModule<typeof MusicMetadata>('music-metadata');
+
+export const parseFile = async (
   filename: string,
-  { duration }: IOptions = {},
-): Promise<IAudioMetadata> => {
-  const emptyMetadata: IAudioMetadata = {
+  { duration }: MusicMetadata.IOptions = {},
+): Promise<MusicMetadata.IAudioMetadata> => {
+  const emptyMetadata: MusicMetadata.IAudioMetadata = {
     common: {
       track: { no: 1, of: 1 },
       disk: { no: null, of: null },
@@ -20,26 +23,22 @@ export const parse = async (
     },
   };
 
-  switch (filename) {
-    case '/imports/empty-metadata.m4a':
-      return emptyMetadata;
-    case '/imports/simple-file.m4a':
-      return mergeDeep(emptyMetadata, {
-        common: {
-          title: 'Simple Title',
-          artists: ['Single Author'],
-          artist: 'Single Author',
-          albumartist: 'Single Author',
-          album: 'Simple Title',
-          year: 2018,
-        },
-        format: duration
-          ? {
-              duration: 31_380,
-            }
-          : {},
-      });
-    default:
-      throw new Error('unexpected filename');
+  const name = basename(filename, extname(filename));
+
+  if (existsSync(require.resolve(`~spec/__mocks__/data/[metadata] ${name}.json`))) {
+    const md: MusicMetadata.IAudioMetadata = JSON.parse(
+      readFileSync(require.resolve(`~spec/__mocks__/data/[metadata] ${name}.json`)).toString(),
+    );
+    return {
+      ...md,
+      common: {
+        ...md.common,
+        picture: md.common.picture
+          ? md.common.picture.map((picture) => ({ ...picture, data: Buffer.from(picture.data) }))
+          : undefined,
+      },
+      format: { ...md.format, duration: duration ? md.format.duration : undefined },
+    };
   }
+  return emptyMetadata;
 };

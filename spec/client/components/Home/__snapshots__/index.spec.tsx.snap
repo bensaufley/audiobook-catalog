@@ -1,0 +1,88 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`~client/components/Home renders without exploding 1`] = `
+<div>
+  <div>
+    <h1>
+      Audiobook Catalog
+    </h1>
+    <div>
+      <img
+        alt="Ghost in the Wires"
+        src="data:image/jpeg;base64,faoiweurpoaewurpoiaewupornawepiofweiohnoipewaf"
+      />
+      <p>
+        Ghost in the Wires
+      </p>
+      <p>
+        by
+         
+        Kevin
+         
+        Mitnick
+        , 
+        William L.
+         
+        Simon
+      </p>
+      <p>
+        2011
+      </p>
+    </div>
+    <div>
+      <p>
+        The Echo Wife
+      </p>
+      <p>
+        by
+         
+        Sarah
+         
+        Gailey
+      </p>
+      <p>
+        2021
+      </p>
+    </div>
+    <div>
+      <p>
+        The Theory of Everything: The Quest to Explain All Reality
+      </p>
+      <p>
+        by
+         
+        Don
+         
+        Lincoln
+        , 
+        The Great
+         
+        Courses
+      </p>
+      <p>
+        2018
+      </p>
+    </div>
+    <div>
+      <p>
+        Vagabonds
+      </p>
+      <p>
+        by
+         
+        Hao
+         
+        Jingfang
+        , 
+        Ken
+         
+        Liu
+         (translator)
+      </p>
+      <p>
+        2020
+      </p>
+    </div>
+  </div>
+</div>
+`;
