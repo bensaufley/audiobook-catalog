@@ -47,12 +47,10 @@ const handleImports = async () => {
         }),
       );
 
-      const storageFilepath = resolve(storagePath, md.filename);
-
       const audiobook = await audiobooks.insertOne({
         cover: md.cover,
         duration: md.duration,
-        filepath: storageFilepath,
+        filepath: md.filename,
         genres: [],
         name: md.name,
         year: md.year,
@@ -66,7 +64,7 @@ const handleImports = async () => {
         })),
       );
 
-      await promises.copyFile(filepath, storageFilepath);
+      await promises.copyFile(filepath, resolve(storagePath, md.filename));
       await promises.rm(filepath);
 
       await toImport.updateOne(

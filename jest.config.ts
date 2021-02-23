@@ -59,6 +59,7 @@ const baseTestConfig: Config.InitialOptions = {
 
   // A map from regular expressions to module names or to arrays of module names that allow to stub out resources with a single module
   moduleNameMapper: {
+    '\\.css$': '<rootDir>/spec/__mocks__/styleMock.ts',
     '^~client(/.*)$': '<rootDir>/src/client$1',
     '^~server(/.*)$': '<rootDir>/src/server$1',
     '^~spec(/.*)$': '<rootDir>/spec$1',

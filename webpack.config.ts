@@ -1,4 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
+import type {} from 'browserslist';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import { resolve } from 'path';
 import {
@@ -35,6 +36,39 @@ const babelLoaderRule: RuleSetRule = {
 const graphqlLoaderRule: RuleSetRule = {
   test: /\.graphqls?$/,
   use: ['babel-loader', 'graphql-tag/loader'],
+};
+
+const postcssRule: RuleSetRule = {
+  test: /\.css$/,
+  use: [
+    'style-loader',
+    {
+      loader: 'css-loader',
+      options: {
+        modules: {
+          auto: true,
+        },
+      },
+    },
+    {
+      loader: 'postcss-loader',
+      options: {
+        postcssOptions: {
+          plugins: [
+            [
+              'postcss-preset-env',
+              {
+                stage: 0,
+                features: {
+                  'nesting-rules': true,
+                },
+              },
+            ],
+          ],
+        },
+      },
+    },
+  ],
 };
 
 const alias = {
@@ -99,7 +133,7 @@ export const clientConfig: Configuration = {
 
   mode,
   module: {
-    rules: [moduleHackRule, babelLoaderRule, graphqlLoaderRule],
+    rules: [moduleHackRule, babelLoaderRule, graphqlLoaderRule, postcssRule],
   },
   optimization,
   plugins: [

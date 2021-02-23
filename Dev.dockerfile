@@ -2,6 +2,7 @@ FROM node:14.14.0-buster-slim
 LABEL maintainer="Ben Saufley<contact@bensaufley.com>"
 
 ENV NODE_ENV=development
+ENV ROOT_DIR=/usr/src/audiobook-catalog
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 

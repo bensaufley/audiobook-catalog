@@ -1,3 +1,11 @@
+/* eslint-disable import/first */
+if (process.env.NODE_ENV === 'development') {
+  /* eslint-disable global-require */
+  require('preact/debug');
+  require('preact/devtools');
+  /* eslint-enable global-require */
+}
+
 import 'core-js/stable';
 import 'whatwg-fetch';
 

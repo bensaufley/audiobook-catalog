@@ -27,13 +27,16 @@ module.exports = {
     'sort-imports': ['off'],
     'import/order': ['off'],
 
-    'import/extensions': ['error', 'never', { json: 'always' }],
+    'import/extensions': ['error', 'never', { css: 'always', json: 'always' }],
 
     'simple-import-sort/imports': ['error'],
+
+    'react/no-unknown-property': ['error', { ignore: ['class'] }],
   },
   settings: {
+    'import/ignore': ['\\.css$'],
     'import/parsers': {
-      '@typescript-eslint/parser': ['.ts'],
+      '@typescript-eslint/parser': ['.ts', '.tsx'],
     },
     'import/resolver': {
       'babel-module': {

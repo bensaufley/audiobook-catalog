@@ -5,5 +5,6 @@ script/setup
 docker run --rm \
   --tty \
   --volume "$(pwd)":/usr/src/audiobook-catalog \
+  --env NODE_ENV=test \
   audiobook-catalog:dev \
   yarn test "${@}"
