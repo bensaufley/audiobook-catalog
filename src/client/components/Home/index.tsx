@@ -14,7 +14,6 @@ const Home: FunctionComponent = () => {
 
   return (
     <div>
-      <h1 class={styles.h1}>Audiobook Catalog</h1>
       {error && <p title={JSON.stringify(error, null, 2)}>{error.message}</p>}
       <div class={styles['audiobook-container']}>
         {audiobooks &&
