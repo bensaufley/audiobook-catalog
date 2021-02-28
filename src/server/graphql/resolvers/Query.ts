@@ -1,16 +1,14 @@
-import getCollection, { getCollections } from '~server/components/db/getCollection';
+import getCollection from '~server/components/db/getCollection';
 import type { QueryResolvers } from '~server/graphql/resolvers/types';
 
 const Query: QueryResolvers = {
-  getAudiobooks: async () => {
-    const [client, audiobooks] = await getCollections('audiobooks');
-    const books = await audiobooks.find().sort({ name: 1 }).toArray();
-    client.close();
-    return books;
+  getAudiobooks: async (_, _args, { db }) => {
+    const audiobooks = await getCollection(db, 'audiobooks');
+    return audiobooks.find().sort({ name: 1 }).toArray();
   },
-  findAudiobooks: async (_, { str }) => {
-    const [client, collection] = await getCollection('audiobooks');
-    const audiobooks = await collection
+  findAudiobooks: async (_, { str }, { db }) => {
+    const collection = await getCollection(db, 'audiobooks');
+    return collection
       .aggregate([
         {
           $lookup: {
@@ -41,14 +39,10 @@ const Query: QueryResolvers = {
         { $sort: { name: 1 } },
       ])
       .toArray();
-    client.close();
-    return audiobooks;
   },
-  getImports: async () => {
-    const [client, collection] = await getCollection('toImport');
-    const toImports = await collection.find().sort({ lastModified: 0 }).toArray();
-    client.close();
-    return toImports;
+  getImports: async (_, _args, { db }) => {
+    const collection = await getCollection(db, 'imports');
+    return collection.find().sort({ lastModified: 0 }).toArray();
   },
 };
 

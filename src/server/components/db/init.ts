@@ -1,12 +1,15 @@
+import { Db } from 'mongodb';
+
 import { getCollections } from '~server/components/db/getCollection';
 
-const init = async () => {
-  const [client, audiobooks, audiobookAuthors, authors, genres, toImport] = await getCollections(
+const init = async (db: Db) => {
+  const [audiobooks, audiobookAuthors, authors, genres, imports] = await getCollections(
+    db,
     'audiobooks',
     'audiobookAuthors',
     'authors',
     'genres',
-    'toImport',
+    'imports',
   );
 
   await audiobooks.createIndex({ genres: 1 });
@@ -16,8 +19,7 @@ const init = async () => {
     { key: { firstName: 1, lastName: 1 }, unique: true },
   ]);
   await genres.createIndex({ name: 1 }, { unique: true });
-  await toImport.createIndex({ filepath: 1 }, { unique: true });
-  await client.close();
+  await imports.createIndex({ filepath: 1 }, { unique: true });
 };
 
 export default init;

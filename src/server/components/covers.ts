@@ -1,9 +1,9 @@
 import type Koa from 'koa';
-import { ObjectID } from 'mongodb';
+import { Db, ObjectID } from 'mongodb';
 
 import getCollection from '~server/components/db/getCollection';
 
-const covers = (app: Koa) => {
+const covers = (app: Koa, db: Db) => {
   app.use(async (ctx, next) => {
     const {
       request: { path },
@@ -22,7 +22,7 @@ const covers = (app: Koa) => {
     try {
       const objID = path.replace(/^\/cover\//, '');
 
-      const [client, audiobooks] = await getCollection('audiobooks');
+      const audiobooks = await getCollection(db, 'audiobooks');
       const audiobook = await audiobooks.findOne({ _id: { $eq: new ObjectID(objID) } });
       if (!audiobook?.cover) {
         ctx.response.status = 404;
@@ -34,7 +34,6 @@ const covers = (app: Koa) => {
 
       ctx.set('Content-Type', audiobook.cover.format);
       ctx.body = audiobook.cover.data.read(0, audiobook.cover.data.length());
-      await client.close();
     } catch (err) {
       console.error('error looking up cover at path', path, '-', err);
       ctx.response.status = 404;

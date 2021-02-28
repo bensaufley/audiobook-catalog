@@ -3,6 +3,7 @@ LABEL maintainer="Ben Saufley<contact@bensaufley.com>"
 
 ENV NODE_ENV=development
 ENV ROOT_DIR=/usr/src/audiobook-catalog
+ENV MONGOMS_VERSION=4.4.3
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 

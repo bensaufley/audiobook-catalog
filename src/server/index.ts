@@ -8,10 +8,10 @@ import create from '~server/create';
 /* eslint-disable-next-line consistent-return */
 const start = async () => {
   try {
-    await pingClient();
-    await init();
-    const importProcess = poll();
-    const app = await create();
+    const db = await pingClient();
+    await init(db);
+    const importProcess = poll(db);
+    const app = await create(db);
     const port = process.env.PORT || '8080';
     console.log(`Listening on port ${port}`);
     const server = app.listen(port);

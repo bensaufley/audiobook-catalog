@@ -1,4 +1,5 @@
 import { stat } from 'fs/promises';
+import { Db } from 'mongodb';
 import { extname } from 'path';
 
 import { ImportStatus } from '~graphql/schema';
@@ -6,8 +7,8 @@ import { getCollections } from '~server/components/db/getCollection';
 import getAudiobookMetadata from '~server/components/files/utilities/getAudiobookMetadata';
 import { supportedFileExtensions } from '~server/components/files/utilities/glob';
 
-const checkForImports = async (files: string[]) => {
-  const [client, audiobooks, toImport] = await getCollections('audiobooks', 'toImport');
+const checkForImports = async (files: string[], db: Db) => {
+  const [audiobooks, imports] = await getCollections(db, 'audiobooks', 'imports');
 
   try {
     let i = 0;
@@ -29,7 +30,7 @@ const checkForImports = async (files: string[]) => {
             filepath: { $eq: new RegExp(`/${metadata.name}$`) },
           });
 
-          const resp = await toImport.updateOne(
+          const resp = await imports.updateOne(
             {
               filepath: { $eq: file },
             },
@@ -56,7 +57,6 @@ const checkForImports = async (files: string[]) => {
   } catch (err) {
     console.error('Error importing from', process.env.IMPORTS_PATH, '-', err);
   }
-  await client.close();
   console.log('done checkForImports');
 };
 

@@ -11,9 +11,10 @@ describe('~client/components/Audiobook', () => {
   it('renders without exploding', () => {
     const audiobook: AudiobookFragment = {
       id: 'asdifpowaerew',
+      duration: 32123141,
+      filepath: 'the-power.m4b',
       name: 'The Power',
       year: 2017,
-      cover: null,
       genres: [],
       authors: [
         {
@@ -30,19 +31,12 @@ describe('~client/components/Audiobook', () => {
   });
 
   it('renders real data without exploding', () => {
-    const cover = theEchoWifeJSON.native.iTunes.find((x) => x.id === 'covr');
-    if (!cover) throw new Error('covr data missing in test data');
-    const { value: coverValue } = cover;
-    if (typeof coverValue === 'string') throw new Error('unexpected cover value type');
-    const { data: coverData } = coverValue;
-    const coverStr = `data:${coverData.type};base64,${Buffer.from(coverData.data).toString(
-      'base64',
-    )}`;
     const audiobook: AudiobookFragment = {
       id: ObjectIDMock(),
+      duration: 2321432,
+      filepath: 'the-echo-wife.m4b',
       name: theEchoWifeJSON.common.title,
       year: theEchoWifeJSON.common.year,
-      cover: coverStr,
       genres: [{ name: 'fiction' }, { name: 'science fiction' }],
       authors: [
         {

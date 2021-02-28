@@ -1,27 +1,30 @@
 import getCollection from '~server/components/db/getCollection';
-import type { AudiobookResolvers } from '~server/graphql/resolvers/types';
+import type { AudiobookResolvers, Resolver, ResolverFn } from '~server/graphql/resolvers/types';
+import type { ApolloContext } from '~server/graphql/server';
 
-const Audiobook: AudiobookResolvers = {
+type ResolverFns<R> = {
+  [k in keyof R]: R[k] extends Resolver<infer A, infer B, infer C, infer D>
+    ? ResolverFn<A, B, C, D>
+    : R[k];
+};
+
+const Audiobook: ResolverFns<AudiobookResolvers<ApolloContext>> = {
   id: (parent) => parent._id.toHexString(),
-  authors: async ({ _id }) => {
-    const [client, collection] = await getCollection('audiobookAuthors');
-    const authors = await collection.find({ audiobook: _id }).toArray();
-    client.close();
-    return authors;
+  authors: async ({ _id }, _, { db }) => {
+    const collection = await getCollection(db, 'audiobookAuthors');
+    return collection.find({ audiobook: _id }).toArray();
   },
   cover: ({ cover }) => cover,
   duration: ({ duration }) => duration,
   filepath: ({ filepath }) => filepath,
-  genres: async (parent) => {
+  genres: async (parent, _, { db }) => {
     if (parent.genres.length === 0) return [];
 
-    const [client, collection] = await getCollection('genres');
-    const genres = await collection
+    const collection = await getCollection(db, 'genres');
+    return collection
       .find({ _id: { $in: parent.genres } })
       .sort({ name: 1 })
       .toArray();
-    client.close();
-    return genres;
   },
   name: ({ name }) => name,
   year: ({ year }) => year,

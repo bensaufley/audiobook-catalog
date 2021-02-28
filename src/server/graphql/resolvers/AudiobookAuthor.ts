@@ -3,17 +3,13 @@ import type { AudiobookAuthorResolvers } from '~server/graphql/resolvers/types';
 
 const AudiobookAuthor: AudiobookAuthorResolvers = {
   id: ({ _id }) => _id.toHexString(),
-  audiobook: async ({ audiobook: _id }) => {
-    const [client, collection] = await getCollection('audiobooks');
-    const audiobook = await collection.findOne({ _id: { $eq: _id } });
-    client.close();
-    return audiobook!;
+  audiobook: async ({ audiobook: _id }, _, { db }) => {
+    const collection = await getCollection(db, 'audiobooks');
+    return (await collection.findOne({ _id: { $eq: _id } }))!;
   },
-  author: async ({ author: _id }) => {
-    const [client, collection] = await getCollection('authors');
-    const author = await collection.findOne({ _id: { $eq: _id } });
-    client.close();
-    return author!;
+  author: async ({ author: _id }, _, { db }) => {
+    const collection = await getCollection(db, 'authors');
+    return (await collection.findOne({ _id: { $eq: _id } }))!;
   },
   meta: ({ meta }) => meta,
 };

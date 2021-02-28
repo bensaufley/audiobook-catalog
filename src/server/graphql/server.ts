@@ -3,6 +3,7 @@ import { ApolloServer } from 'apollo-server-koa';
 import { DocumentNode } from 'graphql';
 import { DateTypeDefinition } from 'graphql-scalars';
 import Koa from 'koa';
+import { Db } from 'mongodb';
 
 import Audiobook from '~graphql/Audiobook.graphqls';
 import AudiobookAuthor from '~graphql/AudiobookAuthor.graphqls';
@@ -14,7 +15,11 @@ import resolvers from '~server/graphql/resolvers';
 
 const isDev = process.env.NODE_ENV === 'development';
 
-const server = (app: Koa) => {
+export interface ApolloContext {
+  db: Db;
+}
+
+const server = (app: Koa, db: Db) => {
   const apolloServer = new ApolloServer({
     resolvers,
     typeDefs: [
@@ -27,6 +32,7 @@ const server = (app: Koa) => {
       Query,
       Import,
     ],
+    context: { db },
     playground: isDev,
     introspection: isDev,
   });

@@ -14,7 +14,7 @@ exports[`~client/components/Audiobook renders real data without exploding 1`] = 
          (2021)
       </h3>
       <p>
-        NaN:aN:aN
+        644:50:32
         <br />
         by
          
@@ -23,7 +23,7 @@ exports[`~client/components/Audiobook renders real data without exploding 1`] = 
         Alderman
       </p>
       <a
-        href="/downloads/undefined"
+        href="/downloads/the-echo-wife.m4b"
       >
         Download
       </a>
@@ -46,7 +46,7 @@ exports[`~client/components/Audiobook renders without exploding 1`] = `
          (2017)
       </h3>
       <p>
-        NaN:aN:aN
+        8923:05:41
         <br />
         by
          
@@ -55,7 +55,7 @@ exports[`~client/components/Audiobook renders without exploding 1`] = `
         Alderman
       </p>
       <a
-        href="/downloads/undefined"
+        href="/downloads/the-power.m4b"
       >
         Download
       </a>

@@ -20,9 +20,7 @@ export default getClient;
 
 export const pingClient = async () => {
   const client = await getClient();
-  try {
-    await client.db('audiobooks').command({ ping: 1 });
-  } finally {
-    client.close();
-  }
+  const db = client.db('audiobooks');
+  await db.command({ ping: 1 });
+  return db;
 };

@@ -1,10 +1,17 @@
 import { Server } from 'http';
+import { Db } from 'mongodb';
 
 import create from '~server/create';
+import { setUpDB } from '~spec/support/spec-helpers';
 
 describe('~server/create', () => {
+  let db: Db;
+  beforeEach(async () => {
+    db = (await setUpDB()).db;
+  });
+
   it('starts successfully', async () => {
-    const app = await create();
+    const app = await create(db);
 
     let server: Server;
     setTimeout(() => {

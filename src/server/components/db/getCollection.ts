@@ -1,6 +1,5 @@
-import { Collection, MongoClient } from 'mongodb';
+import { Collection, Db } from 'mongodb';
 
-import getClient from '~server/components/db/getClient';
 import type {
   AudiobookAuthorDbObject,
   AudiobookDbObject,
@@ -9,7 +8,7 @@ import type {
   ImportDbObject,
 } from '~server/mongoTypes';
 
-type CollectionName = 'audiobooks' | 'audiobookAuthors' | 'authors' | 'genres' | 'toImport';
+type CollectionName = 'audiobooks' | 'audiobookAuthors' | 'authors' | 'genres' | 'imports';
 type CN = CollectionName;
 type _CN = CollectionName | undefined;
 
@@ -21,17 +20,14 @@ type CollectionType<T> = T extends 'audiobooks'
   ? AuthorDbObject
   : T extends 'genres'
   ? GenreDbObject
-  : T extends 'toImport'
+  : T extends 'imports'
   ? ImportDbObject
   : never;
 
 const getCollection = async <T extends CollectionName>(
+  db: Db,
   collection: T,
-): Promise<readonly [MongoClient, Collection<CollectionType<T>>]> => {
-  const client = await getClient();
-  const db = client.db();
-  return [client, db.collection<CollectionType<T>>(collection)] as const;
-};
+): Promise<Collection<CollectionType<T>>> => db.collection<CollectionType<T>>(collection);
 
 export default getCollection;
 
@@ -43,18 +39,14 @@ export const getCollections = async <
   E extends _CN,
   F extends _CN
 >(
-  ...collections: [A] | [A, B] | [A, B, C] | [A, B, C, D] | [A, B, C, D, E] | [A, B, C, D, E, F]
-) => {
-  const client = await getClient();
-  const db = client.db();
-
-  return [
-    client,
+  db: Db,
+  ...collections: [A, B?, C?, D?, E?, F?]
+) =>
+  [
     ...(collections as CN[]).map((collection: CN) =>
       collection ? db.collection(collection as CN) : undefined,
     ),
   ] as [
-    MongoClient,
     Collection<CollectionType<A>>,
     B extends undefined ? undefined : Collection<CollectionType<B>>,
     C extends undefined ? undefined : Collection<CollectionType<C>>,
@@ -62,4 +54,3 @@ export const getCollections = async <
     E extends undefined ? undefined : Collection<CollectionType<E>>,
     F extends undefined ? undefined : Collection<CollectionType<F>>,
   ];
-};
