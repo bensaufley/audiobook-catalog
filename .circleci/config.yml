@@ -5,17 +5,16 @@ jobs:
       - image: circleci/node:14.14.0
         environment:
           NODE_ENV: test
-          ROOT_DIR: /usr/src/audiobook-catalog
-    working_directory: /usr/src/audiobook-catalog
+          ROOT_DIR: $CIRCLE_WORKING_DIRECTORY
     steps:
       - checkout
       - restore_cache:
           keys:
-            - mongo-{{ checksum "scripts/docker/mongo-setup" }}
+            - mongo-{{ checksum "script/docker/mongo-setup" }}
             - mongo-
-      - run: scripts/docker/mongo-setup
+      - run: script/docker/mongo-setup
       - save_cache:
-          key: mongo-{{ checksum "scripts/docker/mongo-setup" }}
+          key: mongo-{{ checksum "script/docker/mongo-setup" }}
           paths:
             - /usr/local/bin/mongo
       - restore_cache:
@@ -28,7 +27,16 @@ jobs:
           paths:
             - node_modules
             - ~/.cache/yarn
-      - run: yarn test
+      - run:
+          name: Run Tests
+          command: yarn jest --ci --runInBand --reporters=default --reporters=jest-junit
+          environment:
+            JEST_JUNIT_OUTPUT_DIR: ./reports/junit/
+      - store_test_results:
+          path: ./reports/junit/
+      - store_artifacts:
+          path: ./reports/junit
+
 
 
 workflows:
