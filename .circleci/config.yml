@@ -1,7 +1,37 @@
 version: 2.1
-orbs:
-  node: circleci/node@3.0.0
+jobs:
+  test:
+    docker:
+      - image: circleci/node:14.14.0
+        environment:
+          NODE_ENV: test
+          ROOT_DIR: /usr/src/audiobook-catalog
+    working_directory: /usr/src/audiobook-catalog
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - mongo-{{ checksum "scripts/docker/mongo-setup" }}
+            - mongo-
+      - run: scripts/docker/mongo-setup
+      - save_cache:
+          key: mongo-{{ checksum "scripts/docker/mongo-setup" }}
+          paths:
+            - /usr/local/bin/mongo
+      - restore_cache:
+          keys:
+            - yarn-lock-{{ checksum "yarn.lock" }}
+            - yarn-lock-
+      - run: yarn install --cache-folder ~/.cache/yarn
+      - save_cache:
+          key: yarn-lock-{{ checksum "yarn.lock" }}
+          paths:
+            - node_modules
+            - ~/.cache/yarn
+      - run: yarn test
+
+
 workflows:
-  node-tests:
+  test:
     jobs:
-      - node/test
+      - test
