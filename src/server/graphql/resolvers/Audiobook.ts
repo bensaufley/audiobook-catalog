@@ -1,14 +1,8 @@
 import getCollection from '~server/components/db/getCollection';
-import type { AudiobookResolvers, Resolver, ResolverFn } from '~server/graphql/resolvers/types';
-import type { ApolloContext } from '~server/graphql/server';
+import type { AudiobookResolvers } from '~server/graphql/resolvers/types';
+import type { ResolverFns } from '~server/graphql/types';
 
-type ResolverFns<R> = {
-  [k in keyof R]: R[k] extends Resolver<infer A, infer B, infer C, infer D>
-    ? ResolverFn<A, B, C, D>
-    : R[k];
-};
-
-const Audiobook: ResolverFns<AudiobookResolvers<ApolloContext>> = {
+const Audiobook: ResolverFns<AudiobookResolvers> = {
   id: (parent) => parent._id.toHexString(),
   authors: async ({ _id }, _, { db }) => {
     const collection = await getCollection(db, 'audiobookAuthors');

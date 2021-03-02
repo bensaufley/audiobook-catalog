@@ -4,6 +4,7 @@ import type { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } f
 import type { IPicture } from 'music-metadata';
 
 import type * as SchemaTypes from '~graphql/schema';
+import type { ApolloContext } from '~server/graphql/types';
 import type {
   AudiobookAuthorDbObject,
   AudiobookDbObject,
@@ -150,7 +151,7 @@ export interface CoverImageScalarConfig
 }
 
 export type AudiobookResolvers<
-  ContextType = any,
+  ContextType = ApolloContext,
   ParentType extends ResolversParentTypes['Audiobook'] = ResolversParentTypes['Audiobook']
 > = ResolversObject<{
   id: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
@@ -165,7 +166,7 @@ export type AudiobookResolvers<
 }>;
 
 export type AudiobookAuthorResolvers<
-  ContextType = any,
+  ContextType = ApolloContext,
   ParentType extends ResolversParentTypes['AudiobookAuthor'] = ResolversParentTypes['AudiobookAuthor']
 > = ResolversObject<{
   id: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
@@ -176,7 +177,7 @@ export type AudiobookAuthorResolvers<
 }>;
 
 export type AuthorResolvers<
-  ContextType = any,
+  ContextType = ApolloContext,
   ParentType extends ResolversParentTypes['Author'] = ResolversParentTypes['Author']
 > = ResolversObject<{
   id: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
@@ -187,7 +188,7 @@ export type AuthorResolvers<
 }>;
 
 export type GenreResolvers<
-  ContextType = any,
+  ContextType = ApolloContext,
   ParentType extends ResolversParentTypes['Genre'] = ResolversParentTypes['Genre']
 > = ResolversObject<{
   id: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
@@ -201,7 +202,7 @@ export type ImportStatusResolvers = EnumResolverSignature<
 >;
 
 export type ImportResolvers<
-  ContextType = any,
+  ContextType = ApolloContext,
   ParentType extends ResolversParentTypes['Import'] = ResolversParentTypes['Import']
 > = ResolversObject<{
   id: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
@@ -214,7 +215,7 @@ export type ImportResolvers<
 }>;
 
 export type QueryResolvers<
-  ContextType = any,
+  ContextType = ApolloContext,
   ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']
 > = ResolversObject<{
   getAudiobooks: Resolver<
@@ -236,7 +237,7 @@ export interface DateScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
   name: 'Date';
 }
 
-export type Resolvers<ContextType = any> = ResolversObject<{
+export type Resolvers<ContextType = ApolloContext> = ResolversObject<{
   CoverImage: GraphQLScalarType;
   Audiobook: AudiobookResolvers<ContextType>;
   AudiobookAuthor: AudiobookAuthorResolvers<ContextType>;
@@ -252,4 +253,4 @@ export type Resolvers<ContextType = any> = ResolversObject<{
  * @deprecated
  * Use "Resolvers" root object instead. If you wish to get "IResolvers", add "typesPrefix: I" to your config.
  */
-export type IResolvers<ContextType = any> = Resolvers<ContextType>;
+export type IResolvers<ContextType = ApolloContext> = Resolvers<ContextType>;

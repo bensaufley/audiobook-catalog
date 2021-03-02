@@ -6,8 +6,14 @@ import { setUpDB } from '~spec/support/spec-helpers';
 
 describe('~server/create', () => {
   let db: Db;
+  let teardown: () => Promise<void>;
+
   beforeEach(async () => {
-    db = (await setUpDB()).db;
+    [{ db }, teardown] = await setUpDB();
+  });
+
+  afterEach(async () => {
+    await teardown();
   });
 
   it('starts successfully', async () => {

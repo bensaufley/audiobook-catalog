@@ -1,5 +1,6 @@
 import { render } from '@testing-library/preact';
 import { Client, Provider } from '@urql/preact';
+import type { GraphQLResolveInfo } from 'graphql';
 import { MongoClient } from 'mongodb';
 import { MongoMemoryServer } from 'mongodb-memory-server-core';
 import { h, VNode } from 'preact';
@@ -53,5 +54,13 @@ export const setUpDB = async (initial?: Partial<WholeDB>) => {
       }),
     );
   }
-  return { client, db, mongo };
+  return [
+    { client, db, mongo },
+    async () => {
+      await client.close();
+      await mongo.stop();
+    },
+  ] as const;
 };
+
+export const gqlInfo: GraphQLResolveInfo = {} as any;

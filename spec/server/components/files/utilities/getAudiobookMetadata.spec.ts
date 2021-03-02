@@ -41,7 +41,7 @@ describe('~server/components/files/utilities/getAudiobookMetadata', () => {
         format: 'image/jpeg',
       },
       duration: undefined,
-      filename: 'Ghost in the Wires by Kevin Mitnick, William L. Simon.m4a',
+      filename: 'ghost-in-the-wires-by-kevin-mitnick-william-l-simon.m4a',
       lastModified: '2021-02-12T20:19:07.422Z',
       name: 'Ghost in the Wires',
       year: 2011,

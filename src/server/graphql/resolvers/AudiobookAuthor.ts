@@ -1,7 +1,8 @@
 import getCollection from '~server/components/db/getCollection';
 import type { AudiobookAuthorResolvers } from '~server/graphql/resolvers/types';
+import type { ResolverFns } from '~server/graphql/types';
 
-const AudiobookAuthor: AudiobookAuthorResolvers = {
+const AudiobookAuthor: ResolverFns<AudiobookAuthorResolvers> = {
   id: ({ _id }) => _id.toHexString(),
   audiobook: async ({ audiobook: _id }, _, { db }) => {
     const collection = await getCollection(db, 'audiobooks');

@@ -15,10 +15,6 @@ import resolvers from '~server/graphql/resolvers';
 
 const isDev = process.env.NODE_ENV === 'development';
 
-export interface ApolloContext {
-  db: Db;
-}
-
 const server = (app: Koa, db: Db) => {
   const apolloServer = new ApolloServer({
     resolvers,

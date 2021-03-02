@@ -63,12 +63,12 @@ const getAudiobookMetadata = async <B extends boolean>(
   const name = common.album || common.title!;
 
   const authors = processAuthors(common.artists, common.artist, common.albumartist);
-  const filename = `${name.replace(
-    /\/\\\?\*%/gi,
-    '_',
-  )} by ${authors
-    .map(({ firstName, lastName }) => [firstName, lastName].filter(Boolean).join(' '))
-    .join(', ')}${extname(filepath)}`;
+  const filename =
+    `${name} by ${authors
+      .map(({ firstName, lastName }) => [firstName, lastName].filter(Boolean).join(' '))
+      .join(', ')}`
+      .toLocaleLowerCase()
+      .replace(/[^a-z0-9]+/gi, '-') + extname(filepath);
 
   return {
     checksum,
