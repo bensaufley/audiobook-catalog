@@ -2,7 +2,7 @@ version: 2.1
 jobs:
   test:
     docker:
-      - image: circleci/node:14.14.0
+      - image: node:14.14.0
         environment:
           NODE_ENV: test
           ROOT_DIR: $CIRCLE_WORKING_DIRECTORY
