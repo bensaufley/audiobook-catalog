@@ -7,7 +7,7 @@ export type AudiobookDbObject = {
   _id: ObjectID;
   cover: Maybe<IPicture>;
   duration: number;
-  filepath: string;
+  filename: string;
   genres: Array<GenreDbObject['_id']>;
   name: string;
   year: Maybe<number>;

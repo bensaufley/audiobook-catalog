@@ -9,7 +9,7 @@ type Audiobook @entity(
   authors: [AudiobookAuthor!]!
   cover: CoverImage @column
   duration: Float! @column
-  filepath: String! @column
+  filename: String! @column
   genres: [Genre!]! @link
   name: String! @column
   year: Int @column

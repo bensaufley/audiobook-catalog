@@ -52,7 +52,7 @@ const handleImports = async (db: Db) => {
       const audiobook = await audiobooks.insertOne({
         cover: md.cover,
         duration: md.duration,
-        filepath: md.filename,
+        filename: md.filename,
         genres: [],
         name: md.name,
         year: md.year,

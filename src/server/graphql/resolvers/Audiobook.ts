@@ -16,7 +16,7 @@ const Audiobook: ResolverFns<AudiobookResolvers<ApolloContext>> = {
   },
   cover: ({ cover }) => cover,
   duration: ({ duration }) => duration,
-  filepath: ({ filepath }) => filepath,
+  filename: ({ filename }) => filename,
   genres: async (parent, _, { db }) => {
     if (parent.genres.length === 0) return [];
 

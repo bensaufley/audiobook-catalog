@@ -12,7 +12,7 @@ describe('~client/components/Audiobook', () => {
     const audiobook: AudiobookFragment = {
       id: 'asdifpowaerew',
       duration: 32123141,
-      filepath: 'the-power.m4b',
+      filename: 'the-power.m4b',
       name: 'The Power',
       year: 2017,
       genres: [],
@@ -34,7 +34,7 @@ describe('~client/components/Audiobook', () => {
     const audiobook: AudiobookFragment = {
       id: ObjectIDMock(),
       duration: 2321432,
-      filepath: 'the-echo-wife.m4b',
+      filename: 'the-echo-wife.m4b',
       name: theEchoWifeJSON.common.title,
       year: theEchoWifeJSON.common.year,
       genres: [{ name: 'fiction' }, { name: 'science fiction' }],

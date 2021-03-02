@@ -21,7 +21,7 @@ describe('~server/graphql/resolvers/Audiobook', () => {
         data: cover,
       },
       duration: 30736,
-      filepath: 'sample-file.m4b',
+      filename: 'sample-file.m4b',
       meta: { checksum: '' },
       name: 'Sample Audiobook',
       genres: [new ObjectID('c03a001c91422a0fc09651b0'), new ObjectID('c6bd8e67b621d48586fde4fb')],

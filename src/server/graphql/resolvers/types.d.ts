@@ -157,7 +157,7 @@ export type AudiobookResolvers<
   authors: Resolver<Array<ResolversTypes['AudiobookAuthor']>, ParentType, ContextType>;
   cover: Resolver<SchemaTypes.Maybe<ResolversTypes['CoverImage']>, ParentType, ContextType>;
   duration: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
-  filepath: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  filename: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   genres: Resolver<Array<ResolversTypes['Genre']>, ParentType, ContextType>;
   name: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   year: Resolver<SchemaTypes.Maybe<ResolversTypes['Int']>, ParentType, ContextType>;

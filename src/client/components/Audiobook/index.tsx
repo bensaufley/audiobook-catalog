@@ -8,7 +8,7 @@ const Audiobook: FunctionComponent<AudiobookFragment> = ({
   id,
   name,
   duration,
-  filepath,
+  filename,
   authors,
   year,
 }) => {
@@ -38,7 +38,7 @@ const Audiobook: FunctionComponent<AudiobookFragment> = ({
             </>
           ))}
         </p>
-        <a class={styles.downloadButton} href={`/downloads/${filepath}`}>
+        <a class={styles.downloadButton} href={`/downloads/${filename}`}>
           Download
         </a>
       </div>

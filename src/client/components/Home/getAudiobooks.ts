@@ -19,7 +19,7 @@ export type AudiobookFragment = {
   __typename?: 'Audiobook';
   id: string;
   duration: number;
-  filepath: string;
+  filename: string;
   name: string;
   year: SchemaTypes.Maybe<number>;
   genres: Array<{ __typename?: 'Genre'; name: string }>;
@@ -35,7 +35,7 @@ export const AudiobookFragmentDoc = gql`
   fragment audiobook on Audiobook {
     id
     duration
-    filepath
+    filename
     name
     year
     genres {

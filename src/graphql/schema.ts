@@ -21,7 +21,7 @@ export type Audiobook = {
   authors: Array<AudiobookAuthor>;
   cover: Maybe<Scalars['CoverImage']>;
   duration: Scalars['Float'];
-  filepath: Scalars['String'];
+  filename: Scalars['String'];
   genres: Array<Genre>;
   name: Scalars['String'];
   year: Maybe<Scalars['Int']>;

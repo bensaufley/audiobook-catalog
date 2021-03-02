@@ -7,7 +7,7 @@ query getAudiobooks($startId: ID) {
 fragment audiobook on Audiobook {
   id
   duration
-  filepath
+  filename
   name
   year
   genres {
