@@ -45,3 +45,8 @@ export type ImportDbObject = {
     checksum: string;
   };
 };
+
+export type UserDbObject = {
+  _id: ObjectID;
+  username: string;
+};

@@ -37,6 +37,7 @@ generates:
         Genre: ~server/mongoTypes#GenreDbObject
         Import: ~server/mongoTypes#ImportDbObject
         ImportStatus: string
+        User: ~server/mongoTypes#UserDbObject
     preset: import-types
     presetConfig:
       importTypesNamespace: SchemaTypes

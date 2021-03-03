@@ -11,6 +11,7 @@ import type {
   AuthorDbObject,
   GenreDbObject,
   ImportDbObject,
+  UserDbObject,
 } from '~server/mongoTypes';
 
 export type EnumResolverSignature<T, AllowedValues = any> = { [key in keyof T]?: AllowedValues };
@@ -124,6 +125,7 @@ export type ResolversTypes = ResolversObject<{
   ImportStatus: ResolverTypeWrapper<string>;
   Import: ResolverTypeWrapper<ImportDbObject>;
   Query: ResolverTypeWrapper<{}>;
+  User: ResolverTypeWrapper<UserDbObject>;
   Date: ResolverTypeWrapper<number>;
   Boolean: ResolverTypeWrapper<SchemaTypes.Scalars['Boolean']>;
 }>;
@@ -141,6 +143,7 @@ export type ResolversParentTypes = ResolversObject<{
   Genre: GenreDbObject;
   Import: ImportDbObject;
   Query: {};
+  User: UserDbObject;
   Date: number;
   Boolean: SchemaTypes.Scalars['Boolean'];
 }>;
@@ -231,6 +234,28 @@ export type QueryResolvers<
     RequireFields<SchemaTypes.QueryFindAudiobooksArgs, 'str'>
   >;
   getImports: Resolver<Array<ResolversTypes['Import']>, ParentType, ContextType>;
+  getUsers: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType>;
+  getUser: Resolver<
+    SchemaTypes.Maybe<ResolversTypes['User']>,
+    ParentType,
+    ContextType,
+    RequireFields<SchemaTypes.QueryGetUserArgs, 'id'>
+  >;
+  logIn: Resolver<
+    ResolversTypes['ID'],
+    ParentType,
+    ContextType,
+    RequireFields<SchemaTypes.QueryLogInArgs, 'username'>
+  >;
+}>;
+
+export type UserResolvers<
+  ContextType = ApolloContext,
+  ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']
+> = ResolversObject<{
+  id: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  username: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export interface DateScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Date'], any> {
@@ -246,6 +271,7 @@ export type Resolvers<ContextType = ApolloContext> = ResolversObject<{
   ImportStatus: ImportStatusResolvers;
   Import: ImportResolvers<ContextType>;
   Query: QueryResolvers<ContextType>;
+  User: UserResolvers<ContextType>;
   Date: GraphQLScalarType;
 }>;
 

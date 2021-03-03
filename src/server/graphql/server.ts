@@ -11,6 +11,7 @@ import Author from '~graphql/Author.graphqls';
 import Genre from '~graphql/Genre.graphqls';
 import Import from '~graphql/Import.graphqls';
 import Query from '~graphql/Query.graphqls';
+import User from '~graphql/User.graphqls';
 import resolvers from '~server/graphql/resolvers';
 
 const isDev = process.env.NODE_ENV === 'development';
@@ -27,6 +28,7 @@ const server = (app: Koa, db: Db) => {
       Genre,
       Query,
       Import,
+      User,
     ],
     context: { db },
     playground: isDev,

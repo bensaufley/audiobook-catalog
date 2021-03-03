@@ -44,6 +44,9 @@ const Query: QueryResolvers = {
     const collection = await getCollection(db, 'imports');
     return collection.find().sort({ lastModified: 0 }).toArray();
   },
+  getUser: () => null,
+  getUsers: () => [],
+  logIn: () => '',
 };
 
 export default Query;

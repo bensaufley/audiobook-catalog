@@ -2,4 +2,7 @@ type Query {
   getAudiobooks(start: ID): [Audiobook!]!
   findAudiobooks(str: String!): [Audiobook!]!
   getImports: [Import!]!
+  getUsers: [User!]!
+  getUser(id: ID!): User
+  logIn(username: String!): ID!
 }

@@ -71,6 +71,9 @@ export type Query = {
   getAudiobooks: Array<Audiobook>;
   findAudiobooks: Array<Audiobook>;
   getImports: Array<Import>;
+  getUsers: Array<User>;
+  getUser: Maybe<User>;
+  logIn: Scalars['ID'];
 };
 
 export type QueryGetAudiobooksArgs = {
@@ -79,4 +82,18 @@ export type QueryGetAudiobooksArgs = {
 
 export type QueryFindAudiobooksArgs = {
   str: Scalars['String'];
+};
+
+export type QueryGetUserArgs = {
+  id: Scalars['ID'];
+};
+
+export type QueryLogInArgs = {
+  username: Scalars['String'];
+};
+
+export type User = {
+  __typename?: 'User';
+  id: Scalars['ID'];
+  username: Scalars['String'];
 };

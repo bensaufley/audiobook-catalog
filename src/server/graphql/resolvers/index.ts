@@ -9,16 +9,18 @@ import Genre from '~server/graphql/resolvers/Genre';
 import Import from '~server/graphql/resolvers/Import';
 import Query from '~server/graphql/resolvers/Query';
 import type { Resolvers } from '~server/graphql/resolvers/types';
+import User from '~server/graphql/resolvers/User';
 
 const resolvers: Resolvers = {
   Audiobook,
   AudiobookAuthor,
   Author,
+  CoverImage,
   Date,
   Genre,
-  CoverImage,
-  Query,
   Import,
+  Query,
+  User,
   ImportStatus: Object.values(ImportStatus).reduce((o, v) => ({ ...o, [v]: v }), {}),
 };
 
