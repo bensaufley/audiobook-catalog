@@ -50,7 +50,7 @@ generates:
     preset: near-operation-file
     presetConfig:
       baseTypesPath: ~~graphql/schema
-      extension: '.ts'
+      extension: '.generated.ts'
       importTypesNamespace: SchemaTypes
     config:
       urqlImportFrom: '@urql/preact'

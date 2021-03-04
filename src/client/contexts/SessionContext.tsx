@@ -3,7 +3,11 @@ import jsCookie from 'js-cookie';
 import { createContext, FunctionComponent, h } from 'preact';
 import { useContext, useState } from 'preact/hooks';
 
-import { GetUserDocument, GetUserQuery, GetUserQueryVariables } from '~client/contexts/getUser';
+import {
+  GetUserDocument,
+  GetUserQuery,
+  GetUserQueryVariables,
+} from '~client/contexts/getUser.generated';
 import { useLoading } from '~client/contexts/LoadingContext';
 import useDidMount from '~client/hooks/useDidMount';
 import type { User } from '~graphql/schema';

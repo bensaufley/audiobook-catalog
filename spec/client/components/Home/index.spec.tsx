@@ -3,7 +3,7 @@ import { h } from 'preact';
 import { fromValue } from 'wonka';
 
 import Home from '~client/components/Home';
-import { GetAudiobooksQuery } from '~client/components/Home/getAudiobooks';
+import { GetAudiobooksQuery } from '~client/components/Home/getAudiobooks.generated';
 import { mockClient, renderWithProviders } from '~spec/support/spec-helpers';
 
 describe('~client/components/Home', () => {

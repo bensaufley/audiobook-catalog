@@ -4,7 +4,7 @@ import { ObjectIDMock } from 'graphql-scalars';
 import { h } from 'preact';
 
 import Audiobook from '~client/components/Audiobook';
-import { AudiobookFragment } from '~client/components/Home/getAudiobooks';
+import { AudiobookFragment } from '~client/components/Home/getAudiobooks.generated';
 import theEchoWifeJSON from '~spec/__mocks__/data/[metadata] The Echo Wife.json';
 
 describe('~client/components/Audiobook', () => {

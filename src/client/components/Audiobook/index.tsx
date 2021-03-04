@@ -2,7 +2,7 @@ import { Fragment, FunctionComponent, h } from 'preact';
 import { useMemo } from 'preact/hooks';
 
 import styles from '~client/components/Audiobook/styles.modules.css';
-import { AudiobookFragment } from '~client/components/Home/getAudiobooks';
+import { AudiobookFragment } from '~client/components/Home/getAudiobooks.generated';
 
 const Audiobook: FunctionComponent<AudiobookFragment> = ({
   id,

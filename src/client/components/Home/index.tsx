@@ -2,7 +2,7 @@ import { FunctionComponent, h } from 'preact';
 import { useMemo } from 'preact/hooks';
 
 import Audiobook from '~client/components/Audiobook';
-import { useGetAudiobooksQuery } from '~client/components/Home/getAudiobooks';
+import { useGetAudiobooksQuery } from '~client/components/Home/getAudiobooks.generated';
 import styles from '~client/components/Home/home.modules.css';
 
 const Home: FunctionComponent = () => {
