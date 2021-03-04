@@ -1,5 +1,8 @@
 # Audiobook Catalog
 
+<a href="https://codeclimate.com/github/bensaufley/audiobook-catalog/maintainability"><img src="https://api.codeclimate.com/v1/badges/7d1a08f5078be7a031de/maintainability" /></a>
+<a href="https://codeclimate.com/github/bensaufley/audiobook-catalog/test_coverage"><img src="https://api.codeclimate.com/v1/badges/7d1a08f5078be7a031de/test_coverage" /></a>
+
 A Docker container for cataloging audiobooks, intended for use on an [Unraid] server.
 
 # Environment Variables
