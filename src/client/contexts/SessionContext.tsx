@@ -10,7 +10,7 @@ import {
 } from '~client/contexts/getUser.generated';
 import { useLoading } from '~client/contexts/LoadingContext';
 import useDidMount from '~client/hooks/useDidMount';
-import type { User } from '~graphql/schema';
+import type { User } from '~graphql/schema.generated';
 
 export interface Session {
   user: User | null;

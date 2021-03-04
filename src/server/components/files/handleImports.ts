@@ -2,7 +2,7 @@ import { existsSync, promises } from 'fs';
 import { Db } from 'mongodb';
 import { resolve } from 'path';
 
-import { ImportStatus } from '~graphql/schema';
+import { ImportStatus } from '~graphql/schema.generated';
 import { getCollections } from '~server/components/db/getCollection';
 import getAudiobookMetadata from '~server/components/files/utilities/getAudiobookMetadata';
 

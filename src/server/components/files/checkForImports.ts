@@ -2,7 +2,7 @@ import { stat } from 'fs/promises';
 import { Db } from 'mongodb';
 import { extname } from 'path';
 
-import { ImportStatus } from '~graphql/schema';
+import { ImportStatus } from '~graphql/schema.generated';
 import { getCollections } from '~server/components/db/getCollection';
 import getAudiobookMetadata from '~server/components/files/utilities/getAudiobookMetadata';
 import { supportedFileExtensions } from '~server/components/files/utilities/glob';

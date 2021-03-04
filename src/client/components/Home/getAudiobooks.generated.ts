@@ -3,7 +3,7 @@
 import * as Urql from '@urql/preact';
 import gql from 'graphql-tag';
 
-import type * as SchemaTypes from '~graphql/schema';
+import type * as SchemaTypes from '~graphql/schema.generated';
 
 export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 export type GetAudiobooksQueryVariables = SchemaTypes.Exact<{

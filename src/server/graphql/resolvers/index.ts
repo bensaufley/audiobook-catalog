@@ -1,6 +1,6 @@
 import { DateResolver as Date } from 'graphql-scalars';
 
-import { ImportStatus } from '~graphql/schema';
+import { ImportStatus } from '~graphql/schema.generated';
 import Audiobook from '~server/graphql/resolvers/Audiobook';
 import AudiobookAuthor from '~server/graphql/resolvers/AudiobookAuthor';
 import Author from '~server/graphql/resolvers/Author';

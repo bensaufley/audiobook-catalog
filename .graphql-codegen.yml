@@ -10,7 +10,7 @@ hooks:
     - eslint --fix
 overwrite: true
 generates:
-  src/graphql/schema.ts:
+  src/graphql/schema.generated.ts:
     plugins:
       - add:
           content: "// Generated file. Do not edit!\n"
@@ -41,7 +41,7 @@ generates:
     preset: import-types
     presetConfig:
       importTypesNamespace: SchemaTypes
-      typesPath:  ~graphql/schema
+      typesPath:  ~graphql/schema.generated
     plugins:
       - add:
           content: "// Generated file. Do not edit!\n\nimport type { ApolloContext } from '~server/graphql/types';\n"
@@ -49,7 +49,7 @@ generates:
   src/:
     preset: near-operation-file
     presetConfig:
-      baseTypesPath: ~~graphql/schema
+      baseTypesPath: ~~graphql/schema.generated
       extension: '.generated.ts'
       importTypesNamespace: SchemaTypes
     config:

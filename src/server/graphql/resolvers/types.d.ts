@@ -3,7 +3,7 @@
 import type { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
 import type { IPicture } from 'music-metadata';
 
-import type * as SchemaTypes from '~graphql/schema';
+import type * as SchemaTypes from '~graphql/schema.generated';
 import type { ApolloContext } from '~server/graphql/types';
 import type {
   AudiobookAuthorDbObject,
