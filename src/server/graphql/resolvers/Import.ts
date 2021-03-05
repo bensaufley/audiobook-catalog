@@ -1,6 +1,7 @@
 import type { ImportResolvers } from '~server/graphql/resolvers/types';
+import type { ResolverFns } from '~server/graphql/types';
 
-const Import: ImportResolvers = {
+const Import: ResolverFns<ImportResolvers> = {
   id: ({ _id }) => _id.toHexString(),
   filepath: ({ filepath }) => filepath,
   name: ({ name }) => name,

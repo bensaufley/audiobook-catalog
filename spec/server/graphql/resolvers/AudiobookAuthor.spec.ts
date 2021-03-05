@@ -56,9 +56,11 @@ describe('~server/graphql/resolvers/AudiobookAuthor', () => {
       audiobook,
     );
   });
+
   it('retrieves the author', async () => {
     expect(await AudiobookAuthor.author(audiobookAuthor, {}, { db }, gqlInfo)).toEqual(author);
   });
+
   it('retrieves the metadata', async () => {
     expect(await AudiobookAuthor.meta(audiobookAuthor, {}, { db }, gqlInfo)).toEqual('translator');
   });
