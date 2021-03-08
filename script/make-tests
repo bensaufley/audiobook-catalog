@@ -15,6 +15,7 @@ skiplist=(
   ./src/client/index.tsx
 
   ./src/server/graphql/resolvers/index.ts # just aggregates individual resolvers
+  ./src/server/graphql/resolvers/Query/index.ts # just aggregates Query resolvers
   ./src/server/components/files/utilities/glob.ts # just wraps glob in a promise
 )
 
@@ -60,6 +61,8 @@ for f in ./src/**/*.{ts,tsx}; do
 done
 
 for t in ./spec/**/*.spec.*; do
+  [[ "$t" =~ /\.snap/ ]] && continue
+  
   original_file="${t/\.\/spec/src}"
   original_file="${original_file/\.spec/}"
 

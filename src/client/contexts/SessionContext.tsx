@@ -1,4 +1,4 @@
-import { useClient } from '@urql/preact';
+import { Context } from '@urql/preact';
 import jsCookie from 'js-cookie';
 import { createContext, FunctionComponent, h } from 'preact';
 import { useContext, useState } from 'preact/hooks';
@@ -24,8 +24,11 @@ export default SessionContext;
 
 export const useSession = () => useContext(SessionContext);
 
-export const SessionProvider: FunctionComponent = ({ children }) => {
-  const urqlClient = useClient();
+export const SessionProvider: FunctionComponent<{ urqlContext?: typeof Context }> = ({
+  children,
+  urqlContext = Context,
+}) => {
+  const client = useContext(urqlContext);
 
   const [session, setSession] = useState<Session>({
     user: null,
@@ -41,7 +44,7 @@ export const SessionProvider: FunctionComponent = ({ children }) => {
       const stopLoading = startLoading();
 
       try {
-        const resp = await urqlClient
+        const resp = await client
           .query<GetUserQuery, GetUserQueryVariables>(GetUserDocument, {
             id: userCookie,
           })

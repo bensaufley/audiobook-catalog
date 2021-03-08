@@ -19,6 +19,7 @@ const Audiobook: FunctionComponent<AudiobookFragment> = ({
     return `${hours}:${`0${minutes}`.substr(-2)}:${`0${seconds}`.substr(-2)}`;
   }, [duration]);
   return (
+    // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
     <div class={styles.audiobook} style={{ backgroundImage: `url(/cover/${id})` }} tabIndex={0}>
       {/* {cover && <img src={cover} alt={name} />} */}
       <div class={styles.contents}>

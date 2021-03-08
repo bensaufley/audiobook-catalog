@@ -1,10 +1,10 @@
 import { render } from '@testing-library/preact';
-import { Client, Provider } from '@urql/preact';
+import { Client, PromisifiedSource, Provider } from '@urql/preact';
 import type { GraphQLResolveInfo } from 'graphql';
 import { MongoClient } from 'mongodb';
 import { MongoMemoryServer } from 'mongodb-memory-server-core';
-import { h, VNode } from 'preact';
-import { never } from 'wonka';
+import { createContext, h, VNode } from 'preact';
+import { never, Source, take, toPromise } from 'wonka';
 
 import type {
   AudiobookAuthorDbObject,
@@ -21,6 +21,12 @@ export const mockClient = (c: Partial<Client> = {}) =>
     executeSubscription: jest.fn(() => never),
     ...c,
   } as Client);
+
+// this is what urql does internally. Used for stubbing.
+export const withPromise = <T extends any>(s: Source<T>): PromisifiedSource<T> => {
+  (s as PromisifiedSource<T>).toPromise = () => toPromise<T>(take<T>(1)(s)); // eslint-disable-line no-param-reassign
+  return s as PromisifiedSource<T>;
+};
 
 export const renderWithProviders = ({ client = mockClient() }: { client?: Client } = {}) => (
   children: VNode,
