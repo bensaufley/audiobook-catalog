@@ -59,6 +59,12 @@ const getAudiobookMetadata = async <B extends boolean>(
     parseFile(filepath, { duration: !!duration }),
     getChecksum(filepath),
   ]);
+  if (Number.isNaN(format.duration)) {
+    // Addresses bug (?) where duration is NaN. It's a hack.
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    format.duration = undefined;
+  }
 
   const name = common.album || common.title!;
 

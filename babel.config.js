@@ -15,6 +15,7 @@ module.exports = (api) => {
           alias: {
             '~client': './src/client',
             '~graphql': './src/graphql',
+            '~lib': './src/lib',
             '~server': './src/server',
             '~spec': './spec',
           },

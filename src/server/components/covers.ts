@@ -8,7 +8,6 @@ const covers = (app: Koa, db: Db) => {
     const {
       request: { path },
     } = ctx;
-    console.log('inside covers', path);
     if (!path.startsWith('/cover/')) {
       await next();
       return;

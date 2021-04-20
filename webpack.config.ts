@@ -74,6 +74,7 @@ const postcssRule: RuleSetRule = {
 const alias = {
   '~client': resolve(process.env.ROOT_DIR, 'src/client/'),
   '~graphql': resolve(process.env.ROOT_DIR, 'src/graphql/'),
+  '~lib': resolve(process.env.ROOT_DIR, 'src/lib/'),
   '~server': resolve(process.env.ROOT_DIR, 'src/server/'),
   '~spec': resolve(process.env.ROOT_DIR, 'spec/'),
 };
@@ -93,7 +94,7 @@ export const serverConfig: Configuration = {
     path: resolve(process.env.ROOT_DIR, '.build/server'),
   },
 
-  devtool: 'source-map',
+  devtool: mode === 'development' ? 'eval-source-map' : 'source-map',
   externals: [
     webpackNodeExternals({
       allowlist: ['webpack/hot/poll?1000'],

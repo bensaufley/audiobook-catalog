@@ -43,6 +43,7 @@ module.exports = {
         alias: {
           '~client': './src/client',
           '~graphql': './src/graphql',
+          '~lib': './src/lib',
           '~server': './src/server',
           '~test': './test',
         },

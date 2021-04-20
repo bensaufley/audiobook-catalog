@@ -14,7 +14,7 @@
     "koa-send": "^5.0.1",
     "koa-static": "^5.0.0",
     "mongodb": "^3.6.4",
-    "music-metadata": "^7.6.6"
+    "music-metadata": "^7.8.3"
   },
   "description": "UI to list audiobooks by cover with limited organization",
   "devDependencies": {
@@ -66,7 +66,6 @@
     "koa-webpack": "^6.0.0",
     "merge-deep": "^3.0.3",
     "mongodb-memory-server-core": "^6.9.3",
-    "nodemon": "^2.0.7",
     "npm-run-all": "^4.1.5",
     "postcss": "^7.0.35",
     "postcss-loader": "^5.0.0",
@@ -101,7 +100,7 @@
     "build:prep": "rimraf .build/{client,server}/*",
     "codegen": "graphql-codegen --config .graphql-codegen.yml",
     "codegen:watch": "yarn codegen --watch",
-    "dev": "npm-run-all --sequential build:prep codegen build --parallel dev:db codegen:watch dev:watch \"start --inspect=9229\"",
+    "dev": "npm-run-all --sequential build:prep codegen build --parallel dev:db codegen:watch dev:watch start:dev",
     "dev:db": "mongod --bind_ip 0.0.0.0 --dbpath /mongo/db",
     "dev:watch": "yarn build --watch",
     "format": "eslint --fix .",
@@ -109,6 +108,7 @@
     "lint:es": "eslint --format unix .",
     "lint:ts": "tsc --noEmit --pretty false",
     "start": "node .build/server/index.js",
+    "start:dev": "node --inspect=0.0.0.0:9229 .build/server/index.js",
     "test": "jest"
   },
   "version": "0.1.0"

@@ -23,7 +23,9 @@ const poll = async (db: Db) => {
   });
   await cleanup(dirs);
 
-  return setTimeout(poll, period);
+  return setTimeout(() => {
+    poll(db);
+  }, period);
 };
 
 export default poll;

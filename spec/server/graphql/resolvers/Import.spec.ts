@@ -7,7 +7,7 @@ import { gqlInfo, setUpDB } from '~spec/support/spec-helpers';
 describe('~server/graphql/resolvers/Import', () => {
   let importObj: ImportDbObject;
   let db: Db;
-  let teardown: () => void;
+  let teardown: () => Promise<void>;
 
   beforeEach(async () => {
     importObj = {

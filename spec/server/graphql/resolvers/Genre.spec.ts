@@ -7,7 +7,7 @@ import { gqlInfo, setUpDB } from '~spec/support/spec-helpers';
 describe('~server/graphql/resolvers/Genre', () => {
   let genre: GenreDbObject;
   let db: Db;
-  let teardown: () => void;
+  let teardown: () => Promise<void>;
 
   beforeEach(async () => {
     genre = {

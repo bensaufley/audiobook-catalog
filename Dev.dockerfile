@@ -33,4 +33,4 @@ COPY .eslintignore \
   webpack.config.ts \
   /usr/src/audiobook-catalog/
 
-EXPOSE 8080 8081 27017
+EXPOSE 8080 8081 27017 9229

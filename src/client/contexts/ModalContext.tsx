@@ -2,6 +2,7 @@ import { createContext, FunctionComponent, h, VNode } from 'preact';
 import { useCallback, useContext, useMemo, useState } from 'preact/hooks';
 
 import styles from '~client/contexts/modal.modules.css';
+import noop from '~lib/noop';
 
 interface Modal {
   setContent: (content: VNode) => void;
@@ -9,12 +10,8 @@ interface Modal {
 }
 
 const ModalContext = createContext<Modal>({
-  setContent: () => {
-    /* noop */
-  },
-  clearContent: () => {
-    /* noop */
-  },
+  setContent: noop,
+  clearContent: noop,
 });
 
 export default ModalContext;

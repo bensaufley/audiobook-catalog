@@ -4,6 +4,7 @@ import { uid } from 'uid';
 
 import styles from '~client/contexts/loading.modules.css';
 import useDidMount from '~client/hooks/useDidMount';
+import noop from '~lib/noop';
 
 interface Loading {
   loading: boolean;
@@ -12,9 +13,7 @@ interface Loading {
 
 const LoadingContext = createContext<Loading>({
   loading: false,
-  startLoading: () => () => {
-    /* noop */
-  },
+  startLoading: () => noop,
 });
 
 export default LoadingContext;

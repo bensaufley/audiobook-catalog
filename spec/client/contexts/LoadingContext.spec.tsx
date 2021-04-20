@@ -1,5 +1,5 @@
 import { render } from '@testing-library/preact';
-import { h } from 'preact';
+import { FunctionComponent, h } from 'preact';
 import { useCallback } from 'preact/hooks';
 
 import { LoadingProvider, useLoading } from '~client/contexts/LoadingContext';

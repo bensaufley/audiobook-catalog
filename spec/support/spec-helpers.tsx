@@ -3,7 +3,7 @@ import { Client, PromisifiedSource, Provider } from '@urql/preact';
 import type { GraphQLResolveInfo } from 'graphql';
 import { MongoClient } from 'mongodb';
 import { MongoMemoryServer } from 'mongodb-memory-server-core';
-import { createContext, h, VNode } from 'preact';
+import { h, VNode } from 'preact';
 import { never, Source, take, toPromise } from 'wonka';
 
 import type {
@@ -50,7 +50,7 @@ export const setUpDB = async (initial?: Partial<WholeDB>) => {
     useUnifiedTopology: true,
   });
   await client.connect();
-  const db = await client.db();
+  const db = client.db();
   if (initial) {
     await Promise.all(
       entries(initial).map(async ([collection, data]) => {

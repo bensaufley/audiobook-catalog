@@ -23,7 +23,7 @@ const handleImports = async (db: Db) => {
 
   let i = 0;
 
-  const toImport = await imports.find();
+  const toImport = imports.find({ status: { $ne: ImportStatus.Done } });
 
   const importProcesses = toImport.map(async ({ _id, filepath, status }) => {
     i += 1;
