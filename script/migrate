@@ -1,0 +1,21 @@
+#!/bin/bash -e
+
+cd "$(dirname "$0")/.."
+
+script/update
+
+args=( "${@}" )
+
+if [ "${#args}" -lt 1 ]; then
+  args=( up )
+fi
+
+docker run \
+  --rm \
+  -it \
+  -v "$(pwd)":/usr/src/book-catalog \
+  -v /usr/src/book-catalog/node_modules \
+  -e APP_ENV="${APP_ENV:-development}" \
+  -e DB_PATH=/usr/src/book-catalog/development.sqlite3 \
+  book-catalog:dev \
+  yarn migrate "${args[@]}"

@@ -1,0 +1,36 @@
+{
+  "compilerOptions": {
+    "target": "es2016",
+
+    "module": "commonjs",
+    "baseUrl": "./",
+    "paths": {
+      "~client/*": ["src/client/*"],
+      "~db/*": ["src/db/*"],
+      "~server/*": ["src/client/*"],
+      "~test/*": ["test/*"]
+    },
+    "resolveJsonModule": true,
+
+    "allowJs": true,
+    "checkJs": true,
+
+    "jsx": "preserve",
+    "jsxFactory": "h",
+    "jsxFragmentFactory": "Fragment",
+
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+
+    "strict": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitReturns": false,
+
+    "outDir": ".build",
+
+    "skipLibCheck": true
+  },
+  "ts-node": {
+    "require": ["tsconfig-paths/register"]
+  }
+}

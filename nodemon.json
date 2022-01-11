@@ -1,0 +1,6 @@
+{
+  "restartable": "rs",
+  "verbose": "true",
+  "watch": ".build/server",
+  "ext": "js,json"
+}
