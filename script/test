@@ -6,9 +6,9 @@ script/update
 
 docker run \
   --rm \
-  -v "$(pwd)":/usr/src/book-catalog \
-  -v /usr/src/book-catalog/node_modules \
+  -v "$(pwd)":/usr/src/audiobook-catalog \
+  -v /usr/src/audiobook-catalog/node_modules \
   -e APP_ENV=test \
-  -e DB_PATH=/usr/src/book-catalog/test.sqlite3 \
-  book-catalog:dev \
+  -e DB_PATH=/usr/src/audiobook-catalog/test.sqlite3 \
+  audiobook-catalog:dev \
   yarn test

@@ -4,6 +4,6 @@ cd "$(dirname "$0")/.."
 
 docker build \
   --no-cache \
-  -t book-catalog:dev \
+  -t audiobook-catalog:dev \
   -f Dev.dockerfile \
   .

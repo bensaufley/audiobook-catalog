@@ -42,8 +42,8 @@
   },
   "license": "MIT",
   "main": ".build/server/index.js",
-  "name": "book-catalog",
-  "repository": "https://github.com/bensaufley/book-catalog",
+  "name": "audiobook-catalog",
+  "repository": "https://github.com/bensaufley/audiobook-catalog",
   "scripts": {
     "build:dev": "NODE_ENV=development webpack",
     "build:prod": "NODE_ENV=production webpack",

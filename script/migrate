@@ -13,9 +13,9 @@ fi
 docker run \
   --rm \
   -it \
-  -v "$(pwd)":/usr/src/book-catalog \
-  -v /usr/src/book-catalog/node_modules \
+  -v "$(pwd)":/usr/src/audiobook-catalog \
+  -v /usr/src/audiobook-catalog/node_modules \
   -e APP_ENV="${APP_ENV:-development}" \
-  -e DB_PATH=/usr/src/book-catalog/development.sqlite3 \
-  book-catalog:dev \
+  -e DB_PATH=/usr/src/audiobook-catalog/development.sqlite3 \
+  audiobook-catalog:dev \
   yarn migrate "${args[@]}"

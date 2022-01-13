@@ -28,10 +28,10 @@ Trace:
 
 npm manifest: 
   {
-    "name": "book-catalog",
+    "name": "audiobook-catalog",
     "version": "0.1.0",
     "main": ".build/server/index.js",
-    "repository": "https://github.com/bensaufley/book-catalog",
+    "repository": "https://github.com/bensaufley/audiobook-catalog",
     "author": "Ben Saufley<contact@bensaufley.com>",
     "license": "MIT",
     "devDependencies": {
