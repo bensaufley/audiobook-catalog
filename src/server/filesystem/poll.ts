@@ -13,7 +13,7 @@ import Narrator from '~db/models/Narrator';
 
 const extensions = ['.m4a', '.m4b'];
 
-const poll = async (sequelize: Sequelize, log: FastifyLoggerInstance, directory: string) => {
+const poll = async (sequelize: Sequelize, log: FastifyLoggerInstance, directory: string, pollPeriod: number) => {
   try {
     log.info('Walking %s...', directory);
     await walk(directory, async (filepath: string, stats: Stats) => {
@@ -87,9 +87,9 @@ const poll = async (sequelize: Sequelize, log: FastifyLoggerInstance, directory:
   } catch (error) {
     log.error({ error }, 'Error walking %s');
   }
-  await wait(5 * 60_000);
+  await wait(pollPeriod);
 
-  setImmediate(() => poll(sequelize, log, directory));
+  setImmediate(() => poll(sequelize, log, directory, pollPeriod));
 };
 
 export default poll;

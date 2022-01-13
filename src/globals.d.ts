@@ -6,5 +6,6 @@ declare namespace NodeJS {
     DB_USER?: string;
     DB_PASSWORD?: string;
     DB_PATH: string;
+    POLL_PERIOD?: string;
   }
 }

@@ -43,7 +43,10 @@ if (process.env.AUTORUN === 'true') {
       server.log.error('AUDIOBOOKS_PATH cannot be empty');
       process.exit(1);
     }
-    const pollPeriod = poll(sequelize, server.log, process.env.AUDIOBOOKS_PATH);
+
+    const pollPeriod = parseInt(process.env.POLL_PERIOD || '', 10) || 5 * 60_000; // five minute default
+    poll(sequelize, server.log, process.env.AUDIOBOOKS_PATH, pollPeriod);
+
     try {
       await server.listen(3000, '0.0.0.0');
     } catch (err) {
