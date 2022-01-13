@@ -4,7 +4,6 @@ import { extname } from 'path';
 import type { Sequelize } from 'sequelize';
 import { parseFile } from 'music-metadata';
 
-import models from '~db/models';
 import walk from '~server/filesystem/walk';
 import { wait } from '~shared/utilities';
 import Audiobook from '~db/models/Audiobook';
@@ -19,7 +18,7 @@ const poll = async (sequelize: Sequelize, log: FastifyLoggerInstance, directory:
     await walk(directory, async (filepath: string, stats: Stats) => {
       if (!extensions.includes(extname(filepath))) return;
 
-      if (await models.Audiobook.findOne({ where: { filepath } })) return;
+      if (await Audiobook.findOne({ where: { filepath } })) return;
 
       const {
         common: {
@@ -57,7 +56,7 @@ const poll = async (sequelize: Sequelize, log: FastifyLoggerInstance, directory:
             where: { firstName, lastName },
             transaction,
           });
-          audiobook.addAuthor(auth, { transaction });
+          await audiobook.addAuthor(auth, { transaction });
         }) || [],
       );
 
@@ -76,14 +75,14 @@ const poll = async (sequelize: Sequelize, log: FastifyLoggerInstance, directory:
               where: { firstName, lastName },
               transaction,
             });
-            audiobook.addNarrator(narr, { transaction });
+            await audiobook.addNarrator(narr, { transaction });
           }),
         );
       }
 
       await transaction.commit();
     });
-    log.info('Done walking %s.');
+    log.info('Done walking %s.', directory);
   } catch (error) {
     log.error({ error }, 'Error walking %s');
   }

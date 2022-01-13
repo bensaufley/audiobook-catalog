@@ -2,7 +2,7 @@ import type from 'webpack-dev-server';
 
 import path from 'path';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
-import { Configuration, HotModuleReplacementPlugin } from 'webpack';
+import { Configuration, EnvironmentPlugin, HotModuleReplacementPlugin } from 'webpack';
 import webpackNodeExternals from 'webpack-node-externals';
 
 const hotConf = 'webpack-hot-middleware/client?path=/__webpack_hmr';
@@ -40,6 +40,7 @@ export const clientConfig: Configuration = {
     host: 'localhost',
   },
   plugins: [
+    new EnvironmentPlugin('APP_ENV'),
     new HtmlWebpackPlugin({
       publicPath: '/static/',
       template: 'src/client/index.html',

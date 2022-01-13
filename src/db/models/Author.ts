@@ -1,4 +1,4 @@
-import { Association, Model, Optional, Sequelize, STRING, UUID, UUIDV4 } from 'sequelize';
+import { Association, BelongsToMany, Model, Optional, Sequelize, STRING, UUID, UUIDV4 } from 'sequelize';
 import type models from '~db/models';
 import type Audiobook from '~db/models/Audiobook';
 
@@ -22,8 +22,10 @@ export default class Author extends Model<AuthorAttributes, AuthorCreationAttrib
     audiobooks: Association<Author, Audiobook<unknown>>;
   };
 
+  public static audiobookAssociation: BelongsToMany<Author, Audiobook<unknown>>;
+
   public static associate(m: typeof models) {
-    Author.belongsToMany(m.Audiobook, { through: m.AudiobookAuthor });
+    this.audiobookAssociation = Author.belongsToMany(m.Audiobook, { through: m.AudiobookAuthor });
   }
 
   public static generate(sequelize: Sequelize) {

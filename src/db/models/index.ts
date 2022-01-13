@@ -13,8 +13,11 @@ const models = {
   Narrator: Narrator.generate(sequelize),
 };
 
-export default models;
-
-Object.keys(models).forEach((modelName) => {
-  models[modelName as keyof typeof models].associate(models);
+export const ready = new Promise<void>((resolve) => {
+  Object.keys(models).forEach((modelName) => {
+    models[modelName as keyof typeof models].associate(models);
+  });
+  resolve();
 });
+
+export default models;

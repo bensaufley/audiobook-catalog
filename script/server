@@ -9,7 +9,9 @@ docker run \
   -it \
   -v "$(pwd)":/usr/src/audiobook-catalog \
   -v /usr/src/audiobook-catalog/node_modules \
+  -v "$(pwd)"/.audiobooks:/audiobooks \
   -e APP_ENV=development \
+  -e AUDIOBOOKS_PATH=/audiobooks \
   -e AUTORUN=true \
   -e DB_PATH=/usr/src/audiobook-catalog/development.sqlite3 \
   -p 6451:3000 \

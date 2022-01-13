@@ -2,7 +2,7 @@
 
 /** @type {import('@babel/core').ConfigFunction} */
 const babelConfig = (api) => {
-  api.cache.never();
+  const isNode = api.caller((/** @type {any} */ caller) => caller?.target === 'node');
 
   return {
     plugins: [
@@ -29,13 +29,21 @@ const babelConfig = (api) => {
     ],
     presets: [
       [
+        '@babel/preset-env',
+        {
+          corejs: '3',
+          useBuiltIns: 'usage',
+
+          ...(isNode ? { targets: { node: 'current' } } : {}),
+        },
+      ],
+      [
         '@babel/preset-typescript',
         {
           allowDeclareFields: true,
           onlyRemoveTypeImports: true,
         },
       ],
-      ['@babel/preset-env', {}],
     ],
   };
 };

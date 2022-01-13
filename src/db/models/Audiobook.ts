@@ -1,8 +1,10 @@
 import {
   Association,
+  BelongsToMany,
   BelongsToManyAddAssociationMixin,
   BLOB,
   FLOAT,
+  HasMany,
   Model,
   Optional,
   Sequelize,
@@ -11,9 +13,11 @@ import {
   UUIDV4,
 } from 'sequelize';
 import type models from '~db/models';
-import { default as Author, AuthorAttributes } from '~db/models/Author';
+import type AudiobookAuthor from '~db/models/AudiobookAuthor';
+import type AudiobookNarrator from '~db/models/AudiobookNarrator';
+import type { default as Author, AuthorAttributes } from '~db/models/Author';
 import type Narrator from '~db/models/Narrator';
-import { NarratorAttributes } from '~db/models/Narrator';
+import type { NarratorAttributes } from '~db/models/Narrator';
 
 export interface AudiobookAttributes<T> {
   id: string;
@@ -31,8 +35,8 @@ export class Audiobook<T>
   implements AudiobookAttributes<T>
 {
   declare static associations: {
-    authors: Association<Audiobook<unknown>, Author>;
-    narrators: Association<Audiobook<unknown>, Narrator>;
+    Authors: Association<Audiobook<unknown>, Author>;
+    Narrators: Association<Audiobook<unknown>, Narrator>;
   };
 
   public declare id: string;
@@ -44,6 +48,9 @@ export class Audiobook<T>
 
   public declare readonly createdAt: Date;
   public declare readonly updatedAt: Date;
+
+  public declare Authors?: Author[];
+  public declare Narrators?: Author[];
 
   public declare addAuthor: BelongsToManyAddAssociationMixin<Author, AuthorAttributes>;
 

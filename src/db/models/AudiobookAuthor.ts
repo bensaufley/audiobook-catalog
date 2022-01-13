@@ -24,8 +24,8 @@ export default class AudiobookAuthor
   };
 
   public static associate(m: typeof models) {
-    this.hasOne(m.Audiobook);
-    this.hasOne(m.Author);
+    this.belongsTo(m.Audiobook);
+    this.belongsTo(m.Author);
   }
 
   public static generate(sequelize: Sequelize) {

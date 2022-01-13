@@ -24,8 +24,8 @@ export default class AudiobookNarrator
   public declare readonly updatedAt: Date;
 
   public static associate(m: typeof models) {
-    this.hasOne(m.Audiobook);
-    this.hasOne(m.Narrator);
+    this.belongsTo(m.Audiobook);
+    this.belongsTo(m.Narrator);
   }
 
   public static generate(sequelize: Sequelize) {
