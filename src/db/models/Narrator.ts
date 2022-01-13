@@ -2,15 +2,18 @@ import { Association, Model, Optional, Sequelize, STRING, UUID, UUIDV4 } from 's
 import type models from '~db/models';
 import type Audiobook from '~db/models/Audiobook';
 
-export interface AuthorAttributes {
+export interface NarratorAttributes {
   id: string;
   firstName: string | null;
-  lastName: string;
+  lastName: string | null;
 }
 
-type AuthorCreationAttributes = Optional<AuthorAttributes, 'id'>;
+type NarratorCreationAttributes = Optional<NarratorAttributes, 'id'>;
 
-export default class Author extends Model<AuthorAttributes, AuthorCreationAttributes> implements AuthorAttributes {
+export default class Narrator
+  extends Model<NarratorAttributes, NarratorCreationAttributes>
+  implements NarratorAttributes
+{
   public declare id: string;
   public declare firstName: string | null;
   public declare lastName: string;
@@ -19,11 +22,11 @@ export default class Author extends Model<AuthorAttributes, AuthorCreationAttrib
   public declare readonly updatedAt: Date;
 
   declare static associations: {
-    audiobooks: Association<Author, Audiobook<unknown>>;
+    audiobooks: Association<Narrator, Audiobook<unknown>>;
   };
 
   public static associate(m: typeof models) {
-    Author.belongsToMany(m.Audiobook, { through: m.AudiobookAuthor });
+    Narrator.belongsToMany(m.Audiobook, { through: m.AudiobookNarrator });
   }
 
   public static generate(sequelize: Sequelize) {

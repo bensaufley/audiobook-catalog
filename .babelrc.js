@@ -14,6 +14,7 @@ const babelConfig = (api) => {
             '~client': './src/client',
             '~db': './src/db',
             '~server': './src/server',
+            '~shared': './src/shared',
             '~test': './test',
           },
         },

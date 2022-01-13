@@ -1,31 +1,31 @@
 import { Association, Model, Optional, Sequelize, UUID, UUIDV4 } from 'sequelize';
 import type models from '~db/models';
 import type Audiobook from '~db/models/Audiobook';
-import type Author from '~db/models/Author';
+import type Narrator from '~db/models/Narrator';
 
-export interface AudiobookAuthorAttributes {
+export interface AudiobookNarratorAttributes {
   id: string;
 }
 
-type AudiobookAuthorCreationAttributes = Optional<AudiobookAuthorAttributes, 'id'>;
+type AudiobookNarratorCreationAttributes = Optional<AudiobookNarratorAttributes, 'id'>;
 
-export default class AudiobookAuthor
-  extends Model<AudiobookAuthorAttributes, AudiobookAuthorCreationAttributes>
-  implements AudiobookAuthorAttributes
+export default class AudiobookNarrator
+  extends Model<AudiobookNarratorAttributes, AudiobookNarratorCreationAttributes>
+  implements AudiobookNarratorAttributes
 {
   public declare id: string;
+
+  public declare static associations: {
+    audiobook: Association<AudiobookNarrator, Audiobook<unknown>>;
+    narrator: Association<AudiobookNarrator, Narrator>;
+  };
 
   public declare readonly createdAt: Date;
   public declare readonly updatedAt: Date;
 
-  declare static associations: {
-    audiobook: Association<AudiobookAuthor, Audiobook<unknown>>;
-    author: Association<AudiobookAuthor, Author>;
-  };
-
   public static associate(m: typeof models) {
     this.hasOne(m.Audiobook);
-    this.hasOne(m.Author);
+    this.hasOne(m.Narrator);
   }
 
   public static generate(sequelize: Sequelize) {

@@ -1,4 +1,4 @@
-import { BLOB, DATE, INTEGER, STRING } from 'sequelize';
+import { BLOB, DATE, FLOAT, INTEGER, NUMBER, STRING } from 'sequelize';
 import type { Migration } from '~db/migrations';
 
 export const up: Migration = async ({ context: queryInterface }) => {
@@ -20,6 +20,12 @@ export const up: Migration = async ({ context: queryInterface }) => {
     },
     cover: {
       type: BLOB,
+    },
+    coverType: {
+      type: STRING,
+    },
+    duration: {
+      type: FLOAT,
     },
     createdAt: {
       allowNull: false,

@@ -10,10 +10,12 @@ export const up: Migration = async ({ context: queryInterface }) => {
       type: STRING,
     },
     AuthorId: {
+      allowNull: false,
       primaryKey: true,
       type: STRING,
     },
     AudiobookId: {
+      allowNull: false,
       primaryKey: true,
       type: STRING,
     },
@@ -53,13 +55,7 @@ export const up: Migration = async ({ context: queryInterface }) => {
 };
 
 export const down: Migration = async ({ context: queryInterface }) => {
-  await queryInterface.removeConstraint(
-    'AudiobookAuthors',
-    'audiobookAuthorsAuthorReference',
-  );
-  await queryInterface.removeConstraint(
-    'AudiobookAuthors',
-    'audiobookAuthorsAudiobookReference',
-  );
+  await queryInterface.removeConstraint('AudiobookAuthors', 'audiobookAuthorsAuthorReference');
+  await queryInterface.removeConstraint('AudiobookAuthors', 'audiobookAuthorsAudiobookReference');
   await queryInterface.dropTable('AudiobookAuthors');
 };
