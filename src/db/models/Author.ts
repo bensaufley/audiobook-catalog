@@ -47,6 +47,7 @@ export default class Author extends Model<AuthorAttributes, AuthorCreationAttrib
         },
       },
       {
+        modelName: 'Author',
         sequelize,
       },
     );

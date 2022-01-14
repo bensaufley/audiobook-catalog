@@ -1,10 +1,8 @@
 import {
   Association,
-  BelongsToMany,
   BelongsToManyAddAssociationMixin,
   BLOB,
   FLOAT,
-  HasMany,
   Model,
   Optional,
   Sequelize,
@@ -13,11 +11,8 @@ import {
   UUIDV4,
 } from 'sequelize';
 import type models from '~db/models';
-import type AudiobookAuthor from '~db/models/AudiobookAuthor';
-import type AudiobookNarrator from '~db/models/AudiobookNarrator';
-import type { default as Author, AuthorAttributes } from '~db/models/Author';
-import type Narrator from '~db/models/Narrator';
-import type { NarratorAttributes } from '~db/models/Narrator';
+import type { AuthorAttributes, default as Author } from '~db/models/Author';
+import type { default as Narrator, NarratorAttributes } from '~db/models/Narrator';
 
 export interface AudiobookAttributes<T> {
   id: string;
@@ -90,6 +85,7 @@ export class Audiobook<T>
         },
       },
       {
+        modelName: 'Audiobook',
         sequelize,
       },
     );

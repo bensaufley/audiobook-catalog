@@ -1,11 +1,10 @@
 import Fastify, { FastifyRequest } from 'fastify';
 import fastifyStatic from 'fastify-static';
 import type webpackT from 'webpack';
-import { basename } from 'path';
+import { basename, resolve } from 'path';
 
 import type * as configT from '../../webpack.config';
 import { umzug } from '~db/migrations';
-import { resolve } from 'path';
 import sequelize from '~db/sequelize';
 import poll from '~server/filesystem/poll';
 import Audiobook from '~db/models/Audiobook';

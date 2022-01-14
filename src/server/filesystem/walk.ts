@@ -1,24 +1,30 @@
-import type { Stats } from 'fs';
 import { readdir, stat } from 'fs/promises';
 import { join, normalize } from 'path';
 
-const walk = async (directory: string, cb: (path: string, stats: Stats) => void | Promise<void>) => {
+const walk = async (directory: string) => {
   const files = await readdir(directory);
 
-  await Promise.all(
-    files.map(async (file) => {
+  const walked = await Promise.all(
+    files.map(async (file): Promise<string | string[] | null> => {
       const path = normalize(join(directory, file));
-      if (!path.startsWith(directory)) return;
+      if (!path.startsWith(directory)) return null;
 
       const stats = await stat(path);
 
       if (stats.isDirectory()) {
-        walk(path, cb);
+        const files = await walk(path);
+        return files;
       } else {
-        cb(path, stats);
+        return file;
       }
     }),
   );
+
+  return walked.reduce<string[]>((a, f) => {
+    if (f === null) return a;
+
+    return Array.isArray(f) ? [...a, ...f] : [...a, f];
+  }, []);
 };
 
 export default walk;

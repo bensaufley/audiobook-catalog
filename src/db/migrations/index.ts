@@ -1,6 +1,6 @@
 const isProd = process.env.APP_ENV === 'prod';
 
-import { Umzug, SequelizeStorage } from 'umzug';
+import { SequelizeStorage, Umzug } from 'umzug';
 
 import sequelize from '~db/sequelize';
 

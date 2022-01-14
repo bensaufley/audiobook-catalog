@@ -1,4 +1,4 @@
-import { BLOB, DATE, FLOAT, INTEGER, NUMBER, STRING } from 'sequelize';
+import { BLOB, DATE, FLOAT, STRING } from 'sequelize';
 import type { Migration } from '~db/migrations';
 
 export const up: Migration = async ({ context: queryInterface }) => {

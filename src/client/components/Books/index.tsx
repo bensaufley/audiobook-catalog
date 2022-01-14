@@ -1,5 +1,5 @@
-import { h, Fragment, FunctionComponent } from 'preact';
-import { useEffect, useMemo, useState } from 'preact/hooks';
+import { FunctionComponent, h } from 'preact';
+import { useEffect, useState } from 'preact/hooks';
 
 import Book from '~client/components/Book';
 import type Audiobook from '~db/models/Audiobook';

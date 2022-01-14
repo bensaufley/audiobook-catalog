@@ -48,6 +48,7 @@ export default class Narrator
         },
       },
       {
+        modelName: 'Narrator',
         sequelize,
       },
     );

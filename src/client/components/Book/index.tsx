@@ -1,4 +1,4 @@
-import { Fragment, FunctionComponent, h } from 'preact';
+import { FunctionComponent, Fragment, h } from 'preact';
 
 import type Audiobook from '~db/models/Audiobook';
 

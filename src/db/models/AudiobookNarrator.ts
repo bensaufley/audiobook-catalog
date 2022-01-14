@@ -40,6 +40,7 @@ export default class AudiobookNarrator
         },
       },
       {
+        modelName: 'AudiobookNarrator',
         sequelize,
       },
     );

@@ -1,5 +1,4 @@
 import { FastifyLoggerInstance } from 'fastify';
-import type { Stats } from 'fs';
 import { extname } from 'path';
 import type { Sequelize } from 'sequelize';
 import { parseFile } from 'music-metadata';
@@ -15,7 +14,9 @@ const extensions = ['.m4a', '.m4b'];
 const poll = async (sequelize: Sequelize, log: FastifyLoggerInstance, directory: string, pollPeriod: number) => {
   try {
     log.info('Walking %s...', directory);
-    await walk(directory, async (filepath: string, stats: Stats) => {
+    const files = await walk(directory);
+
+    for (const filepath of files) {
       if (!extensions.includes(extname(filepath))) return;
 
       if (await Audiobook.findOne({ where: { filepath } })) return;
@@ -81,7 +82,8 @@ const poll = async (sequelize: Sequelize, log: FastifyLoggerInstance, directory:
       }
 
       await transaction.commit();
-    });
+    }
+
     log.info('Done walking %s.', directory);
   } catch (error) {
     log.error({ error }, 'Error walking %s');

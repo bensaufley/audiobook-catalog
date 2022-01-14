@@ -1,4 +1,4 @@
-import { FunctionComponent, h, Fragment } from 'preact';
+import { FunctionComponent, Fragment, h } from 'preact';
 import Books from '~client/components/Books';
 
 import '~client/components/App/styles.css';

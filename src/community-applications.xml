@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<Container version="2">
+  <Name>audiobook-catalog</Name>
+  <Repository>bnsfly/audiobook-catalog</Repository>
+  <Registry>https://hub.docker.com/r/bnsfly/audiobook-catalog/</Registry>
+  <Network>bridge</Network>
+  <Privileged>false</Privileged>
+  <Support>https://hub.docker.com/r/bnsfly/audiobook-catalog/</Support>
+  <Project>https://github.com/bensaufley/audiobook-catalog</Project>
+  <Overview>
+    An Unraid image to provide a UI for audiobooks hosted on a NAS
+
+    Converted By Community Applications   Always verify this template (and values)  against the support page for the container
+
+    https://hub.docker.com/r/bnsfly/audiobook-catalog/
+  </Overview>
+  <Category>Tools: Status:Beta</Category>
+  <WebUI>http://0.0.0.0:3000/</WebUI>
+  <Icon>/plugins/dynamix.docker.manager/images/question.png</Icon>
+  <Description>
+    An Unraid image to provide a UI for audiobooks hosted on a NAS&#xD;
+
+    Converted By Community Applications   Always verify this template (and values)  against the support page for the container
+
+    https://hub.docker.com/r/bnsfly/audiobook-catalog/
+  </Description>
+  <Environment>
+    <Variable>
+      <Value>prod</Value>
+      <Name>APP_ENV</Name>
+    </Variable>
+    <Variable>
+      <Value>production</Value>
+      <Name>NODE_ENV</Name>
+    </Variable>
+    <Variable>
+      <Value>true</Value>
+      <Name>AUTORUN</Name>
+    </Variable>
+  </Environment>
+  <Config Name="Audiobooks Share" Target="/audiobooks" Default="" Mode="ro" Description="Path to directory with audiobooks (audiobooks can be in subdirectories). Mounted to /audiobooks." Type="Path" Display="always" Required="true" Mask="false"/>
+  <Config Name="Database Path" Target="/db/books.sqlite3" Default="" Mode="rw" Description="Path to a sqlite3 database. File will be created if it does not exist. Directory must exist." Type="Path" Display="always" Required="true" Mask="false"/>
+  <Config Name="External Port" Target="3000" Default="6451" Mode="tcp" Description="Port at which UI will be served" Type="Port" Display="always" Required="true" Mask="false"/>
+</Container>
