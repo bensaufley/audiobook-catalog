@@ -1,9 +1,11 @@
+const isProd = process.env.APP_ENV === 'prod';
+
 import { Umzug, SequelizeStorage } from 'umzug';
 
 import sequelize from '~db/sequelize';
 
 export const umzug = new Umzug({
-  migrations: { glob: 'src/db/migrations/*-*.ts' },
+  migrations: { glob: '.build/migrations/*.js' },
   context: sequelize.getQueryInterface(),
   storage: new SequelizeStorage({ sequelize }),
   logger: console,

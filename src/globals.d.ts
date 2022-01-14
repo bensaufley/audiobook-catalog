@@ -9,3 +9,8 @@ declare namespace NodeJS {
     POLL_PERIOD?: string;
   }
 }
+
+declare module '*.module.css' {
+  const mod: Record<string, string>;
+  export default mod;
+}

@@ -1,0 +1,24 @@
+.container {
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  border-radius: 0.25rem;
+  color: var(--color);
+  cursor: default;
+  position: relative;
+  padding-top: 100%;
+
+  &:hover .baseContent {
+    opacity: 1;
+  }
+}
+
+.baseContent {
+  background: rgba(255, 255, 255, 0.9);
+  bottom: 0;
+  font-size: 0.75rem;
+  opacity: 0;
+  position: absolute;
+  transition: 0.3s opacity;
+  width: 100%;
+}
