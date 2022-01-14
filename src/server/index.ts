@@ -50,7 +50,7 @@ export const init = async () => {
         ['title', 'ASC'],
       ],
 
-      logging: fastify.log.debug,
+      logging: (...args) => fastify.log.debug(...args),
     });
     await res.send(audiobooks);
   });
