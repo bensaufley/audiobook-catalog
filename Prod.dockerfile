@@ -20,9 +20,10 @@ WORKDIR /usr/src/audiobook-catalog
 
 COPY yarn.lock package.json ./
 
-COPY --from=builder \
-  /usr/src/audiobook-catalog/node_modules \
-  /usr/src/audiobook-catalog/.build \
-  ./
+COPY --from=builder /usr/src/audiobook-catalog/node_modules ./node_modules
+COPY --from=builder /usr/src/audiobook-catalog/.build ./.build
+
+ENV APP_ENV=prod
+ENV NODE_ENV=prod
 
 CMD [ "yarn", "start" ]
