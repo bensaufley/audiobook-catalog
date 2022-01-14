@@ -22,6 +22,7 @@ export const init = async () => {
   const fastify = Fastify({
     logger: {
       prettyPrint: process.env.APP_ENV === 'development',
+      level: 'debug',
     },
   });
 

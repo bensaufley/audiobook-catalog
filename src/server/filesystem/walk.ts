@@ -1,7 +1,7 @@
 import { readdir, stat } from 'fs/promises';
 import { join, normalize } from 'path';
 
-const walk = async (directory: string) => {
+const walk = async (directory: string): Promise<string[]> => {
   const files = await readdir(directory);
 
   const walked = await Promise.all(
@@ -15,7 +15,7 @@ const walk = async (directory: string) => {
         const files = await walk(path);
         return files;
       } else {
-        return file;
+        return path;
       }
     }),
   );
