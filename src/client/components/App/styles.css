@@ -1,3 +1,25 @@
+@import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&display=swap');
+
+@import './normalize';
+
 body {
-  font-family: sans-serif;
+  --background: #fff;
+  --text: #333;
+
+  background-color: var(--background);
+  color: var(--text);
+  font-family: 'Libre Baskerville', serif;
+  font-weight: 400;
+  padding: 1rem;
+
+  @media (prefers-color-scheme: dark) {
+    --background: #333;
+    --text: #fff;
+  }
+}
+
+@media (prefers-reduced-motion) {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
 }
