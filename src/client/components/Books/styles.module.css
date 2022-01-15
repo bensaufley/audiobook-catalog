@@ -1,7 +1,9 @@
 .container {
   display: grid;
-  grid-gap: 0.25rem;
+  grid-gap: 0.5rem;
   grid-template-columns: repeat(2, 1fr);
+  perspective: 75rem;
+  perspective-origin: center;
 
   @media screen and (min-width: 45em) {
     grid-template-columns: repeat(3, 1fr);

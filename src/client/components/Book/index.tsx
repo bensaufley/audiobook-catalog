@@ -3,30 +3,27 @@ import { FunctionComponent, Fragment, h } from 'preact';
 import type Audiobook from '~db/models/Audiobook';
 
 import styles from '~client/components/Book/styles.module.css';
+import { useCallback } from 'preact/hooks';
 
-const formatDuration = (duration: number) => {
-  const hours = Math.floor(duration / 60 / 60);
-  const minutes = Math.floor((duration % (60 * 60)) / 60);
-  const seconds = Math.floor(duration % 60);
+interface Props {
+  book: Audiobook<unknown>;
+  handleClick: (id: string) => void;
+}
 
-  return `${hours}:${`0${minutes}`.substr(-2)}:${`0${seconds}`.substr(-2)}`;
-};
+const Book: FunctionComponent<Props> = ({ book, handleClick }) => {
+  const onClick = useCallback(
+    (e: MouseEvent) => {
+      e.preventDefault();
+      handleClick(book.id);
+    },
+    [book],
+  );
 
-const Book: FunctionComponent<{ book: Audiobook<unknown> }> = ({ book }) => (
-  <div class={styles.container} style={{ backgroundImage: `url('/books/${book.id}/cover')` }}>
-    <div class={styles.baseContent}>
-      <p>
-        <i>{book.title}</i> by {book.Authors?.map(({ firstName, lastName }) => `${firstName} ${lastName}`)}
-        {book.duration && <> ({formatDuration(book.duration)})</>}
-      </p>
-      <p>
-        <a href={`/books/${book.id}/download`}>Download</a>
-        <a href={`bookplayer://download?url="${location.protocol}//${location.host}/books/${book.id}/download"`}>
-          Bookplayer
-        </a>
-      </p>
+  return (
+    <div class={styles.container}>
+      <div class={styles.book} onClick={onClick} style={{ '--cover': `url('/books/${book.id}/cover')` }} />
     </div>
-  </div>
-);
+  );
+};
 
 export default Book;
