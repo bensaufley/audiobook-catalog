@@ -47,6 +47,7 @@ jobs:
           condition: << pipeline.git.tag >>
           steps:
             - docker/build:
+                dockerfile: Prod.dockerfile
                 image: bnsfly/audiobook-catalog
                 tag: '<< pipeline.git.tag >>'
       - when:
@@ -54,6 +55,7 @@ jobs:
             not: << pipeline.git.tag >>
           steps:
             - docker/build:
+                dockerfile: Prod.dockerfile
                 image: bnsfly/audiobook-catalog
                 tag: 'git-<< pipeline.git.revision >>'
   publish:
