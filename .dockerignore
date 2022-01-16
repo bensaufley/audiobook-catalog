@@ -1,3 +1,4 @@
 node_modules/*
 .build/*
 .audiobooks/E.J. Mellow .audiobooks/Sergey and Marina Dyachenko
+coverage

@@ -9,6 +9,7 @@ docker run \
   -v "$(pwd)":/usr/src/audiobook-catalog \
   -v /usr/src/audiobook-catalog/node_modules \
   -e APP_ENV=test \
-  -e DB_PATH=/usr/src/audiobook-catalog/test.sqlite3 \
+  -e NODE_ENV=development \
+  -e LOG_LEVEL=debug \
   audiobook-catalog:dev \
   yarn test

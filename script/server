@@ -10,10 +10,10 @@ docker run \
   -v "$(pwd)":/usr/src/audiobook-catalog \
   -v /usr/src/audiobook-catalog/node_modules \
   -v "$(pwd)"/.audiobooks:/audiobooks \
-  -e APP_ENV=development \
-  -e AUDIOBOOKS_PATH=/audiobooks \
-  -e AUTORUN=true \
-  -e DB_PATH=/usr/src/audiobook-catalog/development.sqlite3 \
+  -e APP_ENV="${APP_ENV:-development}" \
+  -e DB_DIR=/usr/src/audiobook-catalog/ \
+  -e LOG_LEVEL=debug \
+  -e NODE_ENV="${NODE_ENV:-development}" \
   -p 6451:3000 \
   audiobook-catalog:dev \
   yarn dev

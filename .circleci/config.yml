@@ -1,0 +1,69 @@
+version: 2.1
+orbs:
+  docker: circleci/docker@2.0.1
+jobs:
+  test:
+    docker:
+      - image: node:16.13.1
+        environment:
+          APP_ENV: test
+          NODE_ENV: test
+          ROOT_DIR: $CIRCLE_WORKING_DIRECTORY
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - yarn-lock-{{ checksum "yarn.lock" }}
+            - yarn-lock-
+      - run: yarn install --cache-folder ~/.cache/yarn
+      - save_cache:
+          key: yarn-lock-{{ checksum "yarn.lock" }}
+          paths:
+            - node_modules
+            - ~/.cache/yarn
+      - run:
+          name: Setup Code Climate test-reporter
+          command: |
+            # download test reporter as a static binary
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+            chmod +x ./cc-test-reporter
+      - run:
+          name: Run Tests
+          command: |
+            ./cc-test-reporter before-build
+            yarn jest --ci --runInBand --reporters=default --reporters=jest-junit
+            ./cc-test-reporter after-build --coverage-input-type lcov --exit-code "$?"
+          environment:
+            JEST_JUNIT_OUTPUT_DIR: ./reports/junit/
+      - store_test_results:
+          path: ./reports/junit/
+      - store_artifacts:
+          path: ./reports/junit
+  build:
+    executor: docker/docker
+    steps:
+      - checkout
+      - docker/build:
+          image: bnsfly/audiobook-catalog:git-<< pipeline.git.tag >>
+  publish:
+    executor: docker/docker
+    steps:
+      - checkout
+      - docker/push:
+          image: bnsfly/audiobook-catalog
+          tag: 'git-<< pipeline.git.tag >>'
+
+workflows:
+  test-and-publish:
+    jobs:
+      - test
+      - build
+
+      - publish:
+          requires:
+            - test
+            - build
+          filters:
+            tags:
+              only:
+                - '/v\d+\.\d+\.\d+/'

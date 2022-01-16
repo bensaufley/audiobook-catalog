@@ -1,9 +1,9 @@
 declare namespace NodeJS {
   export interface ProcessEnv {
     APP_ENV: 'development' | 'test' | 'prod';
-    AUDIOBOOKS_PATH?: string;
-    AUTORUN?: string;
-    DB_PATH: string;
+    DB_DIR: string;
+    DB_NAME: string;
+    LOG_LEVEL?: 'trace' | 'debug' | 'info' | 'warn' | 'error';
     POLL_PERIOD?: string;
   }
 }

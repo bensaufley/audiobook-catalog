@@ -2,7 +2,7 @@ import type from 'webpack-dev-server';
 
 import path from 'path';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
-import { Configuration, EnvironmentPlugin, HotModuleReplacementPlugin } from 'webpack';
+import { Configuration, DefinePlugin, EnvironmentPlugin, HotModuleReplacementPlugin } from 'webpack';
 import webpackNodeExternals from 'webpack-node-externals';
 import { readdirSync } from 'fs';
 
@@ -20,6 +20,7 @@ const baseConfig: Configuration = {
       },
     ],
   },
+  plugins: [new EnvironmentPlugin('APP_ENV', 'NODE_ENV')],
   resolve: {
     extensions: ['.ts', '.js'],
   },
@@ -56,7 +57,7 @@ export const clientConfig: Configuration = {
     host: 'localhost',
   },
   plugins: [
-    new EnvironmentPlugin('APP_ENV'),
+    ...baseConfig.plugins!,
     new HtmlWebpackPlugin({
       publicPath: '/static/',
       template: 'src/client/index.html',
@@ -105,11 +106,17 @@ export const serverConfig: Configuration = {
   entry: {
     index: './src/server/index.ts',
   },
+  externals: [webpackNodeExternals()],
   output: {
     clean: true,
     path: path.resolve(__dirname, '.build/server'),
   },
-  externals: [webpackNodeExternals()],
+  plugins: [
+    ...baseConfig.plugins!,
+    new DefinePlugin({
+      'process.env.DB_NAME': JSON.stringify(isProduction ? 'books' : process.env.APP_ENV),
+    }),
+  ],
 };
 
 export default [clientConfig, migrationsConfig, serverConfig];

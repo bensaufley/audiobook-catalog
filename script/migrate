@@ -16,6 +16,8 @@ docker run \
   -v "$(pwd)":/usr/src/audiobook-catalog \
   -v /usr/src/audiobook-catalog/node_modules \
   -e APP_ENV="${APP_ENV:-development}" \
-  -e DB_PATH=/usr/src/audiobook-catalog/development.sqlite3 \
+  -e DB_DIR=/usr/src/audiobook-catalog/ \
+  -e LOG_LEVEL=debug \
+  -e NODE_ENV="${NODE_ENV:-development}" \
   audiobook-catalog:dev \
   yarn migrate "${args[@]}"
