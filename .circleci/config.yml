@@ -39,13 +39,17 @@ jobs:
           path: ./reports/junit/
       - store_artifacts:
           path: ./reports/junit
+  lint-docker:
+    executor: docker/hadolint
+    steps:
+      - checkout
+      - docker/hadolint:
+          dockerfiles: 'Dev.dockerfile,Prod.dockerfile'
   build:
     executor: docker/docker
     steps:
       - setup_remote_docker
       - checkout
-      - docker/hadolint:
-          dockerfiles: 'Dev.dockerfile,Prod.dockerfile'
       - when:
           condition: << pipeline.git.tag >>
           steps:
@@ -74,7 +78,10 @@ workflows:
   test-and-publish:
     jobs:
       - test
-      - build
+      - lint-docker
+      - build:
+          requires:
+            - lint-docker
 
       - publish:
           requires:
