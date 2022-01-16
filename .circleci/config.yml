@@ -41,7 +41,7 @@ jobs:
           path: ./reports/junit
   build:
     docker:
-      - image: cimg/base
+      - image: cimg/base:2022.01
     executor: docker/docker
     steps:
       - checkout
@@ -64,7 +64,7 @@ jobs:
                 tag: 'git-<< pipeline.git.revision >>'
   publish:
     docker:
-      - image: cimg/base
+      - image: cimg/base:2022.01
     executor: docker/docker
     steps:
       - checkout
