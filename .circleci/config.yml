@@ -40,10 +40,9 @@ jobs:
       - store_artifacts:
           path: ./reports/junit
   build:
-    docker:
-      - image: cimg/base:2022.01
     executor: docker/docker
     steps:
+      - setup_remote_docker
       - checkout
       - docker/hadolint:
           dockerfiles: 'Dev.dockerfile,Prod.dockerfile'
@@ -63,10 +62,9 @@ jobs:
                 image: bnsfly/audiobook-catalog
                 tag: 'git-<< pipeline.git.revision >>'
   publish:
-    docker:
-      - image: cimg/base:2022.01
     executor: docker/docker
     steps:
+      - setup_remote_docker
       - checkout
       - docker/push:
           image: bnsfly/audiobook-catalog
