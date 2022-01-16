@@ -3,6 +3,7 @@ orbs:
   docker: circleci/docker@2.0.1
 jobs:
   test:
+    resource_class: small
     docker:
       - image: node:16.13.1
         environment:
@@ -40,12 +41,14 @@ jobs:
       - store_artifacts:
           path: ./reports/junit
   lint-docker:
+    resource_class: small
     executor: docker/hadolint
     steps:
       - checkout
       - docker/hadolint:
           dockerfiles: 'Dev.dockerfile:Prod.dockerfile'
   build:
+    resource_class: small
     executor: docker/docker
     steps:
       - setup_remote_docker
