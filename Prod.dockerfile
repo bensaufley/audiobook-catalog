@@ -3,7 +3,7 @@ LABEL maintainer="Ben Saufley<contact@bensaufley.com>"
 
 WORKDIR /usr/src/audiobook-catalog
 COPY yarn.lock package.json ./
-RUN yarn install
+RUN yarn install && yarn cache clean
 
 COPY . .
 
@@ -12,6 +12,7 @@ ENV NODE_ENV=production
 
 RUN yarn build:prod
 
+# hadolint ignore=DL3059
 RUN npm prune --production
 
 FROM node:16.13.1
