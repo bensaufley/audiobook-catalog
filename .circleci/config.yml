@@ -43,15 +43,26 @@ jobs:
     executor: docker/docker
     steps:
       - checkout
-      - docker/build:
-          image: bnsfly/audiobook-catalog:git-<< pipeline.git.tag >>
+      - when:
+          condition: << pipeline.git.tag >>
+          steps:
+            - docker/build:
+                image: bnsfly/audiobook-catalog
+                tag: '<< pipeline.git.tag >>'
+      - when:
+          condition:
+            not: << pipeline.git.tag >>
+          steps:
+            - docker/build:
+                image: bnsfly/audiobook-catalog
+                tag: 'git-<< pipeline.git.revision >>'
   publish:
     executor: docker/docker
     steps:
       - checkout
       - docker/push:
           image: bnsfly/audiobook-catalog
-          tag: 'git-<< pipeline.git.tag >>'
+          tag: '<< pipeline.git.tag >>'
 
 workflows:
   test-and-publish:
@@ -64,6 +75,7 @@ workflows:
             - test
             - build
           filters:
+            branches:
+              ignore: /.*/
             tags:
-              only:
-                - '/v\d+\.\d+\.\d+/'
+              only: /^v\d+\.\d+\.\d+$/
