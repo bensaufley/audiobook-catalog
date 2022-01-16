@@ -40,9 +40,13 @@ jobs:
       - store_artifacts:
           path: ./reports/junit
   build:
+    docker:
+      image: cimg/base
     executor: docker/docker
     steps:
       - checkout
+      - docker/hadolint:
+          dockerfiles: 'Dev.dockerfile,Prod.dockerfile'
       - when:
           condition: << pipeline.git.tag >>
           steps:
@@ -59,6 +63,8 @@ jobs:
                 image: bnsfly/audiobook-catalog
                 tag: 'git-<< pipeline.git.revision >>'
   publish:
+    docker:
+      image: cimg/base
     executor: docker/docker
     steps:
       - checkout
