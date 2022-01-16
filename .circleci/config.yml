@@ -44,7 +44,7 @@ jobs:
     steps:
       - checkout
       - docker/hadolint:
-          dockerfiles: 'Dev.dockerfile,Prod.dockerfile'
+          dockerfiles: 'Dev.dockerfile:Prod.dockerfile'
   build:
     executor: docker/docker
     steps:
