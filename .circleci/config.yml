@@ -69,6 +69,10 @@ jobs:
                 image: bnsfly/audiobook-catalog
                 tag: 'git-<< pipeline.git.revision >>'
   publish:
+    docker:
+      - auth:
+          username: bnsfly
+          password: $DOCKER_ACCESS_TOKEN
     executor: docker/docker
     steps:
       - setup_remote_docker
