@@ -6909,6 +6909,11 @@ mkdirp@^1.0.0, mkdirp@^1.0.4:
   resolved "https://registry.yarnpkg.com/mkdirp/-/mkdirp-1.0.4.tgz#3eb5ed62622756d79a5f0e2a221dfebad75c2f7e"
   integrity sha512-vVqVZQyf3WLx2Shd0qJ9xuvqgAyKPLAiqITEtqW0oIUjzo3PePDd6fW9iFz30ef7Ysp/oiWqbhszeGWW2T6Gzw==
 
+mktemp@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/mktemp/-/mktemp-1.0.0.tgz#b670eff23f52d6529e1dc362cb74ddf85448a9e3"
+  integrity sha512-2duBeS0A75x0M3sCoY0R1TiLsYfIBUtNBNWS++eo+bX/ObVqzblqnEQhlaepoBOLD14wklsV3cYxZ68o5qYO8A==
+
 moment-timezone@^0.5.34:
   version "0.5.34"
   resolved "https://registry.yarnpkg.com/moment-timezone/-/moment-timezone-0.5.34.tgz#a75938f7476b88f155d3504a9343f7519d9a405c"
