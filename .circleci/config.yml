@@ -70,7 +70,8 @@ jobs:
                 tag: 'git-<< pipeline.git.revision >>'
   publish:
     docker:
-      - auth:
+      - image: circleci/python:3.9
+        auth:
           username: bnsfly
           password: $DOCKER_ACCESS_TOKEN
     executor: docker/docker
