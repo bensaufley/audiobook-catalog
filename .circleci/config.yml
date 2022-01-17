@@ -59,7 +59,7 @@ jobs:
             - docker/build:
                 dockerfile: Prod.dockerfile
                 image: bnsfly/audiobook-catalog
-                tag: '<< pipeline.git.tag >>'
+                tag: '<< pipeline.git.tag >>,latest'
       - when:
           condition:
             not: << pipeline.git.tag >>

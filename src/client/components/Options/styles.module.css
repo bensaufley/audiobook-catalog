@@ -1,0 +1,22 @@
+.sizes {
+  display: flex;
+  flex-flow: row nowrap;
+  font-family: sans-serif;
+  padding: 0.75rem;
+
+  & label {
+    margin-right: 0.5rem;
+  }
+
+  /* & input {
+    left: -100vh;
+    position: absolute;
+    opacity: 0;
+    height: 0;
+    width: 0;
+
+    &:checked + label {
+      font-weight: bold;
+    }
+  } */
+}

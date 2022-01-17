@@ -6,6 +6,7 @@ import type Audiobook from '~db/models/Audiobook';
 
 import styles from '~client/components/Books/styles.module.css';
 import BookModal from '~client/components/BookModal';
+import { useSizeColumns } from '~client/components/contexts/Options';
 
 const Books: FunctionComponent = () => {
   const [error, setError] = useState<string>();
@@ -28,6 +29,8 @@ const Books: FunctionComponent = () => {
   const hideBook = useCallback(() => {
     setSelectedBookId(undefined);
   }, [setSelectedBookId]);
+
+  const columns = useSizeColumns();
 
   useEffect(() => {
     (async () => {
@@ -56,7 +59,7 @@ const Books: FunctionComponent = () => {
 
   return (
     <>
-      <div class={styles.container}>
+      <div class={styles.container} style={{ '--cols': columns }}>
         {books?.map((book) => (
           <Book book={book} handleClick={showBook} />
         ))}
