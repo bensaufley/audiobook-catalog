@@ -105,5 +105,10 @@ workflows:
             tags:
               only: /^v.*/
       - build-and-publish:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/
           requires:
             - lint-docker
