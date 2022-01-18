@@ -61,7 +61,11 @@ jobs:
       - when:
           condition: << pipeline.git.tag >>
           steps:
-            - docker/publish:
+            - docker/build:
+                dockerfile: Prod.dockerfile
+                image: bnsfly/audiobook-catalog
+                tag: '<< pipeline.git.tag >>,latest'
+            - docker/push:
                 dockerfile: Prod.dockerfile
                 image: bnsfly/audiobook-catalog
                 tag: '<< pipeline.git.tag >>,latest'
