@@ -79,6 +79,6 @@ workflows:
     jobs:
       - test
       - lint-docker
-      - build:
+      - build-and-publish:
           requires:
             - lint-docker
