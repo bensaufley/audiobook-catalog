@@ -100,8 +100,6 @@ workflows:
               only: /^v.*/
       - lint-docker:
           filters:
-            branches:
-              only: main
             tags:
               only: /^v.*/
       - build-and-publish:
