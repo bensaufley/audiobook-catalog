@@ -63,7 +63,6 @@ jobs:
       - setup_remote_docker
       - checkout
       - run: echo << pipeline.git.tag >>
-      - install-docker-credential-helper: {}
       - run:
           name: Docker Login
           command: |
