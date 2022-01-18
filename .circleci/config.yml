@@ -47,7 +47,12 @@ jobs:
       - checkout
       - docker/hadolint:
           dockerfiles: 'Dev.dockerfile:Prod.dockerfile'
-  build:
+  build-and-publish:
+    docker:
+      - image: circleci/python:3.9
+        auth:
+          username: bnsfly
+          password: $DOCKER_ACCESS_TOKEN
     resource_class: small
     executor: docker/docker
     steps:
@@ -56,7 +61,7 @@ jobs:
       - when:
           condition: << pipeline.git.tag >>
           steps:
-            - docker/build:
+            - docker/publish:
                 dockerfile: Prod.dockerfile
                 image: bnsfly/audiobook-catalog
                 tag: '<< pipeline.git.tag >>,latest'
@@ -68,19 +73,6 @@ jobs:
                 dockerfile: Prod.dockerfile
                 image: bnsfly/audiobook-catalog
                 tag: 'git-<< pipeline.git.revision >>'
-  publish:
-    docker:
-      - image: circleci/python:3.9
-        auth:
-          username: bnsfly
-          password: $DOCKER_ACCESS_TOKEN
-    executor: docker/docker
-    steps:
-      - setup_remote_docker
-      - checkout
-      - docker/push:
-          image: bnsfly/audiobook-catalog
-          tag: '<< pipeline.git.tag >>'
 
 workflows:
   test-and-publish:
@@ -90,13 +82,3 @@ workflows:
       - build:
           requires:
             - lint-docker
-
-      - publish:
-          requires:
-            - test
-            - build
-          filters:
-            branches:
-              only: main
-            tags:
-              only: /^v\d+\.\d+\.\d+$/
