@@ -7,7 +7,6 @@ A Docker container for cataloging audiobooks, intended for use on an [Unraid] se
 
 # Environment Variables
 
-- `DB_DIR`: Required. The directory in which the SQLite database is or should be placed. If none exists, one will be created.
 - `LOG_LEVEL`: Optional. Passed to pino. Sanitized: options are `trace`, `debug`, `info`, `warn`, `error`. Defaults to `info`.
 - `POLL_PERIOD`: Optional. Number of time in ms between checking for new imports. Defaults to 30,000.
 

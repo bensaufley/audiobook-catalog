@@ -5,9 +5,6 @@ import init from '~server/init';
 // TODO: get top-level await working
 (async () => {
   const server = await init();
-  if (!process.env.DB_DIR) {
-    server.log.warn('DB_DIR is empty; using /audiobooks');
-  }
 
   const pollPeriod = parseInt(process.env.POLL_PERIOD || '', 10) || 5 * 60_000; // five minute default
   poll(sequelize, server.log, '/audiobooks', pollPeriod);

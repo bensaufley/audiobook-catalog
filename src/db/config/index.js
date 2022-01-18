@@ -6,7 +6,7 @@ const { join } = require('path');
 const config = {
   [process.env.APP_ENV]: {
     dialect: 'sqlite',
-    storage: join(process.env.DB_DIR || '/audiobooks', process.env.DB_NAME),
+    storage: join(process.env.DB_DIR || '/db/', `${process.env.DB_NAME}.sqlite3`),
   },
 };
 

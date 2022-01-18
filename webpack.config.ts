@@ -114,6 +114,7 @@ export const serverConfig: Configuration = {
   plugins: [
     ...baseConfig.plugins!,
     new DefinePlugin({
+      'process.env.DB_DIR': JSON.stringify(isProduction ? '/db/' : process.env.DB_DIR),
       'process.env.DB_NAME': JSON.stringify(isProduction ? 'books' : process.env.APP_ENV),
     }),
   ],
