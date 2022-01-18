@@ -83,7 +83,7 @@ workflows:
           filters:
             branches:
               ignore: main
-      - lint-docker
+      - lint-docker:
           filters:
             branches:
               ignore: main
@@ -98,7 +98,7 @@ workflows:
               only: main
             tags:
               only: /^v.*/
-      - lint-docker
+      - lint-docker:
           filters:
             branches:
               only: main
