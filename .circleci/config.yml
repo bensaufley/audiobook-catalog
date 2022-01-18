@@ -81,12 +81,12 @@ workflows:
     jobs:
       - test:
           filters:
-            branches:
-              ignore: main
+            tags:
+              ignore: /^v.*/
       - lint-docker:
           filters:
-            branches:
-              ignore: main
+            tags:
+              ignore: /^v.*/
       - build:
           requires:
             - lint-docker
@@ -95,11 +95,13 @@ workflows:
       - test:
           filters:
             branches:
-              only: main
+              ignore: /.*/
             tags:
               only: /^v.*/
       - lint-docker:
           filters:
+            branches:
+              ignore: /.*/
             tags:
               only: /^v.*/
       - build-and-publish:
