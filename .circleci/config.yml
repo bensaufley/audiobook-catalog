@@ -57,17 +57,18 @@ jobs:
           image: bnsfly/audiobook-catalog
           tag: 'git-<< pipeline.git.revision >>'
   build-and-publish:
-    docker:
-      - image: circleci/python:3.9
-        auth:
-          username: bnsfly
-          password: $DOCKER_ACCESS_TOKEN
     resource_class: small
     executor: docker/docker
     steps:
       - setup_remote_docker
       - checkout
       - run: echo << pipeline.git.tag >>
+      - install-docker-credential-helper: {}
+      - run:
+          name: Docker Login
+          command: |
+            set -e
+            echo "$DOCKER_ACCESS_TOKEN" | docker login --username bnsfly --password-stdin
       - docker/build:
           dockerfile: Prod.dockerfile
           image: bnsfly/audiobook-catalog
@@ -75,7 +76,6 @@ jobs:
       - docker/push:
           image: bnsfly/audiobook-catalog
           tag: '<< pipeline.git.tag >>,latest'
-          use-docker-credentials-store: true
 
 workflows:
   version: 2
