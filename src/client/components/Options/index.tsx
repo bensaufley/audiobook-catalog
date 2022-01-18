@@ -24,7 +24,7 @@ const Options: FunctionComponent = () => {
         min={Size.Small}
         max={Size.XLarge}
         value={size}
-        onChange={handleChange}
+        onInput={handleChange}
       />
     </div>
   );
