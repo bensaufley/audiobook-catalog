@@ -75,8 +75,10 @@ jobs:
       - docker/push:
           image: bnsfly/audiobook-catalog
           tag: '<< pipeline.git.tag >>,latest'
+          use-docker-credentials-store: true
 
 workflows:
+  version: 2
   test-and-build:
     jobs:
       - test:
