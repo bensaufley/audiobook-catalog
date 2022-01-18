@@ -3,10 +3,12 @@ import { useCallback, useEffect, useMemo, useState } from 'preact/hooks';
 
 import Book from '~client/components/Book';
 import type Audiobook from '~db/models/Audiobook';
-
 import styles from '~client/components/Books/styles.module.css';
 import BookModal from '~client/components/BookModal';
-import { useSizeColumns } from '~client/components/contexts/Options';
+import { useOptions, useSizeColumns } from '~client/components/contexts/Options';
+import { jarowinkler } from 'wuzzy';
+
+const threshold = 0.5;
 
 const Books: FunctionComponent = () => {
   const [error, setError] = useState<string>();
@@ -31,6 +33,19 @@ const Books: FunctionComponent = () => {
   }, [setSelectedBookId]);
 
   const columns = useSizeColumns();
+  const { filter } = useOptions();
+
+  const filteredBooks = useMemo(() => {
+    if (!filter.trim()) return books;
+
+    return books?.filter(
+      (book) =>
+        jarowinkler(book.title, filter) > threshold ||
+        [...(book.Authors || []), ...(book.Narrators || [])].some(
+          ({ firstName = '', lastName }) => jarowinkler(`${firstName} ${lastName}`.trim(), filter) > threshold,
+        ),
+    );
+  }, [books, filter]);
 
   useEffect(() => {
     (async () => {
@@ -60,7 +75,7 @@ const Books: FunctionComponent = () => {
   return (
     <>
       <div class={styles.container} style={{ '--cols': columns }}>
-        {books?.map((book) => (
+        {filteredBooks?.map((book) => (
           <Book book={book} handleClick={showBook} />
         ))}
       </div>

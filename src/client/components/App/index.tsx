@@ -3,13 +3,12 @@ import Books from '~client/components/Books';
 
 import '~client/components/App/styles.css';
 import { OptionsProvider } from '~client/components/contexts/Options';
-import Options from '~client/components/Options';
+import Nav from '~client/components/Nav';
 
 const App: FunctionComponent = () => (
   <OptionsProvider>
     <>
-      <h1>Audiobook Catalog</h1>
-      <Options />
+      <Nav />
       <Books />
     </>
   </OptionsProvider>

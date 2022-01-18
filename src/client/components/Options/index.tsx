@@ -5,7 +5,7 @@ import styles from '~client/components/Options/styles.module.css';
 import { useCallback, useMemo } from 'preact/hooks';
 
 const Options: FunctionComponent = () => {
-  const { changeSize, size } = useOptions();
+  const { changeFilter, changeSize, filter, size } = useOptions();
 
   const handleChange: h.JSX.GenericEventHandler<HTMLInputElement> = useCallback(
     (e) => {
@@ -14,8 +14,15 @@ const Options: FunctionComponent = () => {
     [changeSize],
   );
 
+  const handleSearch: h.JSX.GenericEventHandler<HTMLInputElement> = useCallback(
+    ({ currentTarget: { value } }) => {
+      changeFilter(value);
+    },
+    [changeFilter],
+  );
+
   return (
-    <div class={styles.sizes}>
+    <div class={styles.options}>
       <label for="size">Size:</label>
       <input
         type="range"
@@ -26,6 +33,8 @@ const Options: FunctionComponent = () => {
         value={size}
         onInput={handleChange}
       />
+      <label for="filter">Filter:</label>
+      <input type="search" name="filter" id="filter" onInput={handleSearch} value={filter} />
     </div>
   );
 };

@@ -1608,6 +1608,11 @@
   dependencies:
     "@types/node" "*"
 
+"@types/wuzzy@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@types/wuzzy/-/wuzzy-0.1.0.tgz#32738fc69dbd5c1dd81103462ac498dcf9892da5"
+  integrity sha512-fNGKZ3pRHEkdseDmlQ6ecCTQroQM16ElZ4EV6ee5Ijy8UhNXcOppWMZnYKAYc51ixc1sRWEbVaTfC+jXvR3unA==
+
 "@types/yargs-parser@*":
   version "20.2.1"
   resolved "https://registry.yarnpkg.com/@types/yargs-parser/-/yargs-parser-20.2.1.tgz#3b9ce2489919d9e4fea439b76916abc34b2df129"
@@ -10664,6 +10669,13 @@ ws@^8.1.0:
   version "8.4.0"
   resolved "https://registry.yarnpkg.com/ws/-/ws-8.4.0.tgz#f05e982a0a88c604080e8581576e2a063802bed6"
   integrity sha512-IHVsKe2pjajSUIl4KYMQOdlyliovpEPquKkqbwswulszzI7r0SfQrxnXdWAEqOlDCLrVSJzo+O1hAwdog2sKSQ==
+
+wuzzy@^0.1.8:
+  version "0.1.8"
+  resolved "https://registry.yarnpkg.com/wuzzy/-/wuzzy-0.1.8.tgz#2e729f157b5757d4ed4d73c050f9f4ae12336f5c"
+  integrity sha512-FUzKQepFSTnANsDYwxpIzGJ/dIJaqxuMre6tzzbvWwFAiUHPsI1nVQVCLK4Xqr67KO7oYAK0kaCcI/+WYj/7JA==
+  dependencies:
+    lodash "^4.17.15"
 
 xdg-basedir@^4.0.0:
   version "4.0.0"

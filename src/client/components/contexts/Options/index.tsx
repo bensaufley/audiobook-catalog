@@ -1,5 +1,5 @@
 import { createContext, FunctionComponent, h } from 'preact';
-import { useContext, useState } from 'preact/hooks';
+import { useContext, useMemo, useState } from 'preact/hooks';
 
 export enum Size {
   Small,
@@ -9,14 +9,17 @@ export enum Size {
 }
 
 export interface OptionValues {
+  filter: string;
   size: Size;
 }
 
 export type Options = OptionValues & {
   changeSize: (size: Size) => void;
+  changeFilter: (filter: string) => void;
 };
 
 const defaultOpts: OptionValues = {
+  filter: '',
   size: Size.Medium,
 };
 
@@ -26,6 +29,7 @@ const noop = () => {
 
 const OptionsContext = createContext<Options>({
   ...defaultOpts,
+  changeFilter: noop,
   changeSize: noop,
 });
 
@@ -48,5 +52,16 @@ export const useSizeColumns = () => {
 
 export const OptionsProvider: FunctionComponent<Partial<OptionValues>> = ({ children, ...opts }) => {
   const [size, changeSize] = useState(opts.size || defaultOpts.size);
-  return <OptionsContext.Provider value={{ changeSize, size }}>{children}</OptionsContext.Provider>;
+  const [filter, changeFilter] = useState(opts.filter || defaultOpts.filter);
+
+  const value = useMemo(
+    () => ({
+      changeFilter,
+      changeSize,
+      filter,
+      size,
+    }),
+    [changeFilter, changeSize, filter, size],
+  );
+  return <OptionsContext.Provider value={value}>{children}</OptionsContext.Provider>;
 };

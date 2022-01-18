@@ -1,5 +1,6 @@
 .container {
   --cols: 2;
+  clear: both;
   display: grid;
   grid-gap: 0.5rem;
   grid-template-columns: repeat(var(--cols), 1fr);

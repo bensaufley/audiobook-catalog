@@ -1,22 +1,22 @@
-.sizes {
+.options {
+  align-items: center;
   display: flex;
   flex-flow: row nowrap;
   font-family: sans-serif;
-  padding: 0.75rem;
+  overflow-x: auto;
 
-  & label {
+  & > * {
     margin-right: 0.5rem;
   }
 
-  /* & input {
-    left: -100vh;
-    position: absolute;
-    opacity: 0;
-    height: 0;
-    width: 0;
+  & input[type='search'] {
+    border: 1px solid var(--text);
+    border-radius: 3px;
+    outline: none;
+    padding: 0.25rem;
 
-    &:checked + label {
-      font-weight: bold;
+    &:focus {
+      box-shadow: 0 0 6px rgba(127, 127, 127, 0.4);
     }
-  } */
+  }
 }
