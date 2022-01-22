@@ -1,7 +1,7 @@
 import { FunctionComponent, h } from 'preact';
-import Options from '~client/contexts/Options/Options';
 
 import styles from '~client/components/Nav/styles.module.css';
+import Options from '~client/contexts/Options/Options';
 
 const Nav: FunctionComponent = () => {
   return (

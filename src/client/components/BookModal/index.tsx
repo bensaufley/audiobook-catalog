@@ -1,9 +1,8 @@
 import { FunctionComponent, Fragment, h } from 'preact';
+import { useMemo } from 'preact/hooks';
 
 import type { AudiobookJSON } from '~db/models/Audiobook';
-
 import styles from '~client/components/BookModal/styles.module.css';
-import { useMemo } from 'preact/hooks';
 
 interface Props {
   book: AudiobookJSON;

@@ -3,6 +3,8 @@ import AudiobookAuthor from '~db/models/AudiobookAuthor';
 import AudiobookNarrator from '~db/models/AudiobookNarrator';
 import Author from '~db/models/Author';
 import Narrator from '~db/models/Narrator';
+import User from '~db/models/User';
+import UserAudiobook from '~db/models/UserAudiobook';
 import sequelize from '../sequelize';
 
 const models = {
@@ -11,6 +13,8 @@ const models = {
   AudiobookNarrator: AudiobookNarrator.generate(sequelize),
   Author: Author.generate(sequelize),
   Narrator: Narrator.generate(sequelize),
+  User: User.generate(sequelize),
+  UserAudiobook: UserAudiobook.generate(sequelize),
 };
 
 export const ready = new Promise<void>((resolve) => {

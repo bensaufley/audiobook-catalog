@@ -1,9 +1,8 @@
-import { FunctionComponent, Fragment, h } from 'preact';
+import { FunctionComponent, h } from 'preact';
+import { useCallback } from 'preact/hooks';
 
 import type { AudiobookJSON } from '~db/models/Audiobook';
-
 import styles from '~client/components/Book/styles.module.css';
-import { useCallback } from 'preact/hooks';
 
 interface Props {
   book: AudiobookJSON;

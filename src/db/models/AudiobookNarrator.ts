@@ -16,8 +16,8 @@ export default class AudiobookNarrator
   public declare id: string;
 
   public declare static associations: {
-    audiobook: Association<AudiobookNarrator, Audiobook<unknown>>;
-    narrator: Association<AudiobookNarrator, Narrator>;
+    Audiobook: Association<AudiobookNarrator, Audiobook<unknown>>;
+    Narrator: Association<AudiobookNarrator, Narrator>;
   };
 
   public declare readonly createdAt: Date;

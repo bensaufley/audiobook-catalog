@@ -1,13 +1,10 @@
 import { FastifyLoggerInstance } from 'fastify';
 import { extname } from 'path';
 import type { Sequelize } from 'sequelize';
-import { parseFile } from 'music-metadata';
+import importBook from '~server/filesystem/importBook';
 
 import walk from '~server/filesystem/walk';
 import { wait } from '~shared/utilities';
-import Audiobook from '~db/models/Audiobook';
-import Author from '~db/models/Author';
-import importBook from '~server/filesystem/importBook';
 
 const extensions = ['.m4a', '.m4b'];
 

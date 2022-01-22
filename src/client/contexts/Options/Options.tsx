@@ -1,8 +1,8 @@
 import { FunctionComponent, Fragment, h } from 'preact';
+import { useCallback } from 'preact/hooks';
 
 import { Size, useOptions } from '~client/contexts/Options';
 import styles from '~client/contexts/Options/styles.module.css';
-import { useCallback } from 'preact/hooks';
 import { SortBy, SortOrder } from '~client/contexts/Options/sort';
 
 const Options: FunctionComponent = () => {

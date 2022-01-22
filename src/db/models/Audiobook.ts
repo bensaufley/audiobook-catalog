@@ -45,7 +45,7 @@ export class Audiobook<T>
   public declare readonly updatedAt: Date;
 
   public declare Authors?: Author[];
-  public declare Narrators?: Author[];
+  public declare Narrators?: Narrator[];
 
   public declare addAuthor: BelongsToManyAddAssociationMixin<Author, AuthorAttributes>;
 
