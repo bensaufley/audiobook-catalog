@@ -1,6 +1,6 @@
 import { FastifyPluginAsync, FastifyReply, FastifyRequest } from 'fastify';
 import User from '~db/models/User';
-import UserAudiobook from "~db/models/UserAudiobook";
+import UserAudiobook from '~db/models/UserAudiobook';
 
 declare module 'fastify' {
   interface FastifyRequest {
@@ -14,18 +14,20 @@ type CreateUserRequest = FastifyRequest<{
 
 type UserBookRequest = FastifyRequest<{ Params: { bookId: string } }>;
 
-const setBookReadStatus = (read: boolean) => async ({ params: { bookId }, user }: UserBookRequest, res: FastifyReply) => {
-  if (!user) {
-    await res.status(403).send({ error: 'Not Authorized' });
-    return
-  }
+const setBookReadStatus =
+  (read: boolean) =>
+  async ({ params: { bookId }, user }: UserBookRequest, res: FastifyReply) => {
+    if (!user) {
+      await res.status(403).send({ error: 'Not Authorized' });
+      return;
+    }
 
-  const [userAudiobook] = await UserAudiobook.findOrCreate({ where: { UserId: user.id, AudiobookId: bookId } });
+    const [userAudiobook] = await UserAudiobook.findOrCreate({ where: { UserId: user.id, AudiobookId: bookId } });
 
-  await userAudiobook.update({ read });
+    await userAudiobook.update({ read });
 
-  await res.status(204);
-}
+    await res.status(204);
+  };
 
 const users: FastifyPluginAsync = async (fastify, opts) => {
   fastify.decorateRequest<User | undefined>('user', undefined);

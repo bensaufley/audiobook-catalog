@@ -31,12 +31,7 @@
 
     "skipLibCheck": true
   },
-  "include": [
-    "./*.js",
-    "./*.ts",
-    "src",
-    "test"
-  ],
+  "include": ["./*.js", "./*.ts", "src", "test"],
   "ts-node": {
     "require": ["tsconfig-paths/register"]
   }
