@@ -66,7 +66,7 @@
     "dev:hmr": "webpack serve",
     "dev:serve": "nodemon .build/server/index.js",
     "dev:watch": "webpack --watch",
-    "migrate": "ts-node -T --cwd-mode \"$(pwd)/src/db/migrate.ts\"",
+    "migrate": "DB_NAME=\"$([ NODE_ENV = 'production' ] && echo 'books' || echo \"$APP_ENV\")\" ts-node -T --cwd-mode \"$(pwd)/src/db/migrate.ts\"",
     "start": "node .build/server/index.js",
     "test": "jest",
     "typecheck": "tsc --noEmit"

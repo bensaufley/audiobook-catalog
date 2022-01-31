@@ -1,19 +1,21 @@
-import { Association, Model, Optional, Sequelize, UUID, UUIDV4 } from 'sequelize';
+import { Association, Model, Optional, Sequelize, STRING, UUID, UUIDV4 } from 'sequelize';
 import type models from '~db/models';
 import type Audiobook from '~db/models/Audiobook';
 import type Author from '~db/models/Author';
 
 export interface AudiobookAuthorAttributes {
-  id: string;
+  AudiobookId: string;
+  AuthorId: string;
 }
 
-type AudiobookAuthorCreationAttributes = Optional<AudiobookAuthorAttributes, 'id'>;
+type AudiobookAuthorCreationAttributes = Partial<AudiobookAuthorAttributes>;
 
 export default class AudiobookAuthor
   extends Model<AudiobookAuthorAttributes, AudiobookAuthorCreationAttributes>
   implements AudiobookAuthorAttributes
 {
-  public declare id: string;
+  public declare AudiobookId: string;
+  public declare AuthorId: string;
 
   public declare readonly createdAt: Date;
   public declare readonly updatedAt: Date;
@@ -31,12 +33,15 @@ export default class AudiobookAuthor
   public static generate(sequelize: Sequelize) {
     return this.init(
       {
-        id: {
-          type: UUID,
-          primaryKey: true,
-          defaultValue: UUIDV4,
+        AudiobookId: {
+          type: STRING,
           allowNull: false,
-          autoIncrement: false,
+          references: 'Audiobooks',
+        },
+        AuthorId: {
+          type: STRING,
+          allowNull: false,
+          references: 'Users',
         },
       },
       {

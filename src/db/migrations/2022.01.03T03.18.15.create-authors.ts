@@ -1,7 +1,7 @@
 import { DATE, STRING } from 'sequelize';
 import type { Migration } from '~db/migrations';
 
-export const up: Migration = async ({ context: queryInterface }) => {
+export const up: Migration = async ({ context: queryInterface }) => queryInterface.sequelize.transaction(async (transaction) => {
   await queryInterface.createTable('Authors', {
     id: {
       allowNull: false,
@@ -24,9 +24,9 @@ export const up: Migration = async ({ context: queryInterface }) => {
       allowNull: false,
       type: DATE,
     },
-  });
-};
+  }, { transaction });
+});
 
-export const down: Migration = async ({ context: queryInterface }) => {
-  await queryInterface.dropTable('Authors');
-};
+export const down: Migration = async ({ context: queryInterface }) => queryInterface.sequelize.transaction(async (transaction) => {
+  await queryInterface.dropTable('Authors', { transaction });
+});

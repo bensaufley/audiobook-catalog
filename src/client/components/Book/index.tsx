@@ -3,17 +3,20 @@ import { useCallback } from 'preact/hooks';
 
 import type { AudiobookJSON } from '~db/models/Audiobook';
 import styles from '~client/components/Book/styles.module.css';
+import BookModal from '~client/components/BookModal';
+import { useModal } from '~client/contexts/Modal';
 
 interface Props {
   book: AudiobookJSON;
-  handleClick: (id: string) => void;
 }
 
-const Book: FunctionComponent<Props> = ({ book, handleClick }) => {
+const Book: FunctionComponent<Props> = ({ book }) => {
+  const { setContent } = useModal();
+
   const onClick = useCallback(
     (e: MouseEvent) => {
       e.preventDefault();
-      handleClick(book.id);
+      setContent(<BookModal book={book} />);
     },
     [book],
   );

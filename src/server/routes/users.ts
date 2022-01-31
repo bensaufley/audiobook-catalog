@@ -9,7 +9,7 @@ declare module 'fastify' {
 }
 
 type CreateUserRequest = FastifyRequest<{
-  Params: { username: string };
+  Body: string;
 }>;
 
 type UserBookRequest = FastifyRequest<{ Params: { bookId: string } }>;
@@ -20,7 +20,7 @@ const setBookReadStatus = (read: boolean) => async ({ params: { bookId }, user }
     return
   }
 
-  const [userAudiobook] = await UserAudiobook.findOrCreate({ where: { userId: user.id, audiobookId: bookId } });
+  const [userAudiobook] = await UserAudiobook.findOrCreate({ where: { UserId: user.id, AudiobookId: bookId } });
 
   await userAudiobook.update({ read });
 
@@ -53,7 +53,9 @@ const users: FastifyPluginAsync = async (fastify, opts) => {
     await res.send(users);
   });
 
-  fastify.post('/', async ({ params: { username } }: CreateUserRequest, res) => {
+  fastify.post('/', async ({ body }: CreateUserRequest, res) => {
+    const { username } = JSON.parse(body);
+    console.log('body.username: ', username);
     const user = await User.create({ username });
 
     await res.send(user);

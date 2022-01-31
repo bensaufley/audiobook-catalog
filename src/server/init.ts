@@ -44,8 +44,8 @@ const init = async () => {
     prefix: '/static/',
   });
 
-  fastify.register(books, { prefix: '/books/' });
-  fastify.register(users, { prefix: '/users/' });
+  fastify.register(books, { prefix: '/books' });
+  fastify.register(users, { prefix: '/users' });
 
   fastify.get('/*', async (req, res) => {
     await res.sendFile('index.html');

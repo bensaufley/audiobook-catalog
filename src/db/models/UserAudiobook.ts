@@ -4,24 +4,22 @@ import type Audiobook from '~db/models/Audiobook';
 import type User from '~db/models/User';
 
 export interface UserAudiobookAttributes {
-  id: string;
   read: boolean;
 
-  audiobookId: string;
-  userId: string;
+  AudiobookId: string;
+  UserId: string;
 }
 
-type UserAudiobookCreationAttributes = Optional<UserAudiobookAttributes, 'id'>;
+type UserAudiobookCreationAttributes = Partial<UserAudiobookAttributes>;
 
 export default class UserAudiobook
   extends Model<UserAudiobookAttributes, UserAudiobookCreationAttributes>
   implements UserAudiobookAttributes
 {
-  public declare id: string;
   public declare read: boolean;
 
-  public declare audiobookId: string;
-  public declare userId: string;
+  public declare AudiobookId: string;
+  public declare UserId: string;
 
   public declare readonly createdAt: Date;
   public declare readonly updatedAt: Date;
@@ -42,24 +40,17 @@ export default class UserAudiobook
   public static generate(sequelize: Sequelize) {
     return this.init(
       {
-        id: {
-          type: UUID,
-          primaryKey: true,
-          defaultValue: UUIDV4,
-          allowNull: false,
-          autoIncrement: false,
-        },
         read: {
           type: BOOLEAN,
           defaultValue: false,
           allowNull: false,
         },
-        audiobookId: {
+        AudiobookId: {
           type: STRING,
           allowNull: false,
           references: 'Audiobooks',
         },
-        userId: {
+        UserId: {
           type: STRING,
           allowNull: false,
           references: 'Users',
