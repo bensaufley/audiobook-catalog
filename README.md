@@ -14,7 +14,7 @@ A Docker container for cataloging audiobooks, intended for use on an [Unraid] se
 
 Audiobooks should be mounted at `/audiobooks`.
 
-The directory where 
+The database will be placed in `/db/` or the directory mounted at `DB_DIR`.
 
 # Development
 

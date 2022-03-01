@@ -1,18 +1,18 @@
-import { FunctionComponent, Fragment, h } from 'preact';
+import { Fragment, FunctionComponent, h } from 'preact';
 import { useCallback, useEffect, useMemo, useState } from 'preact/hooks';
-
-import Book from '~client/components/Book';
-import type Audiobook from '~db/models/Audiobook';
-import styles from '~client/components/Books/styles.module.css';
-import BookModal from '~client/components/BookModal';
-import { useOptions, useSizeColumns } from '~client/components/contexts/Options';
 import { jarowinkler } from 'wuzzy';
 
-const threshold = 0.5;
+import Book from '~client/components/Book';
+import BookModal from '~client/components/BookModal';
+import { useOptions, useSizeColumns } from '~client/components/contexts/Options';
+import type Audiobook from '~db/models/Audiobook';
+
+import styles from '~client/components/Books/styles.module.css';
 
 const Books: FunctionComponent = () => {
   const [error, setError] = useState<string>();
   const [books, setBooks] = useState<Audiobook<unknown>[]>();
+
   const [selectedBookId, setSelectedBookId] = useState<string>();
 
   const selectedBook = useMemo(() => {
@@ -36,15 +36,37 @@ const Books: FunctionComponent = () => {
   const { filter } = useOptions();
 
   const filteredBooks = useMemo(() => {
-    if (!filter.trim()) return books;
+    const lowerFilter = filter.trim().toLocaleLowerCase();
 
-    return books?.filter(
+    if (!lowerFilter) return books;
+
+    if (!books) return null;
+
+    const exactMatches = books.filter(
       (book) =>
-        jarowinkler(book.title, filter) > threshold ||
-        [...(book.Authors || []), ...(book.Narrators || [])].some(
-          ({ firstName = '', lastName }) => jarowinkler(`${firstName} ${lastName}`.trim(), filter) > threshold,
+        book.title.toLocaleLowerCase().includes(lowerFilter) ||
+        [...(book.Authors || []), ...(book.Narrators || [])].some(({ firstName = '', lastName }) =>
+          `${firstName} ${lastName}`.trim().toLocaleLowerCase().includes(lowerFilter),
         ),
     );
+
+    if (exactMatches.length > 0) return exactMatches;
+
+    let fuzzyBooks: Audiobook<unknown>[] = [];
+
+    let threshold = 0.5;
+    do {
+      fuzzyBooks = books.filter(
+        (book) =>
+          jarowinkler(book.title, lowerFilter) > threshold ||
+          [...(book.Authors || []), ...(book.Narrators || [])].some(
+            ({ firstName = '', lastName }) => jarowinkler(`${firstName} ${lastName}`.trim(), lowerFilter) > threshold,
+          ),
+      );
+      threshold += 0.05;
+    } while (fuzzyBooks.length > Math.max(2, books.length / 4));
+
+    return fuzzyBooks;
   }, [books, filter]);
 
   useEffect(() => {
@@ -52,6 +74,7 @@ const Books: FunctionComponent = () => {
       try {
         const resp = await fetch('/books');
         const bks = await resp.json();
+        if (!resp.ok) throw bks;
         setBooks(bks);
       } catch (err) {
         setError((err as Error).message);
