@@ -29,9 +29,8 @@ const setBookReadStatus =
     await res.status(204);
   };
 
-const users: FastifyPluginAsync = async (fastify, opts) => {
-  fastify.decorateRequest<User | undefined>('user', undefined);
-  fastify.addHook('preHandler', async (req, res) => {
+export const addUserHook: FastifyPluginAsync = async (fastify) => {
+  fastify.addHook('preHandler', async (req) => {
     const userId = req.headers['x-audiobook-catalog-user'];
 
     if (!userId) return;
@@ -45,6 +44,11 @@ const users: FastifyPluginAsync = async (fastify, opts) => {
       req.log.error(err);
     }
   });
+};
+
+const users: FastifyPluginAsync = async (fastify, opts) => {
+  fastify.decorateRequest<User | undefined>('user', undefined);
+  fastify.register(addUserHook);
 
   fastify.get('/', async (_, res) => {
     const users = await User.findAll({
@@ -63,8 +67,8 @@ const users: FastifyPluginAsync = async (fastify, opts) => {
     await res.send(user);
   });
 
-  fastify.post('/books/:id/read', setBookReadStatus(true));
-  fastify.post('/books/:id/unread', setBookReadStatus(false));
+  fastify.post('/books/:bookId/read', setBookReadStatus(true));
+  fastify.post('/books/:bookId/unread', setBookReadStatus(false));
 };
 
 export default users;

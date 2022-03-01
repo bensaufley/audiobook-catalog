@@ -1,5 +1,5 @@
 import { createContext, FunctionComponent, Fragment, h, VNode } from 'preact';
-import { useCallback, useContext, useMemo, useState } from 'preact/hooks';
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'preact/hooks';
 
 import styles from '~client/contexts/Modal/styles.module.css';
 
@@ -22,6 +22,25 @@ export const useModal = () => useContext(ModalContext);
 
 export const ModalProvider: FunctionComponent = ({ children }) => {
   const [content, setContent] = useState<VNode | null>(null);
+
+  useEffect(() => {
+    const intercept = (e: KeyboardEvent) => {
+      console.log('intercept intercepted', e);
+
+      if (!content) return;
+
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        setContent(null);
+      }
+    };
+
+    document.body.addEventListener('keyup', intercept);
+
+    return () => {
+      document.body.removeEventListener('keyup', intercept);
+    };
+  }, [content, setContent]);
 
   const handleHide: h.JSX.GenericEventHandler<HTMLElement> = useCallback(
     (e) => {

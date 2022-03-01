@@ -1,8 +1,9 @@
-import { Fragment, FunctionComponent, Fragment, h } from 'preact';
-import { useMemo } from 'preact/hooks';
+import { Fragment, FunctionComponent, h } from 'preact';
+import { useCallback, useMemo, useState } from 'preact/hooks';
 
 import type { AudiobookJSON } from '~db/models/Audiobook';
 import styles from '~client/components/BookModal/styles.module.css';
+import { useUser } from '~client/contexts/User';
 
 interface Props {
   book: AudiobookJSON;
@@ -23,6 +24,26 @@ const BookModal: FunctionComponent<Props> = ({ book }) => {
     }`;
   }, [book.title, book.Authors]);
 
+  const { user } = useUser();
+
+  const [read, setRead] = useState(!!book.UserAudiobooks?.[0]?.read);
+
+  const handleChangeRead: h.JSX.GenericEventHandler<HTMLInputElement> = useCallback(
+    async (e) => {
+      const resp = await fetch(`/users/books/${book.id}/read`, {
+        headers: {
+          'x-audiobook-catalog-user': user!.id,
+        },
+        method: 'POST',
+      });
+
+      if (!resp.ok) return;
+
+      setRead(e.currentTarget.checked);
+    },
+    [setRead],
+  );
+
   return (
     <>
       <img class={styles.cover} src={`/books/${book.id}/cover`} alt={`Cover for ${book.title}`} />
@@ -38,6 +59,12 @@ const BookModal: FunctionComponent<Props> = ({ book }) => {
         </p>
       )}
       {book.duration && <p class={styles.duration}>Duration: {formatDuration(book.duration)}</p>}
+      {user && (
+        <label for="read">
+          <input type="checkbox" id="read" name="read" checked={read} onChange={handleChangeRead} />
+          Read
+        </label>
+      )}
       <div class={styles.outbound}>
         <p>View In:</p>
         <ul>

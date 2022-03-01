@@ -2,6 +2,7 @@ import { createContext, FunctionComponent, h } from 'preact';
 import { StateUpdater, useContext, useEffect, useMemo, useState } from 'preact/hooks';
 import { SortBy, SortOrder } from '~client/contexts/Options/sort';
 import useBooks from '~client/contexts/Options/useBooks';
+import { useUser } from '~client/contexts/User';
 import type { AudiobookJSON } from '~db/models/Audiobook';
 
 export enum Size {
@@ -86,6 +87,7 @@ export const OptionsProvider: FunctionComponent<Partial<OptionValues>> = ({ chil
   const [filter, changeFilter] = useState(opts.filter || defaultOpts.filter);
   const [page, changePage] = useState(0);
   const [perPage, changePerPage] = useState(60);
+  const { user } = useUser();
 
   const [sortBy, changeSortBy] = useState(SortBy.Author);
   const [sortOrder, changeSortOrder] = useState(SortOrder.Ascending);
@@ -96,6 +98,7 @@ export const OptionsProvider: FunctionComponent<Partial<OptionValues>> = ({ chil
     page,
     sortBy,
     sortOrder,
+    user,
   });
 
   useEffect(() => {

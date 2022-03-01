@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'preact/hooks';
 import { levenshtein } from 'wuzzy';
 import { SortBy, sorters, SortOrder } from '~client/contexts/Options/sort';
+import type { UserFields } from '~client/contexts/User';
 import type { AudiobookJSON } from '~db/models/Audiobook';
 
 interface UseBooksResponse {
@@ -18,12 +19,14 @@ const useBooks = ({
   page,
   sortBy,
   sortOrder,
+  user,
 }: {
   filter?: string;
   perPage: number;
   page: number;
   sortBy: SortBy;
   sortOrder: SortOrder;
+  user: UserFields | undefined;
 }): UseBooksResponse => {
   const [error, setError] = useState<string>();
   const [books, setBooks] = useState<AudiobookJSON[]>();
@@ -92,7 +95,7 @@ const useBooks = ({
   useEffect(() => {
     (async () => {
       try {
-        const resp = await fetch('/books');
+        const resp = await fetch('/books', { headers: { 'x-audiobook-catalog-user': user?.id || '' } });
         const bks = await resp.json();
         if (!resp.ok) throw bks;
         setBooks(bks);

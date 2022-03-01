@@ -13,6 +13,8 @@ import {
 import type models from '~db/models';
 import type { AuthorAttributes, default as Author } from '~db/models/Author';
 import type { default as Narrator, NarratorAttributes } from '~db/models/Narrator';
+import type User from '~db/models/User';
+import type UserAudiobook from '~db/models/UserAudiobook';
 
 export interface AudiobookAttributes<T> {
   id: string;
@@ -32,6 +34,8 @@ export class Audiobook<T>
   declare static associations: {
     Authors: Association<Audiobook<unknown>, Author>;
     Narrators: Association<Audiobook<unknown>, Narrator>;
+    UserAudiobooks: Association<Audiobook<unknown>, UserAudiobook>;
+    Users: Association<Audiobook<unknown>, User>;
   };
 
   public declare id: string;
@@ -46,6 +50,8 @@ export class Audiobook<T>
 
   public declare Authors?: Author[];
   public declare Narrators?: Narrator[];
+  public declare Users?: User[];
+  public declare UserAudiobooks?: UserAudiobook[];
 
   public declare addAuthor: BelongsToManyAddAssociationMixin<Author, AuthorAttributes>;
 
@@ -54,6 +60,8 @@ export class Audiobook<T>
   public static associate(m: typeof models) {
     this.belongsToMany(m.Author, { through: m.AudiobookAuthor });
     this.belongsToMany(m.Narrator, { through: m.AudiobookNarrator });
+    this.hasMany(m.UserAudiobook);
+    this.belongsToMany(m.User, { through: m.UserAudiobook });
   }
 
   public static generate(sequelize: Sequelize) {
