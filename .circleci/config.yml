@@ -50,7 +50,8 @@ jobs:
   build:
     executor: docker/docker
     steps:
-      - setup_remote_docker
+      - setup_remote_docker:
+          version: 20.10.11
       - checkout
       - docker/build:
           dockerfile: Prod.dockerfile
@@ -60,7 +61,8 @@ jobs:
     resource_class: small
     executor: docker/docker
     steps:
-      - setup_remote_docker
+      - setup_remote_docker:
+          version: 20.10.11
       - checkout
       - run: echo << pipeline.git.tag >>
       - run:
