@@ -1,6 +1,6 @@
 import { Fragment, FunctionComponent, h } from 'preact';
 import { useCallback, useEffect, useMemo, useState } from 'preact/hooks';
-import { jarowinkler } from 'wuzzy';
+import { levenshtein } from 'wuzzy';
 
 import Book from '~client/components/Book';
 import BookModal from '~client/components/BookModal';
@@ -58,13 +58,13 @@ const Books: FunctionComponent = () => {
     do {
       fuzzyBooks = books.filter(
         (book) =>
-          jarowinkler(book.title, lowerFilter) > threshold ||
+          levenshtein(book.title, lowerFilter) > threshold ||
           [...(book.Authors || []), ...(book.Narrators || [])].some(
-            ({ firstName = '', lastName }) => jarowinkler(`${firstName} ${lastName}`.trim(), lowerFilter) > threshold,
+            ({ firstName = '', lastName }) => levenshtein(`${firstName} ${lastName}`.trim(), lowerFilter) > threshold,
           ),
       );
       threshold += 0.05;
-    } while (fuzzyBooks.length > Math.max(2, books.length / 4));
+    } while (fuzzyBooks.length > Math.max(2, Math.min(books.length / 4, 20)));
 
     return fuzzyBooks;
   }, [books, filter]);
