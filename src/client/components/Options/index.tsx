@@ -1,6 +1,6 @@
 import { FunctionComponent, Fragment, h } from 'preact';
 
-import { Size, useOptions } from '~client/components/contexts/Options';
+import { Size, useOptions } from '~client/contexts/Options';
 import styles from '~client/components/Options/styles.module.css';
 import { useCallback, useMemo } from 'preact/hooks';
 

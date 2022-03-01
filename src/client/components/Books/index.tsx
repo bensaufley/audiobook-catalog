@@ -4,7 +4,7 @@ import { levenshtein } from 'wuzzy';
 
 import Book from '~client/components/Book';
 import BookModal from '~client/components/BookModal';
-import { useOptions, useSizeColumns } from '~client/components/contexts/Options';
+import { useOptions, useSizeColumns } from '~client/contexts/Options';
 import type Audiobook from '~db/models/Audiobook';
 
 import styles from '~client/components/Books/styles.module.css';
