@@ -113,3 +113,4 @@ workflows:
               only: /^v.*/
           requires:
             - lint-docker
+            - test
