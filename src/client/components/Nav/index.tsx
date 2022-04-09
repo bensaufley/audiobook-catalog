@@ -1,5 +1,5 @@
 import { FunctionComponent, h } from 'preact';
-import Options from '~client/components/Options';
+import Options from '~client/contexts/Options/Options';
 
 import styles from '~client/components/Nav/styles.module.css';
 

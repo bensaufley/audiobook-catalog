@@ -33,7 +33,7 @@ const Books: FunctionComponent = () => {
   }, [setSelectedBookId]);
 
   const columns = useSizeColumns();
-  const { filter } = useOptions();
+  const { filter, page, perPage } = useOptions();
 
   const filteredBooks = useMemo(() => {
     const lowerFilter = filter.trim().toLocaleLowerCase();
@@ -98,7 +98,7 @@ const Books: FunctionComponent = () => {
   return (
     <>
       <div class={styles.container} style={{ '--cols': columns }}>
-        {filteredBooks?.map((book) => (
+        {(filter.trim() ? filteredBooks : books.slice(page * perPage, page * perPage + perPage))?.map((book) => (
           <Book book={book} handleClick={showBook} />
         ))}
       </div>
