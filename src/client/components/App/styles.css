@@ -1,25 +1,32 @@
 @import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&display=swap');
 
-@import './normalize';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-body {
-  --background: #fff;
-  --text: #333;
+@layer base {
+  body {
+    --background: #fff;
+    --text: #333;
 
-  background-color: var(--background);
-  color: var(--text);
-  font-family: 'Libre Baskerville', serif;
-  font-weight: 400;
-  padding: 1rem;
+    background-color: var(--background);
+    color: var(--text);
+    font-family: 'Libre Baskerville', serif;
+    font-weight: 400;
+    padding: 1rem;
 
-  @media (prefers-color-scheme: dark) {
-    --background: #333;
-    --text: #fff;
+    @media (prefers-color-scheme: dark) {
+      --background: #333;
+      --text: #fff;
+    }
   }
-}
 
-@media (prefers-reduced-motion) {
-  animation-duration: 0.01ms !important;
-  animation-iteration-count: 1 !important;
-  transition-duration: 0.01ms !important;
+  @media (prefers-reduced-motion) {
+    &,
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
 }

@@ -80,14 +80,15 @@ export const clientConfig: Configuration = {
             loader: 'postcss-loader',
             options: {
               postcssOptions: {
-                plugins: [
-                  [
-                    'postcss-preset-env',
-                    {
-                      stage: 0,
-                    },
-                  ],
-                ],
+                plugins: {
+                  'postcss-import': {},
+                  'tailwindcss/nesting': 'postcss-nesting',
+                  tailwindcss: {},
+                  'postcss-preset-env': {
+                    stage: 0,
+                    features: { 'nesting-rules': false },
+                  },
+                },
               },
             },
           },

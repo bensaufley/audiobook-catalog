@@ -11,8 +11,4 @@
   top: 0;
   width: auto;
   z-index: 200;
-
-  & h1 {
-    margin: 0 0 0.5rem;
-  }
 }
