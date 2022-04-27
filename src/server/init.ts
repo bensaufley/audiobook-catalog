@@ -49,7 +49,7 @@ const init = async () => {
 
   fastify.get('/books', async (_, res) => {
     const audiobooks = await Audiobook.findAll({
-      attributes: ['id', 'title', 'duration'],
+      attributes: ['id', 'title', 'createdAt', 'duration'],
       include: [Audiobook.associations.Authors, Audiobook.associations.Narrators],
       order: [
         [Audiobook.associations.Authors, 'lastName', 'ASC'],
@@ -64,7 +64,7 @@ const init = async () => {
 
   fastify.get('/books/:id', async ({ params: { id } }: BookRequest, res) => {
     const book = await Audiobook.findOne({
-      attributes: ['id', 'title', 'duration'],
+      attributes: ['id', 'title', 'createdAt', 'duration'],
       include: [Audiobook.associations.Authors, Audiobook.associations.Narrators],
       where: { id },
     });

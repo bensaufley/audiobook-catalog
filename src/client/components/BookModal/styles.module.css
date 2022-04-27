@@ -6,6 +6,7 @@
   right: 0;
   top: 0;
   opacity: 0.8;
+  z-index: 998;
 
   @media (prefers-color-scheme: dark) {
     background-color: #111;
@@ -25,6 +26,7 @@
   position: fixed;
   right: 1rem;
   top: 1rem;
+  z-index: 999;
 
   @media screen and (min-width: 34em) {
     left: 50%;

@@ -93,3 +93,8 @@ export class Audiobook<T>
 }
 
 export default Audiobook;
+
+export interface AudiobookJSON<T = unknown> extends Omit<Audiobook<T>, 'createdAt' | 'updatedAt'> {
+  createdAt: string;
+  updatedAt: string;
+}
