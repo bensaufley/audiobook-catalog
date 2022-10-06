@@ -12,6 +12,12 @@ export enum Size {
   XLarge,
 }
 
+export enum Read {
+  All = 'All',
+  Unread = 'Unread',
+  Read = 'Read',
+}
+
 export interface OptionValues {
   books: AudiobookJSON[] | undefined;
   error: string | undefined;
@@ -19,6 +25,7 @@ export interface OptionValues {
   page: number;
   pages: number;
   perPage: number;
+  read: Read;
   selectedBook: AudiobookJSON | undefined;
   size: Size;
   sortBy: SortBy;
@@ -29,11 +36,14 @@ export type Options = OptionValues & {
   changeFilter: StateUpdater<string>;
   changePage: StateUpdater<number>;
   changePerPage: StateUpdater<number>;
+  changeRead: StateUpdater<Read>;
   changeSize: StateUpdater<Size>;
   changeSortBy: StateUpdater<SortBy>;
   changeSortOrder: StateUpdater<SortOrder>;
   selectBook: (id: string) => void;
   unselectBook: () => void;
+
+  refresh: () => void;
 };
 
 const defaultOpts: OptionValues = {
@@ -43,6 +53,7 @@ const defaultOpts: OptionValues = {
   page: 0,
   pages: 1,
   perPage: 50,
+  read: Read.All,
   selectedBook: undefined,
   sortBy: SortBy.Author,
   sortOrder: SortOrder.Ascending,
@@ -58,11 +69,13 @@ const OptionsContext = createContext<Options>({
   changeFilter: noop,
   changePage: noop,
   changePerPage: noop,
+  changeRead: noop,
   changeSize: noop,
   changeSortBy: noop,
   changeSortOrder: noop,
   selectBook: noop,
   unselectBook: noop,
+  refresh: noop,
 });
 
 export const useOptions = () => useContext(OptionsContext);
@@ -87,15 +100,22 @@ export const OptionsProvider: FunctionComponent<Partial<OptionValues>> = ({ chil
   const [filter, changeFilter] = useState(opts.filter || defaultOpts.filter);
   const [page, changePage] = useState(0);
   const [perPage, changePerPage] = useState(60);
+  const [read, changeRead] = useState(Read.All);
   const { user } = useUser();
 
   const [sortBy, changeSortBy] = useState(SortBy.Author);
   const [sortOrder, changeSortOrder] = useState(SortOrder.Ascending);
 
-  const { books, error, pages, selectedBook, selectBook, unselectBook } = useBooks({
+  useEffect(() => {
+    if (sortBy === SortBy.DateAdded) changeSortOrder(SortOrder.Descending);
+    else changeSortOrder(SortOrder.Ascending);
+  }, [sortBy]);
+
+  const { books, error, pages, refresh, selectedBook, selectBook, unselectBook } = useBooks({
     filter,
     perPage,
     page,
+    read,
     sortBy,
     sortOrder,
     user,
@@ -111,6 +131,7 @@ export const OptionsProvider: FunctionComponent<Partial<OptionValues>> = ({ chil
       changeFilter,
       changePage,
       changePerPage,
+      changeRead,
       changeSize,
       changeSortBy,
       changeSortOrder,
@@ -119,6 +140,8 @@ export const OptionsProvider: FunctionComponent<Partial<OptionValues>> = ({ chil
       page,
       pages,
       perPage,
+      read,
+      refresh,
       selectBook,
       selectedBook,
       size,
@@ -131,6 +154,7 @@ export const OptionsProvider: FunctionComponent<Partial<OptionValues>> = ({ chil
       changeFilter,
       changePage,
       changePerPage,
+      changeRead,
       changeSize,
       changeSortBy,
       changeSortOrder,
@@ -139,6 +163,8 @@ export const OptionsProvider: FunctionComponent<Partial<OptionValues>> = ({ chil
       page,
       pages,
       perPage,
+      read,
+      refresh,
       selectBook,
       selectedBook,
       size,

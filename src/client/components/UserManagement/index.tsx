@@ -4,6 +4,8 @@ import NewUser from '~client/components/UserManagement/NewUser';
 import { useModal } from '~client/contexts/Modal';
 import { useUser } from '~client/contexts/User';
 
+const cancelSubmit: h.JSX.GenericEventHandler<HTMLFormElement> = (e) => e.preventDefault();
+
 const UserManagement: FunctionComponent = () => {
   const { setUser, user, users } = useUser();
   const { setContent } = useModal();
@@ -14,11 +16,9 @@ const UserManagement: FunctionComponent = () => {
     setSelection(user?.id || '');
   }, [user?.id]);
 
-  const handleSubmit: h.JSX.GenericEventHandler<HTMLFormElement> = useCallback(
-    (e) => {
-      e.preventDefault();
-
-      switch (selection) {
+  const handleSelect: h.JSX.GenericEventHandler<HTMLSelectElement> = useCallback(
+    ({ currentTarget: { value } }) => {
+      switch (value) {
         case '': {
           setUser(null);
           break;
@@ -28,19 +28,15 @@ const UserManagement: FunctionComponent = () => {
           break;
         }
         default: {
-          setUser(users.find(({ id }) => id === selection)!);
+          setUser(users.find(({ id }) => id === value)!);
         }
       }
     },
-    [selection, setUser],
+    [users, setContent, setUser],
   );
 
-  const handleSelect: h.JSX.GenericEventHandler<HTMLSelectElement> = useCallback((e) => {
-    setSelection(e.currentTarget.value);
-  }, []);
-
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={cancelSubmit}>
       <select value={selection} onChange={handleSelect}>
         <option value="">{user ? <>Log Out</> : <>&ndash; No User &ndash;</>}</option>
         {users.map((u) => (
@@ -48,7 +44,6 @@ const UserManagement: FunctionComponent = () => {
         ))}
         <option value="--add--">+ New User</option>
       </select>
-      <button type="submit">&rarr;</button>
     </form>
   );
 };

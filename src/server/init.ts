@@ -1,13 +1,14 @@
 import Fastify from 'fastify';
-import fastifyStatic from 'fastify-static';
+import fastifyStatic from '@fastify/static';
 import { resolve } from 'path';
 import type webpackT from 'webpack';
 import { umzug } from '~db/migrations';
 import { ready } from '~db/models';
 import books from '~server/routes/books';
-import users from '~server/routes/users';
 
 import type * as configT from '../../webpack.config';
+import User from '~db/models/User';
+import users from '~server/routes/users';
 
 const logLevels = ['trace', 'debug', 'info', 'warn', 'error'];
 const sanitizeLogLevel = (level?: string) => {
@@ -25,8 +26,14 @@ const init = async () => {
 
   const fastify = Fastify({
     logger: {
-      prettyPrint: process.env.APP_ENV === 'development',
       level: sanitizeLogLevel(process.env.LOG_LEVEL),
+      ...(process.env.APP_ENV === 'development'
+        ? {
+            transport: {
+              target: 'pino-pretty',
+            },
+          }
+        : {}),
     },
   });
 
@@ -43,9 +50,24 @@ const init = async () => {
     root: resolve(__dirname, '../client'),
     prefix: '/static/',
   });
+  fastify.addHook('preHandler', async (req) => {
+    const userId = req.headers['x-audiobook-catalog-user'];
 
-  fastify.register(books, { prefix: '/books' });
-  fastify.register(users, { prefix: '/users' });
+    req.log.debug('x-audiobook-catalog-user: %s', userId);
+    if (!userId) return;
+
+    try {
+      const user = await User.findOne({ where: { id: userId } });
+
+      if (user) req.user = user;
+      else req.log.warn('No User found for id %s', userId);
+    } catch (err) {
+      req.log.error(err);
+    }
+  });
+
+  await fastify.register(books, { prefix: '/books' });
+  await fastify.register(users, { prefix: '/users' });
 
   fastify.get('/*', async (req, res) => {
     await res.sendFile('index.html');

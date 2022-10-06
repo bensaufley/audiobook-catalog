@@ -22,6 +22,10 @@ const NewUser: FunctionComponent = () => {
     async (e) => {
       e.preventDefault();
       setError(undefined);
+      if (username === '--add--') {
+        setError('Invalid username');
+        return;
+      }
       try {
         const resp = await fetch('/users/', {
           method: 'POST',
@@ -31,7 +35,7 @@ const NewUser: FunctionComponent = () => {
         if (!resp.ok) throw new Error(json.message);
 
         await refreshUsers();
-        await setUser(json);
+        setUser(json);
         setContent(null);
       } catch (err) {
         setError((err as Error).message);

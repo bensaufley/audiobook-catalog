@@ -1,6 +1,6 @@
 import cookie from 'js-cookie';
 import { createContext, FunctionComponent, h } from 'preact';
-import { useCallback, useContext, useEffect, useState } from 'preact/hooks';
+import { useCallback, useContext, useEffect, useMemo, useState } from 'preact/hooks';
 import { noop } from '~shared/utilities';
 
 export interface UserFields {
@@ -25,13 +25,12 @@ export const useUser = () => useContext(UserContext);
 const userCookieName = 'audiobook-catalog-user';
 
 export const UserProvider: FunctionComponent = ({ children }) => {
-  const [user, setUserState] = useState<UserFields>();
-  const [users, setUsers] = useState<UserFields[]>([]);
-
-  useEffect(() => {
+  const [user, setUserState] = useState<UserFields>(() => {
     const cookieUser = cookie.get(userCookieName);
-    if (cookieUser) setUserState(JSON.parse(cookieUser));
-  }, []);
+    if (cookieUser) return JSON.parse(cookieUser);
+    return undefined;
+  });
+  const [users, setUsers] = useState<UserFields[]>([]);
 
   const refreshUsers = useCallback(async () => {
     const res = await fetch('/users');
@@ -56,5 +55,7 @@ export const UserProvider: FunctionComponent = ({ children }) => {
     [setUserState],
   );
 
-  return <UserContext.Provider value={{ refreshUsers, setUser, user, users }}>{children}</UserContext.Provider>;
+  const value: User = useMemo(() => ({ refreshUsers, setUser, user, users }), [refreshUsers, setUser, user, users]);
+
+  return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };

@@ -2,23 +2,22 @@ import { FastifyPluginAsync, FastifyRequest } from 'fastify';
 import { basename } from 'path';
 
 import Audiobook from '~db/models/Audiobook';
-import UserAudiobook from '~db/models/UserAudiobook';
-import { addUserHook } from '~server/routes/users';
 
 type BookRequest = FastifyRequest<{
   Params: { id: string };
 }>;
 
 const books: FastifyPluginAsync = async (fastify, opts) => {
-  fastify.register(addUserHook);
-
-  fastify.get('/', async ({ user }, res) => {
+  fastify.get('/', async ({ log, user }, res) => {
+    log.debug('user: %o', user);
     const audiobooks = await Audiobook.findAll({
       attributes: ['id', 'title', 'createdAt', 'duration'],
       include: [
         Audiobook.associations.Authors,
         Audiobook.associations.Narrators,
-        ...(user ? [{ association: Audiobook.associations.UserAudiobooks, where: { id: user?.id } }] : []),
+        ...(user
+          ? [{ association: Audiobook.associations.UserAudiobooks, where: { userId: user?.id }, required: false }]
+          : []),
       ],
       order: [
         [Audiobook.associations.Authors, 'lastName', 'ASC'],

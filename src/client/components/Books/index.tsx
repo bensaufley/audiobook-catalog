@@ -27,7 +27,7 @@ const Books: FunctionComponent = () => {
     <>
       <div class={styles.container} style={{ '--cols': columns }}>
         {books.map((book) => (
-          <Book book={book} />
+          <Book book={book} key={book.id} />
         ))}
       </div>
       {selectedBook && <BookModal book={selectedBook} />}
