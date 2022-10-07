@@ -27,10 +27,10 @@ const Books: FunctionComponent = () => {
     <>
       <div class={styles.container} style={{ '--cols': columns }}>
         {books.map((book) => (
-          <Book book={book} handleClick={selectBook} />
+          <Book book={book} key={book.id} />
         ))}
       </div>
-      {selectedBook && <BookModal book={selectedBook} handleHide={unselectBook} />}
+      {selectedBook && <BookModal book={selectedBook} />}
     </>
   );
 };

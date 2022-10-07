@@ -1,15 +1,17 @@
 import { FunctionComponent, Fragment, h } from 'preact';
-
-import { Size, useOptions } from '~client/contexts/Options';
-import styles from '~client/contexts/Options/styles.module.css';
 import { useCallback } from 'preact/hooks';
+
+import { Read, Size, useOptions } from '~client/contexts/Options';
+import styles from '~client/contexts/Options/styles.module.css';
 import { SortBy, SortOrder } from '~client/contexts/Options/sort';
+import { useUser } from '~client/contexts/User';
 
 const Options: FunctionComponent = () => {
   const {
     changeFilter,
     changePage,
     changePerPage,
+    changeRead,
     changeSize,
     changeSortBy,
     changeSortOrder,
@@ -17,10 +19,13 @@ const Options: FunctionComponent = () => {
     page,
     pages,
     perPage,
+    read,
     size,
     sortBy,
     sortOrder,
   } = useOptions();
+
+  const { user } = useUser();
 
   const handleChangeSize: h.JSX.GenericEventHandler<HTMLInputElement> = useCallback(
     (e) => {
@@ -41,6 +46,13 @@ const Options: FunctionComponent = () => {
       changePerPage(parseInt(value, 10));
     },
     [changePerPage],
+  );
+
+  const handleChangeRead: h.JSX.GenericEventHandler<HTMLSelectElement> = useCallback(
+    ({ currentTarget: { value } }) => {
+      changeRead(value as Read);
+    },
+    [changeRead],
   );
 
   const handleSearch: h.JSX.GenericEventHandler<HTMLInputElement> = useCallback(
@@ -68,6 +80,15 @@ const Options: FunctionComponent = () => {
 
   return (
     <div class={styles.options}>
+      {user && (
+        <select name="read" id="read" onChange={handleChangeRead}>
+          {Object.entries(Read).map(([k, v]) => (
+            <option value={k} selected={read === k}>
+              {v}
+            </option>
+          ))}
+        </select>
+      )}
       <label for="sort-by">Sort By:</label>
       <select name="sort-by" id="sort-by" onChange={handleChangeSortBy}>
         {Object.entries(SortBy).map(([k, v]) => (
@@ -88,7 +109,7 @@ const Options: FunctionComponent = () => {
         ))}
       </select>
       <label for="per-page">Per Page:</label>
-      <select name="per-page" id="per-page" onChange={handleChangePage}>
+      <select name="per-page" id="per-page" onChange={handleChangePerPage}>
         {[...new Array(5)].map((_, i) => (
           <option value={(i + 1) * 20} selected={perPage === (i + 1) * 20}>
             {(i + 1) * 20}

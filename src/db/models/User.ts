@@ -1,29 +1,30 @@
 import { Association, Model, Optional, Sequelize, STRING, UUID, UUIDV4 } from 'sequelize';
 import type models from '~db/models';
 import type Audiobook from '~db/models/Audiobook';
+import UserAudiobook from '~db/models/UserAudiobook';
 
-export interface AuthorAttributes {
+export interface UserAttributes {
   id: string;
-  firstName: string | null;
-  lastName: string;
+  username: string;
 }
 
-type AuthorCreationAttributes = Optional<AuthorAttributes, 'id'>;
+type UserCreationAttributes = Optional<UserAttributes, 'id'>;
 
-export default class Author extends Model<AuthorAttributes, AuthorCreationAttributes> implements AuthorAttributes {
+export default class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
   public declare id: string;
-  public declare firstName: string | null;
-  public declare lastName: string;
+  public declare username: string;
 
   public declare readonly createdAt: Date;
   public declare readonly updatedAt: Date;
 
   declare static associations: {
-    Audiobooks: Association<Author, Audiobook<unknown>>;
+    Audiobooks: Association<User, Audiobook<unknown>>;
+    UserAudiobooks: Association<User, UserAudiobook>;
   };
 
   public static associate(m: typeof models) {
-    Author.belongsToMany(m.Audiobook, { through: m.AudiobookAuthor });
+    User.hasMany(m.UserAudiobook);
+    User.belongsToMany(m.Audiobook, { through: m.UserAudiobook });
   }
 
   public static generate(sequelize: Sequelize) {
@@ -36,16 +37,14 @@ export default class Author extends Model<AuthorAttributes, AuthorCreationAttrib
           allowNull: false,
           autoIncrement: false,
         },
-        firstName: {
-          type: STRING,
-        },
-        lastName: {
+        username: {
           type: STRING,
           allowNull: false,
+          unique: true,
         },
       },
       {
-        modelName: 'Author',
+        modelName: 'User',
         sequelize,
       },
     );

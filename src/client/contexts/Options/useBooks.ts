@@ -1,33 +1,40 @@
 import { useCallback, useEffect, useMemo, useState } from 'preact/hooks';
 import { levenshtein } from 'wuzzy';
+import { Read } from '~client/contexts/Options';
 import { SortBy, sorters, SortOrder } from '~client/contexts/Options/sort';
+import { UserFields, useUser } from '~client/contexts/User';
 import type { AudiobookJSON } from '~db/models/Audiobook';
 
 interface UseBooksResponse {
   books: AudiobookJSON[] | undefined;
   error: string | undefined;
   pages: number;
+  refresh: () => void;
   selectedBook: AudiobookJSON | undefined;
   selectBook: (id: string) => void;
   unselectBook: () => void;
+  updateBook: (book: AudiobookJSON) => void;
 }
 
 const useBooks = ({
   filter = '',
   perPage,
   page,
+  read,
   sortBy,
   sortOrder,
 }: {
   filter?: string;
   perPage: number;
   page: number;
+  read: Read;
   sortBy: SortBy;
   sortOrder: SortOrder;
 }): UseBooksResponse => {
   const [error, setError] = useState<string>();
   const [books, setBooks] = useState<AudiobookJSON[]>();
   const [pages, setPages] = useState(1);
+  const { user } = useUser();
 
   const [selectedBookId, setSelectedBookId] = useState<string>();
 
@@ -44,11 +51,16 @@ const useBooks = ({
   const filteredBooks = useMemo(() => {
     const lowerFilter = filter.trim().toLocaleLowerCase();
 
-    if (!lowerFilter) return books;
-
     if (!books) return undefined;
 
-    const exactMatches = books.filter(
+    const readBooks =
+      read === Read.All
+        ? books
+        : books.filter(({ UserAudiobooks }) => UserAudiobooks?.some(({ read: r }) => r) === (read === Read.Read));
+
+    if (!lowerFilter) return readBooks;
+
+    const exactMatches = readBooks.filter(
       (book) =>
         book.title.toLocaleLowerCase().includes(lowerFilter) ||
         [...(book.Authors || []), ...(book.Narrators || [])].some(({ firstName = '', lastName }) =>
@@ -62,7 +74,7 @@ const useBooks = ({
 
     let threshold = 0.5;
     do {
-      fuzzyBooks = books.filter(
+      fuzzyBooks = readBooks.filter(
         (book) =>
           levenshtein(book.title, lowerFilter) > threshold ||
           [...(book.Authors || []), ...(book.Narrators || [])].some(
@@ -73,7 +85,7 @@ const useBooks = ({
     } while (fuzzyBooks.length > Math.max(2, Math.min(books.length / 4, 20)));
 
     return fuzzyBooks;
-  }, [books, filter]);
+  }, [books, filter, read]);
 
   const sortedBooks = useMemo(() => {
     if (!filteredBooks) return;
@@ -89,10 +101,13 @@ const useBooks = ({
     return sortedBooks?.slice(start, end);
   }, [sortedBooks, perPage, page]);
 
+  const [refreshToken, setRefreshToken] = useState<number>();
+
   useEffect(() => {
     (async () => {
       try {
-        const resp = await fetch('/books');
+        console.debug('fetching books');
+        const resp = await fetch('/books', { headers: { 'x-audiobook-catalog-user': user?.id || '' } });
         const bks = await resp.json();
         if (!resp.ok) throw bks;
         setBooks(bks);
@@ -102,16 +117,29 @@ const useBooks = ({
         setPages(1);
       }
     })();
-  }, []);
+  }, [user?.id, refreshToken]);
+
+  const refresh = useCallback(() => {
+    setRefreshToken(Date.now());
+  }, [setRefreshToken]);
+
+  const updateBook = useCallback(
+    (book: AudiobookJSON) => {
+      setBooks((prev) => prev?.map((b) => (b.id === book.id ? { ...b, ...book } : b)));
+    },
+    [setBooks],
+  );
 
   return useMemo<UseBooksResponse>(
     () => ({
       books: paginatedBooks,
       error,
       pages,
+      refresh,
       selectedBook,
       selectBook: setSelectedBookId,
       unselectBook,
+      updateBook,
     }),
     [paginatedBooks, error, pages, selectedBook, setSelectedBookId, unselectBook],
   );

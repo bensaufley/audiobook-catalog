@@ -1,16 +1,14 @@
-import Fastify, { FastifyRequest } from 'fastify';
-import fastifyStatic from 'fastify-static';
+import Fastify from 'fastify';
+import fastifyStatic from '@fastify/static';
+import { resolve } from 'path';
 import type webpackT from 'webpack';
-import { basename, resolve } from 'path';
+import { umzug } from '~db/migrations';
+import { ready } from '~db/models';
+import books from '~server/routes/books';
 
 import type * as configT from '../../webpack.config';
-import { umzug } from '~db/migrations';
-import Audiobook from '~db/models/Audiobook';
-import { ready } from '~db/models';
-
-type BookRequest = FastifyRequest<{
-  Params: { id: string };
-}>;
+import User from '~db/models/User';
+import users from '~server/routes/users';
 
 const logLevels = ['trace', 'debug', 'info', 'warn', 'error'];
 const sanitizeLogLevel = (level?: string) => {
@@ -28,8 +26,14 @@ const init = async () => {
 
   const fastify = Fastify({
     logger: {
-      prettyPrint: process.env.APP_ENV === 'development',
       level: sanitizeLogLevel(process.env.LOG_LEVEL),
+      ...(process.env.APP_ENV === 'development'
+        ? {
+            transport: {
+              target: 'pino-pretty',
+            },
+          }
+        : {}),
     },
   });
 
@@ -46,59 +50,24 @@ const init = async () => {
     root: resolve(__dirname, '../client'),
     prefix: '/static/',
   });
+  fastify.addHook('preHandler', async (req) => {
+    const userId = req.headers['x-audiobook-catalog-user'];
 
-  fastify.get('/books', async (_, res) => {
-    const audiobooks = await Audiobook.findAll({
-      attributes: ['id', 'title', 'createdAt', 'duration'],
-      include: [Audiobook.associations.Authors, Audiobook.associations.Narrators],
-      order: [
-        [Audiobook.associations.Authors, 'lastName', 'ASC'],
-        [Audiobook.associations.Authors, 'firstName', 'ASC'],
-        ['title', 'ASC'],
-      ],
+    req.log.debug('x-audiobook-catalog-user: %s', userId);
+    if (!userId) return;
 
-      logging: (...args) => fastify.log.debug(...args),
-    });
-    await res.send(audiobooks);
-  });
+    try {
+      const user = await User.findOne({ where: { id: userId } });
 
-  fastify.get('/books/:id', async ({ params: { id } }: BookRequest, res) => {
-    const book = await Audiobook.findOne({
-      attributes: ['id', 'title', 'createdAt', 'duration'],
-      include: [Audiobook.associations.Authors, Audiobook.associations.Narrators],
-      where: { id },
-    });
-
-    if (book === null) {
-      await res.status(404).send({});
-      return;
+      if (user) req.user = user;
+      else req.log.warn('No User found for id %s', userId);
+    } catch (err) {
+      req.log.error(err);
     }
-
-    await res.send(book);
   });
 
-  fastify.get('/books/:id/cover', async ({ params: { id } }: BookRequest, res) => {
-    const book = await Audiobook.findOne({ attributes: ['cover', 'coverType'], where: { id } });
-
-    if (book === null) {
-      await res.status(404).send({});
-      return;
-    }
-
-    await res.header('Content-Type', book.coverType).send(book.cover);
-  });
-
-  fastify.get('/books/:id/download', async ({ params: { id } }: BookRequest, res) => {
-    const book = await Audiobook.findOne({ attributes: ['filepath'], where: { id } });
-
-    if (book === null) {
-      await res.status(404);
-      return;
-    }
-
-    const filename = basename(book.filepath);
-    await res.header('Content-Disposition', `attachment; filename="${filename}"`).sendFile(book.filepath, '/');
-  });
+  await fastify.register(books, { prefix: '/books' });
+  await fastify.register(users, { prefix: '/users' });
 
   fastify.get('/*', async (req, res) => {
     await res.sendFile('index.html');
