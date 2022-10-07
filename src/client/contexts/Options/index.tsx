@@ -42,6 +42,7 @@ export type Options = OptionValues & {
   changeSortOrder: StateUpdater<SortOrder>;
   selectBook: (id: string) => void;
   unselectBook: () => void;
+  updateBook: (book: AudiobookJSON) => void;
 
   refresh: () => void;
 };
@@ -75,6 +76,7 @@ const OptionsContext = createContext<Options>({
   changeSortOrder: noop,
   selectBook: noop,
   unselectBook: noop,
+  updateBook: noop,
   refresh: noop,
 });
 
@@ -111,7 +113,7 @@ export const OptionsProvider: FunctionComponent<Partial<OptionValues>> = ({ chil
     else changeSortOrder(SortOrder.Ascending);
   }, [sortBy]);
 
-  const { books, error, pages, refresh, selectedBook, selectBook, unselectBook } = useBooks({
+  const { books, error, pages, refresh, selectedBook, selectBook, unselectBook, updateBook } = useBooks({
     filter,
     perPage,
     page,
@@ -148,6 +150,7 @@ export const OptionsProvider: FunctionComponent<Partial<OptionValues>> = ({ chil
       sortBy,
       sortOrder,
       unselectBook,
+      updateBook,
     }),
     [
       books,
@@ -171,6 +174,7 @@ export const OptionsProvider: FunctionComponent<Partial<OptionValues>> = ({ chil
       sortBy,
       sortOrder,
       unselectBook,
+      updateBook,
     ],
   );
   return <OptionsContext.Provider value={value}>{children}</OptionsContext.Provider>;

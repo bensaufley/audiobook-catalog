@@ -15,6 +15,7 @@ import type { AuthorAttributes, default as Author } from '~db/models/Author';
 import type { default as Narrator, NarratorAttributes } from '~db/models/Narrator';
 import type User from '~db/models/User';
 import type UserAudiobook from '~db/models/UserAudiobook';
+import type { UserAudiobookJSON } from '~db/models/UserAudiobook';
 
 export interface AudiobookAttributes<T> {
   id: string;
@@ -102,7 +103,8 @@ export class Audiobook<T>
 
 export default Audiobook;
 
-export interface AudiobookJSON<T = unknown> extends Omit<Audiobook<T>, 'createdAt' | 'updatedAt'> {
+export interface AudiobookJSON<T = unknown> extends Omit<Audiobook<T>, 'createdAt' | 'updatedAt' | 'UserAudiobooks'> {
   createdAt: string;
   updatedAt: string;
+  UserAudiobooks: UserAudiobookJSON[];
 }

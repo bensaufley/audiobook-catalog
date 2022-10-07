@@ -25,7 +25,7 @@ export const useUser = () => useContext(UserContext);
 const userCookieName = 'audiobook-catalog-user';
 
 export const UserProvider: FunctionComponent = ({ children }) => {
-  const [user, setUserState] = useState<UserFields>(() => {
+  const [user, setUserState] = useState<UserFields | undefined>(() => {
     const cookieUser = cookie.get(userCookieName);
     if (cookieUser) return JSON.parse(cookieUser);
     return undefined;

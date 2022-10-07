@@ -5,7 +5,6 @@ import { Read, Size, useOptions } from '~client/contexts/Options';
 import styles from '~client/contexts/Options/styles.module.css';
 import { SortBy, SortOrder } from '~client/contexts/Options/sort';
 import { useUser } from '~client/contexts/User';
-import useBooks from '~client/contexts/Options/useBooks';
 
 const Options: FunctionComponent = () => {
   const {
@@ -21,7 +20,6 @@ const Options: FunctionComponent = () => {
     pages,
     perPage,
     read,
-    refresh,
     size,
     sortBy,
     sortOrder,
@@ -53,7 +51,6 @@ const Options: FunctionComponent = () => {
   const handleChangeRead: h.JSX.GenericEventHandler<HTMLSelectElement> = useCallback(
     ({ currentTarget: { value } }) => {
       changeRead(value as Read);
-      refresh(); // TODO: handle more elegantly
     },
     [changeRead],
   );

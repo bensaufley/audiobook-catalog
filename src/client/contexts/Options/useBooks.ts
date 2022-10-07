@@ -13,6 +13,7 @@ interface UseBooksResponse {
   selectedBook: AudiobookJSON | undefined;
   selectBook: (id: string) => void;
   unselectBook: () => void;
+  updateBook: (book: AudiobookJSON) => void;
 }
 
 const useBooks = ({
@@ -122,6 +123,13 @@ const useBooks = ({
     setRefreshToken(Date.now());
   }, [setRefreshToken]);
 
+  const updateBook = useCallback(
+    (book: AudiobookJSON) => {
+      setBooks((prev) => prev?.map((b) => (b.id === book.id ? { ...b, ...book } : b)));
+    },
+    [setBooks],
+  );
+
   return useMemo<UseBooksResponse>(
     () => ({
       books: paginatedBooks,
@@ -131,6 +139,7 @@ const useBooks = ({
       selectedBook,
       selectBook: setSelectedBookId,
       unselectBook,
+      updateBook,
     }),
     [paginatedBooks, error, pages, selectedBook, setSelectedBookId, unselectBook],
   );

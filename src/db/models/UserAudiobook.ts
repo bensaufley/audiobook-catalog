@@ -63,3 +63,8 @@ export default class UserAudiobook
     );
   }
 }
+
+export type UserAudiobookJSON = Pick<UserAudiobook, 'read' | 'UserId' | 'AudiobookId'> & {
+  createdAt: string;
+  updatedAt: string;
+};

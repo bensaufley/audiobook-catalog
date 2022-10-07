@@ -2,11 +2,12 @@ import { FunctionComponent, Fragment, h } from 'preact';
 import { useCallback, useState } from 'preact/hooks';
 
 import type { AudiobookJSON } from '~db/models/Audiobook';
+import type { UserAudiobookJSON } from '~db/models/UserAudiobook';
 import BookModal from '~client/components/BookModal';
 import { useModal } from '~client/contexts/Modal';
 import { useUser } from '~client/contexts/User';
-
 import styles from '~client/components/Book/styles.module.css';
+import { useOptions } from '~client/contexts/Options';
 
 interface Props {
   book: AudiobookJSON;
@@ -18,6 +19,7 @@ const stopProp: h.JSX.GenericEventHandler<HTMLElement> = (e) => {
 
 const Book: FunctionComponent<Props> = ({ book }) => {
   const { setContent } = useModal();
+  const { updateBook } = useOptions();
 
   const [read, setRead] = useState(() => !!book.UserAudiobooks?.some(({ read: r }) => r));
 
@@ -45,6 +47,19 @@ const Book: FunctionComponent<Props> = ({ book }) => {
         });
 
         setRead(checked);
+        const ua = book.UserAudiobooks?.some(({ UserId }) => UserId === user!.id);
+        const UserAudiobooks: UserAudiobookJSON[] = ua
+          ? book.UserAudiobooks!.map((x) => (x.UserId === user!.id ? { ...x, read: checked } : x))
+          : [
+              {
+                read: checked,
+                UserId: user!.id,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+                AudiobookId: book.id,
+              },
+            ];
+        updateBook({ ...book, UserAudiobooks });
       } catch {}
 
       setLoading(false);
