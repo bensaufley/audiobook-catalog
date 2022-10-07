@@ -69,13 +69,18 @@ const BookModal: FunctionComponent<Props> = ({ book }) => {
         <p>View In:</p>
         <ul>
           <li>
-            <a href={`https://app.thestorygraph.com/browse?search_term=${searchParam}`} target="_blank">
+            <a
+              href={`https://app.thestorygraph.com/browse?search_term=${searchParam}`}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
               The StoryGraph
             </a>
           </li>
           <li>
             <a
               href={`https://www.librarything.com/search.php?searchtype=101&searchtype=101&sortchoice=0&search=${searchParam}`}
+              rel="noopener noreferrer"
               target="_blank"
             >
               LibraryThing
