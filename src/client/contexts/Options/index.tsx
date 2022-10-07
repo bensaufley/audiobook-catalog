@@ -103,7 +103,6 @@ export const OptionsProvider: FunctionComponent<Partial<OptionValues>> = ({ chil
   const [page, changePage] = useState(0);
   const [perPage, changePerPage] = useState(60);
   const [read, changeRead] = useState(Read.All);
-  const { user } = useUser();
 
   const [sortBy, changeSortBy] = useState(SortBy.Author);
   const [sortOrder, changeSortOrder] = useState(SortOrder.Ascending);
@@ -120,7 +119,6 @@ export const OptionsProvider: FunctionComponent<Partial<OptionValues>> = ({ chil
     read,
     sortBy,
     sortOrder,
-    user,
   });
 
   useEffect(() => {

@@ -1,5 +1,5 @@
 import { FunctionComponent, Fragment, h } from 'preact';
-import { useCallback, useState } from 'preact/hooks';
+import { useCallback, useMemo, useState } from 'preact/hooks';
 
 import type { AudiobookJSON } from '~db/models/Audiobook';
 import type { UserAudiobookJSON } from '~db/models/UserAudiobook';
@@ -21,7 +21,7 @@ const Book: FunctionComponent<Props> = ({ book }) => {
   const { setContent } = useModal();
   const { updateBook } = useOptions();
 
-  const [read, setRead] = useState(() => !!book.UserAudiobooks?.some(({ read: r }) => r));
+  const read = book.UserAudiobooks?.some(({ read: r }) => r);
 
   const { user } = useUser();
 
@@ -46,7 +46,6 @@ const Book: FunctionComponent<Props> = ({ book }) => {
           headers: { 'x-audiobook-catalog-user': user!.id },
         });
 
-        setRead(checked);
         const ua = book.UserAudiobooks?.some(({ UserId }) => UserId === user!.id);
         const UserAudiobooks: UserAudiobookJSON[] = ua
           ? book.UserAudiobooks!.map((x) => (x.UserId === user!.id ? { ...x, read: checked } : x))
@@ -64,7 +63,7 @@ const Book: FunctionComponent<Props> = ({ book }) => {
 
       setLoading(false);
     },
-    [setRead, setLoading],
+    [setLoading],
   );
 
   return (

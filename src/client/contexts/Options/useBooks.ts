@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'preact/hooks';
 import { levenshtein } from 'wuzzy';
 import { Read } from '~client/contexts/Options';
 import { SortBy, sorters, SortOrder } from '~client/contexts/Options/sort';
-import type { UserFields } from '~client/contexts/User';
+import { UserFields, useUser } from '~client/contexts/User';
 import type { AudiobookJSON } from '~db/models/Audiobook';
 
 interface UseBooksResponse {
@@ -23,7 +23,6 @@ const useBooks = ({
   read,
   sortBy,
   sortOrder,
-  user,
 }: {
   filter?: string;
   perPage: number;
@@ -31,11 +30,11 @@ const useBooks = ({
   read: Read;
   sortBy: SortBy;
   sortOrder: SortOrder;
-  user: UserFields | undefined;
 }): UseBooksResponse => {
   const [error, setError] = useState<string>();
   const [books, setBooks] = useState<AudiobookJSON[]>();
   const [pages, setPages] = useState(1);
+  const { user } = useUser();
 
   const [selectedBookId, setSelectedBookId] = useState<string>();
 
@@ -107,6 +106,7 @@ const useBooks = ({
   useEffect(() => {
     (async () => {
       try {
+        console.debug('fetching books');
         const resp = await fetch('/books', { headers: { 'x-audiobook-catalog-user': user?.id || '' } });
         const bks = await resp.json();
         if (!resp.ok) throw bks;
@@ -117,7 +117,7 @@ const useBooks = ({
         setPages(1);
       }
     })();
-  }, [refreshToken]);
+  }, [user?.id, refreshToken]);
 
   const refresh = useCallback(() => {
     setRefreshToken(Date.now());
