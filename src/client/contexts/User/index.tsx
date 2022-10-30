@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import cookie from 'js-cookie';
 import { createContext, FunctionComponent, h } from 'preact';
 import { useCallback, useContext, useEffect, useMemo, useState } from 'preact/hooks';
@@ -24,11 +25,22 @@ export const useUser = () => useContext(UserContext);
 
 const userCookieName = 'audiobook-catalog-user';
 
+const setCookie = (user: UserFields) => {
+  cookie.set(userCookieName, JSON.stringify(user), {
+    expires: dayjs().add(2, 'weeks').toDate(),
+    sameSite: 'strict',
+    secure: false, // audiobook-catalog is not served via HTTPS
+  });
+};
+
 export const UserProvider: FunctionComponent = ({ children }) => {
   const [user, setUserState] = useState<UserFields | undefined>(() => {
     const cookieUser = cookie.get(userCookieName);
-    if (cookieUser) return JSON.parse(cookieUser);
-    return undefined;
+    if (!cookieUser) return undefined;
+
+    const user = JSON.parse(cookieUser);
+    setCookie(user); // extend cookie expiration
+    return user;
   });
   const [users, setUsers] = useState<UserFields[]>([]);
 
@@ -45,7 +57,7 @@ export const UserProvider: FunctionComponent = ({ children }) => {
   const setUser = useCallback(
     (user: UserFields | null) => {
       if (user) {
-        cookie.set(userCookieName, JSON.stringify(user));
+        setCookie(user);
         setUserState(user);
       } else {
         cookie.remove(userCookieName);

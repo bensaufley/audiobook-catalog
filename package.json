@@ -30,6 +30,7 @@
     "babel-loader": "^8.2.3",
     "babel-plugin-module-resolver": "^4.1.0",
     "css-loader": "^6.5.1",
+    "dayjs": "^1.11.6",
     "fastify-webpack-hmr": "^3.0.0",
     "html-webpack-plugin": "^5.5.0",
     "jest": "^27.4.5",
