@@ -6,3 +6,4 @@ node_modules
 /*.sqlite3
 coverage
 yarn-error.log
+development
