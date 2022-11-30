@@ -1,12 +1,13 @@
-import Fastify from 'fastify';
+import Fastify, { FastifyBaseLogger, FastifyServerOptions } from 'fastify';
 import fastifyStatic from '@fastify/static';
-import { resolve } from 'path';
-import type webpackT from 'webpack';
+import type { Server } from 'node:http';
+import { resolve } from 'node:path';
+import httpDevServer from 'vavite/http-dev-server';
+
 import { umzug } from '~db/migrations';
 import { ready } from '~db/models';
 import books from '~server/routes/books';
 
-import type * as configT from '../../webpack.config';
 import User from '~db/models/User';
 import users from '~server/routes/users';
 
@@ -24,6 +25,16 @@ const init = async () => {
 
   await ready;
 
+  let devServerOpts: Pick<FastifyServerOptions<Server, FastifyBaseLogger>, 'serverFactory'> | undefined;
+  if (httpDevServer) {
+    devServerOpts = {
+      serverFactory: (handler) => {
+        httpDevServer!.on('request', handler);
+        return httpDevServer!;
+      },
+    };
+  }
+
   const fastify = Fastify({
     logger: {
       level: sanitizeLogLevel(process.env.LOG_LEVEL),
@@ -35,16 +46,8 @@ const init = async () => {
           }
         : {}),
     },
+    ...devServerOpts,
   });
-
-  if (process.env.APP_ENV === 'development') {
-    const webpack: typeof webpackT = require('webpack');
-    const HMR = require('fastify-webpack-hmr');
-    const { clientConfig }: typeof configT = require('../../webpack.config');
-
-    const compiler = webpack(clientConfig);
-    fastify.register(HMR, { compiler, webpackDev: { publicPath: '/static/' } });
-  }
 
   fastify.register(fastifyStatic, {
     root: resolve(__dirname, '../client'),

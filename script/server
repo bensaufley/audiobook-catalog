@@ -15,5 +15,7 @@ docker run \
   -e LOG_LEVEL=debug \
   -e NODE_ENV="${NODE_ENV:-development}" \
   -p 6451:3000 \
+  -p 6452:6452 \
+  -p 6453:6453 \
   audiobook-catalog:dev \
   yarn dev
