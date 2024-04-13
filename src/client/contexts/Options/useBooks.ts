@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'preact/hooks';
 import { levenshtein } from 'wuzzy';
-import { Read } from '~client/contexts/Options';
-import { SortBy, sorters, SortOrder } from '~client/contexts/Options/sort';
-import { UserFields, useUser } from '~client/contexts/User';
+
+import { Read } from '~client/contexts/Options/enums';
+import { type SortBy, sorters, SortOrder } from '~client/contexts/Options/sort';
+import { useUser } from '~client/contexts/User';
 import type { AudiobookJSON } from '~db/models/Audiobook';
 
 interface UseBooksResponse {
@@ -41,7 +42,7 @@ const useBooks = ({
   const selectedBook = useMemo(() => {
     if (!selectedBookId) return undefined;
 
-    return books?.find(({ id }) => id === selectedBookId)!;
+    return books?.find(({ id }) => id === selectedBookId);
   }, [books, selectedBookId]);
 
   const unselectBook = useCallback(() => {
@@ -74,11 +75,12 @@ const useBooks = ({
 
     let threshold = 0.5;
     do {
+      const thr = threshold;
       fuzzyBooks = readBooks.filter(
         (book) =>
-          levenshtein(book.title, lowerFilter) > threshold ||
+          levenshtein(book.title, lowerFilter) > thr ||
           [...(book.Authors || []), ...(book.Narrators || [])].some(
-            ({ firstName = '', lastName }) => levenshtein(`${firstName} ${lastName}`.trim(), lowerFilter) > threshold,
+            ({ firstName = '', lastName }) => levenshtein(`${firstName} ${lastName}`.trim(), lowerFilter) > thr,
           ),
       );
       threshold += 0.05;
@@ -88,7 +90,7 @@ const useBooks = ({
   }, [books, filter, read]);
 
   const sortedBooks = useMemo(() => {
-    if (!filteredBooks) return;
+    if (!filteredBooks) return null;
 
     const sorted = [...filteredBooks].sort(sorters[sortBy]);
     if (sortOrder === SortOrder.Descending) sorted.reverse();
@@ -106,7 +108,6 @@ const useBooks = ({
   useEffect(() => {
     (async () => {
       try {
-        console.debug('fetching books');
         const resp = await fetch('/books', { headers: { 'x-audiobook-catalog-user': user?.id || '' } });
         const bks = await resp.json();
         if (!resp.ok) throw bks;

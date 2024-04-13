@@ -1,5 +1,5 @@
-import { FastifyPluginAsync, FastifyRequest } from 'fastify';
-import { basename } from 'path';
+import type { FastifyPluginAsync, FastifyRequest } from 'fastify';
+import { basename } from 'node:path';
 
 import Audiobook from '~db/models/Audiobook';
 
@@ -7,7 +7,7 @@ type BookRequest = FastifyRequest<{
   Params: { id: string };
 }>;
 
-const books: FastifyPluginAsync = async (fastify, opts) => {
+const books: FastifyPluginAsync = async (fastify, _opts) => {
   fastify.get('/', async ({ log, user }, res) => {
     log.debug('user: %o', user);
     const audiobooks = await Audiobook.findAll({

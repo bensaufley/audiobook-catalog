@@ -1,10 +1,11 @@
-import { Fragment, FunctionComponent, h } from 'preact';
+import type { FunctionComponent, JSX } from 'preact';
 import { useCallback, useEffect, useState } from 'preact/hooks';
+
 import NewUser from '~client/components/UserManagement/NewUser';
 import { useModal } from '~client/contexts/Modal';
 import { useUser } from '~client/contexts/User';
 
-const cancelSubmit: h.JSX.GenericEventHandler<HTMLFormElement> = (e) => e.preventDefault();
+const cancelSubmit: JSX.GenericEventHandler<HTMLFormElement> = (e) => e.preventDefault();
 
 const UserManagement: FunctionComponent = () => {
   const { setUser, user, users } = useUser();
@@ -16,7 +17,7 @@ const UserManagement: FunctionComponent = () => {
     setSelection(user?.id || '');
   }, [user?.id]);
 
-  const handleSelect: h.JSX.GenericEventHandler<HTMLSelectElement> = useCallback(
+  const handleSelect: JSX.GenericEventHandler<HTMLSelectElement> = useCallback(
     ({ currentTarget: { value } }) => {
       switch (value) {
         case '': {

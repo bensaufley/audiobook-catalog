@@ -1,4 +1,7 @@
-export const wait = (n: number) => new Promise((resolve) => setTimeout(resolve, n));
+export const wait = (n: number) =>
+  new Promise<void>((resolve) => {
+    setTimeout(resolve, n);
+  });
 
 export const noop = () => {
   /* noop */

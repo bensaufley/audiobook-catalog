@@ -1,13 +1,14 @@
-import { FunctionComponent, Fragment, h } from 'preact';
-import { useCallback, useMemo, useState } from 'preact/hooks';
+import type { FunctionComponent, h } from 'preact';
+import { useCallback, useState } from 'preact/hooks';
 
-import type { AudiobookJSON } from '~db/models/Audiobook';
-import type { UserAudiobookJSON } from '~db/models/UserAudiobook';
 import BookModal from '~client/components/BookModal';
 import { useModal } from '~client/contexts/Modal';
-import { useUser } from '~client/contexts/User';
-import styles from '~client/components/Book/styles.module.css';
 import { useOptions } from '~client/contexts/Options';
+import { useUser } from '~client/contexts/User';
+import type { AudiobookJSON } from '~db/models/Audiobook';
+import type { UserAudiobookJSON } from '~db/models/UserAudiobook';
+
+import styles from '~client/components/Book/styles.module.css';
 
 interface Props {
   book: AudiobookJSON;
@@ -26,7 +27,7 @@ const Book: FunctionComponent<Props> = ({ book }) => {
   const { user } = useUser();
 
   const onClick = useCallback(
-    (e: MouseEvent) => {
+    (e: Event) => {
       e.preventDefault();
       setContent(<BookModal book={book} />);
     },
@@ -59,7 +60,9 @@ const Book: FunctionComponent<Props> = ({ book }) => {
               },
             ];
         updateBook({ ...book, UserAudiobooks });
-      } catch {}
+      } catch {
+        /* noop */
+      }
 
       setLoading(false);
     },
@@ -68,7 +71,19 @@ const Book: FunctionComponent<Props> = ({ book }) => {
 
   return (
     <div class={styles.container}>
-      <div class={styles.book} onClick={onClick} style={{ '--cover': `url('/books/${book.id}/cover')` }}>
+      <div
+        role="button"
+        tabindex={0}
+        class={styles.book}
+        onClick={onClick}
+        style={{ '--cover': `url('/books/${book.id}/cover')` }}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            onClick(e);
+          }
+        }}
+      >
         {user && <input disabled={loading} type="checkbox" onChange={handleRead} onClick={stopProp} checked={read} />}
       </div>
     </div>

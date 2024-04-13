@@ -1,4 +1,5 @@
-import { Association, Model, Optional, Sequelize, STRING, UUID, UUIDV4 } from 'sequelize';
+import { type Association, Model, type Sequelize, STRING } from 'sequelize';
+
 import type models from '~db/models';
 import type Audiobook from '~db/models/Audiobook';
 import type Author from '~db/models/Author';
@@ -15,9 +16,11 @@ export default class AudiobookAuthor
   implements AudiobookAuthorAttributes
 {
   public declare AudiobookId: string;
+
   public declare AuthorId: string;
 
   public declare readonly createdAt: Date;
+
   public declare readonly updatedAt: Date;
 
   declare static associations: {

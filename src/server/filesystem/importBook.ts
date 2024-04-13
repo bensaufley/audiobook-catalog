@@ -1,6 +1,7 @@
 import type { FastifyLoggerInstance } from 'fastify';
 import { parseFile } from 'music-metadata';
 import type { Sequelize } from 'sequelize';
+
 import Audiobook from '~db/models/Audiobook';
 import Author from '~db/models/Author';
 import Narrator from '~db/models/Narrator';
@@ -27,7 +28,7 @@ const importBook = async (filepath: string, sequelize: Sequelize, log: FastifyLo
 
   const transaction = await sequelize.transaction();
 
-  let name = title || album;
+  const name = title || album;
   if (!name) {
     log.error('No title for file %s. Skipping', filepath);
     return;

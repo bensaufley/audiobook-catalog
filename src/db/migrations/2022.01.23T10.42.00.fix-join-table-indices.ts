@@ -1,4 +1,5 @@
 import { DATE, STRING, UUID } from 'sequelize';
+
 import type { Migration } from '~db/migrations';
 
 export const up: Migration = async ({ context: queryInterface }) => {

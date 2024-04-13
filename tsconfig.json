@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
-    "target": "esnext",
+    "target": "ESNext",
 
-    "module": "commonjs",
+    "module": "ESNext",
     "baseUrl": "./",
     "paths": {
       "~client/*": ["src/client/*"],
@@ -11,14 +11,14 @@
       "~shared/*": ["src/shared/*"],
       "~test/*": ["test/*"]
     },
+    "moduleResolution": "Node",
     "resolveJsonModule": true,
 
     "allowJs": true,
     "checkJs": true,
 
-    "jsx": "preserve",
-    "jsxFactory": "h",
-    "jsxFragmentFactory": "Fragment",
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact",
 
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,

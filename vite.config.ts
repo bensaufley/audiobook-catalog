@@ -1,9 +1,11 @@
-import { defineConfig } from 'vite';
-import path from 'path';
-import envCompatible from 'vite-plugin-env-compatible';
-import { createHtmlPlugin } from 'vite-plugin-html';
+/* eslint-disable import/no-extraneous-dependencies */
+/// <reference types="preact" />
+
 import preact from '@preact/preset-vite';
-import vavite from 'vavite';
+import path from 'node:path';
+import { vavite } from 'vavite';
+import { defineConfig } from 'vite';
+import { createHtmlPlugin } from 'vite-plugin-html';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -29,7 +31,6 @@ export default defineConfig({
     },
   },
   plugins: [
-    envCompatible(),
     preact(),
     createHtmlPlugin({
       entry: 'index.tsx',
@@ -41,10 +42,9 @@ export default defineConfig({
       },
     }),
     vavite({
-      serverEntry: './src/server/index.ts',
+      serverEntry: './server/index.ts',
       reloadOn: 'static-deps-change',
       serveClientAssetsInDev: true,
     }),
   ],
-  build: {},
 });

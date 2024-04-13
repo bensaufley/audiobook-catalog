@@ -5,7 +5,7 @@ jobs:
   test:
     resource_class: small
     docker:
-      - image: node:16.13.1
+      - image: node:18.7.0
         environment:
           APP_ENV: test
           NODE_ENV: test

@@ -1,4 +1,5 @@
-import { Association, Model, Optional, Sequelize, STRING, UUID, UUIDV4 } from 'sequelize';
+import { type Association, Model, type Sequelize, STRING } from 'sequelize';
+
 import type models from '~db/models';
 import type Audiobook from '~db/models/Audiobook';
 import type Narrator from '~db/models/Narrator';
@@ -15,6 +16,7 @@ export default class AudiobookNarrator
   implements AudiobookNarratorAttributes
 {
   public declare AudiobookId: string;
+
   public declare NarratorId: string;
 
   public declare static associations: {
@@ -23,6 +25,7 @@ export default class AudiobookNarrator
   };
 
   public declare readonly createdAt: Date;
+
   public declare readonly updatedAt: Date;
 
   public static associate(m: typeof models) {

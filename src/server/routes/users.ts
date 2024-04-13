@@ -1,4 +1,5 @@
-import { FastifyPluginAsync, FastifyReply, FastifyRequest } from 'fastify';
+import type { FastifyPluginAsync, FastifyReply, FastifyRequest } from 'fastify';
+
 import User from '~db/models/User';
 import UserAudiobook from '~db/models/UserAudiobook';
 
@@ -30,7 +31,7 @@ const setBookReadStatus =
     await res.status(204).send();
   };
 
-const users: FastifyPluginAsync = async (fastify, opts) => {
+const users: FastifyPluginAsync = async (fastify, _opts) => {
   fastify.decorateRequest<User | undefined>('user', undefined);
 
   fastify.get('/', async (_, res) => {

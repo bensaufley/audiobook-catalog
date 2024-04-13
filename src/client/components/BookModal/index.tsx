@@ -1,9 +1,10 @@
-import { Fragment, FunctionComponent, h } from 'preact';
+import type { FunctionComponent, h } from 'preact';
 import { useCallback, useMemo, useState } from 'preact/hooks';
 
-import type { AudiobookJSON } from '~db/models/Audiobook';
-import styles from '~client/components/BookModal/styles.module.css';
 import { useUser } from '~client/contexts/User';
+import type { AudiobookJSON } from '~db/models/Audiobook';
+
+import styles from '~client/components/BookModal/styles.module.css';
 
 interface Props {
   book: AudiobookJSON;
@@ -18,11 +19,13 @@ const formatDuration = (duration: number) => {
 };
 
 const BookModal: FunctionComponent<Props> = ({ book }) => {
-  const searchParam = useMemo(() => {
-    return `${encodeURIComponent(book.title)} ${
-      book.Authors?.map(({ firstName = '', lastName }) => `${firstName} ${lastName}`) || ''
-    }`;
-  }, [book.title, book.Authors]);
+  const searchParam = useMemo(
+    () =>
+      `${encodeURIComponent(book.title)} ${
+        book.Authors?.map(({ firstName = '', lastName }) => `${firstName} ${lastName}`) || ''
+      }`,
+    [book.title, book.Authors],
+  );
 
   const { user } = useUser();
 
@@ -90,7 +93,9 @@ const BookModal: FunctionComponent<Props> = ({ book }) => {
       </div>
       <div class={styles.buttons}>
         <a href={`/books/${book.id}/download`}>Download</a>
-        <a href={`bookplayer://download?url="${location.protocol}//${location.host}/books/${book.id}/download"`}>
+        <a
+          href={`bookplayer://download?url="${window.location.protocol}//${window.location.host}/books/${book.id}/download"`}
+        >
           Bookplayer
         </a>
       </div>

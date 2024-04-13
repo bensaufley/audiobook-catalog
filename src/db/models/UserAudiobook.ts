@@ -1,4 +1,5 @@
-import { Association, BOOLEAN, Model, Optional, Sequelize, STRING, UUID, UUIDV4 } from 'sequelize';
+import { type Association, BOOLEAN, Model, type Sequelize, STRING } from 'sequelize';
+
 import type models from '~db/models';
 import type Audiobook from '~db/models/Audiobook';
 import type User from '~db/models/User';
@@ -19,12 +20,15 @@ export default class UserAudiobook
   public declare read: boolean;
 
   public declare AudiobookId: string;
+
   public declare UserId: string;
 
   public declare readonly createdAt: Date;
+
   public declare readonly updatedAt: Date;
 
   public declare Audiobook: Audiobook<unknown>;
+
   public declare User: User;
 
   declare static associations: {

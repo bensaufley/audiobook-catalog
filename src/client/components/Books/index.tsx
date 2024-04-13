@@ -1,4 +1,4 @@
-import { Fragment, FunctionComponent, h } from 'preact';
+import type { FunctionComponent } from 'preact';
 
 import Book from '~client/components/Book';
 import BookModal from '~client/components/BookModal';
@@ -7,7 +7,7 @@ import { useOptions, useSizeColumns } from '~client/contexts/Options';
 import styles from '~client/components/Books/styles.module.css';
 
 const Books: FunctionComponent = () => {
-  const { books, error, selectedBook, selectBook, unselectBook } = useOptions();
+  const { books, error, selectedBook /* , selectBook, unselectBook */ } = useOptions();
   const columns = useSizeColumns();
 
   if (error) {

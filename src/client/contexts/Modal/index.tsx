@@ -1,9 +1,9 @@
-import { createContext, FunctionComponent, Fragment, h, VNode } from 'preact';
-import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'preact/hooks';
-
-import styles from '~client/contexts/Modal/styles.module.css';
+import { createContext, type FunctionComponent, type JSX, type VNode } from 'preact';
+import { useCallback, useContext, useEffect, useMemo, useState } from 'preact/hooks';
 
 import { noop } from '~shared/utilities';
+
+import styles from '~client/contexts/Modal/styles.module.css';
 
 export interface ModalValues {
   content: VNode | null;
@@ -25,8 +25,6 @@ export const ModalProvider: FunctionComponent = ({ children }) => {
 
   useEffect(() => {
     const intercept = (e: KeyboardEvent) => {
-      console.log('intercept intercepted', e);
-
       if (!content) return;
 
       if (e.key === 'Escape') {
@@ -42,7 +40,7 @@ export const ModalProvider: FunctionComponent = ({ children }) => {
     };
   }, [content, setContent]);
 
-  const handleHide: h.JSX.GenericEventHandler<HTMLElement> = useCallback(
+  const handleHide: JSX.GenericEventHandler<HTMLElement> = useCallback(
     (e) => {
       e.preventDefault();
       setContent(null);
@@ -57,8 +55,8 @@ export const ModalProvider: FunctionComponent = ({ children }) => {
       {children}
       {content && (
         <>
-          <div onClick={handleHide} class={styles.overlay} />
-          <div class={styles.modal}>
+          <div aria-hidden onClick={handleHide} class={styles.overlay} />
+          <div class={styles.modal} role="dialog">
             <button class={styles.closeButton} type="button" onClick={handleHide}>
               &times;
             </button>

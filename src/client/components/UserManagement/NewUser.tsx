@@ -1,5 +1,6 @@
-import { FunctionComponent, h } from 'preact';
+import type { FunctionComponent, h } from 'preact';
 import { useCallback, useState } from 'preact/hooks';
+
 import { useModal } from '~client/contexts/Modal';
 import { useUser } from '~client/contexts/User';
 

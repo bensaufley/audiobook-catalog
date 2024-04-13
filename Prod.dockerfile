@@ -1,4 +1,4 @@
-FROM node:16.13.1 AS builder
+FROM node:18.7.0 AS builder
 LABEL maintainer="Ben Saufley<contact@bensaufley.com>"
 
 WORKDIR /usr/src/audiobook-catalog
@@ -15,7 +15,7 @@ RUN yarn build:prod
 # hadolint ignore=DL3059
 RUN npm prune --production
 
-FROM node:16.13.1
+FROM node:18.7.0
 
 WORKDIR /usr/src/audiobook-catalog
 

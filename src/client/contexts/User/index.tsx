@@ -1,7 +1,8 @@
 import dayjs from 'dayjs';
 import cookie from 'js-cookie';
-import { createContext, FunctionComponent, h } from 'preact';
+import { createContext, type FunctionComponent } from 'preact';
 import { useCallback, useContext, useEffect, useMemo, useState } from 'preact/hooks';
+
 import { noop } from '~shared/utilities';
 
 export interface UserFields {
@@ -51,6 +52,7 @@ export const UserProvider: FunctionComponent = ({ children }) => {
   }, [setUsers]);
 
   useEffect(() => {
+    // eslint-disable-next-line no-console
     refreshUsers().catch(console.error);
   }, []);
 

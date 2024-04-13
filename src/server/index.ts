@@ -1,5 +1,7 @@
+/// <reference types="vite/client" />
+
 import type { AddressInfo } from 'net';
-import httpDevServer from 'vavite/http-dev-server';
+import type httpDevServer from 'vavite/http-dev-server';
 
 import sequelize from '~db/sequelize';
 import poll from '~server/filesystem/poll';
@@ -13,8 +15,13 @@ import init from '~server/init';
   poll(sequelize, server.log, '/audiobooks', pollPeriod);
 
   try {
+    let devServer: typeof httpDevServer | undefined;
+    if (import.meta.env.DEV) {
+      // eslint-disable-next-line import/no-extraneous-dependencies
+      ({ default: devServer } = await import('vavite/http-dev-server'));
+    }
     await server.listen({
-      port: httpDevServer ? (httpDevServer.address() as AddressInfo).port : 3000,
+      port: devServer ? (devServer.address() as AddressInfo).port : 3000,
       host: '0.0.0.0',
     });
   } catch (err) {

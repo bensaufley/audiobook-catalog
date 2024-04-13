@@ -1,22 +1,11 @@
-import { createContext, FunctionComponent, h } from 'preact';
-import { StateUpdater, useContext, useEffect, useMemo, useState } from 'preact/hooks';
+import { createContext, type FunctionComponent } from 'preact';
+import { type StateUpdater, useContext, useEffect, useMemo, useState } from 'preact/hooks';
+
 import { SortBy, SortOrder } from '~client/contexts/Options/sort';
 import useBooks from '~client/contexts/Options/useBooks';
-import { useUser } from '~client/contexts/User';
 import type { AudiobookJSON } from '~db/models/Audiobook';
 
-export enum Size {
-  Small,
-  Medium,
-  Large,
-  XLarge,
-}
-
-export enum Read {
-  All = 'All',
-  Unread = 'Unread',
-  Read = 'Read',
-}
+import { Read, Size } from './enums';
 
 export interface OptionValues {
   books: AudiobookJSON[] | undefined;
@@ -82,6 +71,7 @@ const OptionsContext = createContext<Options>({
 
 export const useOptions = () => useContext(OptionsContext);
 
+// eslint-disable-next-line consistent-return
 export const useSizeColumns = () => {
   const { size } = useOptions();
 
