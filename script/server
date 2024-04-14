@@ -18,4 +18,4 @@ docker run \
   -p 6452:6452 \
   -p 6453:6453 \
   audiobook-catalog:dev \
-  yarn dev
+  npm run dev

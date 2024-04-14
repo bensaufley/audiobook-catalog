@@ -25,4 +25,4 @@ COPY --from=builder /usr/src/audiobook-catalog/.build ./.build
 ENV APP_ENV=prod
 ENV NODE_ENV=production
 
-CMD [ "yarn", "start" ]
+CMD [ "npm", "start" ]

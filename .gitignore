@@ -5,5 +5,4 @@ node_modules
 !/.build/.keep
 /*.sqlite3
 coverage
-yarn-error.log
 development

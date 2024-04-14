@@ -14,14 +14,14 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - yarn-lock-{{ checksum "yarn.lock" }}
-            - yarn-lock-
-      - run: yarn install --cache-folder ~/.cache/yarn
+            - npm-lock-{{ checksum "package-lock.json" }}
+            - npm-lock-
+      - run: npm install --cache ~/.cache/npm
       - save_cache:
-          key: yarn-lock-{{ checksum "yarn.lock" }}
+          key: npm-lock-{{ checksum "package-lock.json" }}
           paths:
             - node_modules
-            - ~/.cache/yarn
+            - ~/.cache/npm
       - run:
           name: Setup Code Climate test-reporter
           command: |
@@ -32,7 +32,7 @@ jobs:
           name: Run Tests
           command: |
             ./cc-test-reporter before-build
-            yarn jest --ci --runInBand --reporters=default --reporters=jest-junit
+            npx jest --ci --runInBand --reporters=default --reporters=jest-junit
             ./cc-test-reporter after-build --coverage-input-type lcov --exit-code "$?"
           environment:
             JEST_JUNIT_OUTPUT_DIR: ./reports/junit/
