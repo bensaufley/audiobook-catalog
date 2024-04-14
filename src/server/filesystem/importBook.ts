@@ -62,7 +62,7 @@ const importBook = async (filepath: string, sequelize: Sequelize, log: FastifyLo
   if (narrators?.length) {
     let nars = narrators;
     if (nars.length === 1) {
-      nars = nars[0].split(/,(?! *(?:jr\.?|sr\.?|junior|senior|i+v?|vi+)\b)/i);
+      nars = nars[0]!.split(/,(?! *(?:jr\.?|sr\.?|junior|senior|i+v?|vi+)\b)/i);
     }
 
     await Promise.all(

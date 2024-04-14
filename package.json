@@ -45,8 +45,8 @@
     "style-loader": "^3.3.4",
     "stylelint": "^16.3.1",
     "stylelint-config-standard": "^36.0.0",
-    "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
+    "tsx": "^4.7.2",
     "typescript": "^5.4.4",
     "vavite": "^4.1.1",
     "vite": "^5.2.8",
@@ -63,7 +63,6 @@
   "scripts": {
     "build": "APP_ENV=production NODE_ENV=production vite build",
     "dev": "vite dev",
-    "migrate": "DB_NAME=\"$([ NODE_ENV = 'production' ] && echo 'books' || echo \"$APP_ENV\")\" ts-node -T --cwd-mode \"$(pwd)/src/db/migrate.ts\"",
     "start": "node .build/server/index.js",
     "test": "vitest",
     "lint": "npm-run-all --parallel --continue-on-error --aggregate-output lint:es lint:css",
@@ -75,6 +74,6 @@
     "check": "npm-run-all --parallel --continue-on-error --aggregate-output typecheck lint",
     "typecheck": "tsc --noEmit"
   },
-  "version": "0.4.0",
+  "version": "0.5.0",
   "type": "module"
 }

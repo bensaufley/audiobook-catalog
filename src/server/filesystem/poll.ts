@@ -16,7 +16,7 @@ const poll = async (sequelize: Sequelize, log: FastifyLoggerInstance, directory:
 
     let i = files.length;
     while (i--) {
-      const filepath = files[i];
+      const filepath = files[i]!;
       if (!extensions.includes(extname(filepath))) continue;
 
       // eslint-disable-next-line no-await-in-loop

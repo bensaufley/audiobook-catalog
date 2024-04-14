@@ -19,5 +19,6 @@ docker run \
   -e DB_DIR=/usr/src/audiobook-catalog/ \
   -e LOG_LEVEL=debug \
   -e NODE_ENV="${NODE_ENV:-development}" \
+  -e DB_NAME="$([ "$NODE_ENV" = 'production' ] && echo 'books' || echo "${APP_ENV:-development}")" \
   audiobook-catalog:dev \
-  npm run migrate "${args[@]}"
+  npx tsx "./src/db/migrate.ts" "${args[@]}"
