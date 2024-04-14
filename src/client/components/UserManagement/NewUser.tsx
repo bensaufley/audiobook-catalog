@@ -1,4 +1,4 @@
-import type { FunctionComponent, h } from 'preact';
+import type { FunctionComponent, JSX } from 'preact';
 import { useCallback, useState } from 'preact/hooks';
 
 import { useModal } from '~client/contexts/Modal';
@@ -12,14 +12,14 @@ const NewUser: FunctionComponent = () => {
 
   const [error, setError] = useState<string>();
 
-  const handleChange: h.JSX.GenericEventHandler<HTMLInputElement> = useCallback(
+  const handleChange: JSX.GenericEventHandler<HTMLInputElement> = useCallback(
     ({ currentTarget }) => {
       setUsername(currentTarget.value);
     },
     [setUsername],
   );
 
-  const handleSubmit: h.JSX.GenericEventHandler<HTMLFormElement> = useCallback(
+  const handleSubmit: JSX.GenericEventHandler<HTMLFormElement> = useCallback(
     async (e) => {
       e.preventDefault();
       setError(undefined);

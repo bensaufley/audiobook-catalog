@@ -1,4 +1,4 @@
-import type { FunctionComponent, h } from 'preact';
+import type { FunctionComponent, JSX } from 'preact';
 import { useCallback, useMemo, useState } from 'preact/hooks';
 
 import { useUser } from '~client/contexts/User';
@@ -31,7 +31,7 @@ const BookModal: FunctionComponent<Props> = ({ book }) => {
 
   const [read, setRead] = useState(!!book.UserAudiobooks?.[0]?.read);
 
-  const handleChangeRead: h.JSX.GenericEventHandler<HTMLInputElement> = useCallback(
+  const handleChangeRead: JSX.GenericEventHandler<HTMLInputElement> = useCallback(
     async (e) => {
       const resp = await fetch(`/users/books/${book.id}/read`, {
         headers: {

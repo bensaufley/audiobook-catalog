@@ -1,5 +1,5 @@
 import { createContext, type FunctionComponent } from 'preact';
-import { type StateUpdater, useContext, useEffect, useMemo, useState } from 'preact/hooks';
+import { type Dispatch, type StateUpdater, useContext, useEffect, useMemo, useState } from 'preact/hooks';
 
 import { SortBy, SortOrder } from '~client/contexts/Options/sort';
 import useBooks from '~client/contexts/Options/useBooks';
@@ -22,13 +22,13 @@ export interface OptionValues {
 }
 
 export type Options = OptionValues & {
-  changeFilter: StateUpdater<string>;
-  changePage: StateUpdater<number>;
-  changePerPage: StateUpdater<number>;
-  changeRead: StateUpdater<Read>;
-  changeSize: StateUpdater<Size>;
-  changeSortBy: StateUpdater<SortBy>;
-  changeSortOrder: StateUpdater<SortOrder>;
+  changeFilter: Dispatch<StateUpdater<string>>;
+  changePage: Dispatch<StateUpdater<number>>;
+  changePerPage: Dispatch<StateUpdater<number>>;
+  changeRead: Dispatch<StateUpdater<Read>>;
+  changeSize: Dispatch<StateUpdater<Size>>;
+  changeSortBy: Dispatch<StateUpdater<SortBy>>;
+  changeSortOrder: Dispatch<StateUpdater<SortOrder>>;
   selectBook: (id: string) => void;
   unselectBook: () => void;
   updateBook: (book: AudiobookJSON) => void;

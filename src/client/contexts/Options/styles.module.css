@@ -16,7 +16,7 @@
     padding: 0.25rem;
 
     &:focus {
-      box-shadow: 0 0 6px rgba(127, 127, 127, 0.4);
+      box-shadow: 0 0 6px rgb(127 127 127 / 40%);
     }
   }
 }

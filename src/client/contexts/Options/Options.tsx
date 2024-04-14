@@ -1,8 +1,8 @@
-import type { FunctionComponent } from 'preact';
+import type { FunctionComponent, JSX } from 'preact';
 import { useCallback } from 'preact/hooks';
 
 import { useOptions } from '~client/contexts/Options';
-import type { Read, Size } from '~client/contexts/Options/enums';
+import { Read, Size } from '~client/contexts/Options/enums';
 import { SortBy, SortOrder } from '~client/contexts/Options/sort';
 import { useUser } from '~client/contexts/User';
 
@@ -29,49 +29,49 @@ const Options: FunctionComponent = () => {
 
   const { user } = useUser();
 
-  const handleChangeSize: h.JSX.GenericEventHandler<HTMLInputElement> = useCallback(
+  const handleChangeSize: JSX.GenericEventHandler<HTMLInputElement> = useCallback(
     (e) => {
       changeSize(Number(e.currentTarget.value) as Size);
     },
     [changeSize],
   );
 
-  const handleChangePage: h.JSX.GenericEventHandler<HTMLSelectElement> = useCallback(
+  const handleChangePage: JSX.GenericEventHandler<HTMLSelectElement> = useCallback(
     ({ currentTarget: { value } }) => {
       changePage(() => Number(value));
     },
     [changePage, page],
   );
 
-  const handleChangePerPage: h.JSX.GenericEventHandler<HTMLSelectElement> = useCallback(
+  const handleChangePerPage: JSX.GenericEventHandler<HTMLSelectElement> = useCallback(
     ({ currentTarget: { value } }) => {
       changePerPage(parseInt(value, 10));
     },
     [changePerPage],
   );
 
-  const handleChangeRead: h.JSX.GenericEventHandler<HTMLSelectElement> = useCallback(
+  const handleChangeRead: JSX.GenericEventHandler<HTMLSelectElement> = useCallback(
     ({ currentTarget: { value } }) => {
       changeRead(value as Read);
     },
     [changeRead],
   );
 
-  const handleSearch: h.JSX.GenericEventHandler<HTMLInputElement> = useCallback(
+  const handleSearch: JSX.GenericEventHandler<HTMLInputElement> = useCallback(
     ({ currentTarget: { value } }) => {
       changeFilter(value);
     },
     [changeFilter],
   );
 
-  const handleChangeSortBy: h.JSX.GenericEventHandler<HTMLSelectElement> = useCallback(
+  const handleChangeSortBy: JSX.GenericEventHandler<HTMLSelectElement> = useCallback(
     ({ currentTarget: { value } }) => {
       changeSortBy(SortBy[value as keyof typeof SortBy]);
     },
     [changeSortBy],
   );
 
-  const handleChangeSortOrder: h.JSX.GenericEventHandler<HTMLButtonElement> = useCallback(
+  const handleChangeSortOrder: JSX.GenericEventHandler<HTMLButtonElement> = useCallback(
     (e) => {
       e.preventDefault();
 

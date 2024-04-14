@@ -1,4 +1,4 @@
-import type { FunctionComponent, h } from 'preact';
+import type { FunctionComponent, JSX } from 'preact';
 import { useCallback, useState } from 'preact/hooks';
 
 import BookModal from '~client/components/BookModal';
@@ -14,7 +14,7 @@ interface Props {
   book: AudiobookJSON;
 }
 
-const stopProp: h.JSX.GenericEventHandler<HTMLElement> = (e) => {
+const stopProp: JSX.GenericEventHandler<HTMLElement> = (e) => {
   e.stopPropagation();
 };
 
@@ -37,7 +37,7 @@ const Book: FunctionComponent<Props> = ({ book }) => {
   const [loading, setLoading] = useState(false);
 
   const handleRead = useCallback(
-    async ({ currentTarget: { checked } }: h.JSX.TargetedEvent<HTMLInputElement>) => {
+    async ({ currentTarget: { checked } }: JSX.TargetedEvent<HTMLInputElement>) => {
       setLoading(true);
 
       try {

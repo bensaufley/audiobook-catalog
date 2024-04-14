@@ -1,6 +1,7 @@
-FROM node:18.7.0
+FROM node:20.12.1
 LABEL maintainer="Ben Saufley<contact@bensaufley.com>"
 
 WORKDIR /usr/src/audiobook-catalog
-COPY yarn.lock package.json ./
-RUN yarn install && yarn cache clean
+COPY package.json package-lock.json ./
+RUN npm install && \
+  npm cache clean --force

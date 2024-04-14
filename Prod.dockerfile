@@ -1,25 +1,23 @@
-FROM node:18.7.0 AS builder
+FROM node:20.12.1 AS builder
 LABEL maintainer="Ben Saufley<contact@bensaufley.com>"
 
 WORKDIR /usr/src/audiobook-catalog
-COPY yarn.lock package.json ./
-RUN yarn install && yarn cache clean
+COPY package.json package-lock.json ./
+RUN npm install && npm cache clean --force
 
 COPY . .
 
 ENV APP_ENV=prod
 ENV NODE_ENV=production
 
-RUN yarn build:prod
+RUN npm run build:prod && \
+  npm prune --production
 
-# hadolint ignore=DL3059
-RUN npm prune --production
-
-FROM node:18.7.0
+FROM node:20.12.1-alpine
 
 WORKDIR /usr/src/audiobook-catalog
 
-COPY yarn.lock package.json ./
+COPY package.json package-lock.json ./
 
 COPY --from=builder /usr/src/audiobook-catalog/node_modules ./node_modules
 COPY --from=builder /usr/src/audiobook-catalog/.build ./.build
