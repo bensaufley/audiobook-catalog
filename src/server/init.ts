@@ -2,7 +2,6 @@ import fastifyStatic from '@fastify/static';
 import Fastify, { type FastifyBaseLogger, type FastifyServerOptions } from 'fastify';
 import type { Server } from 'node:http';
 import { resolve } from 'node:path';
-import type httpDevServer from 'vavite/http-dev-server';
 
 import { umzug } from '~db/migrations';
 import { ready } from '~db/models';
@@ -19,8 +18,6 @@ const sanitizeLogLevel = (level?: string) => {
   return logLevels.includes(standardized) ? standardized : 'info';
 };
 
-let devServer: typeof httpDevServer | undefined;
-
 const init = async () => {
   await umzug.up();
 
@@ -29,7 +26,7 @@ const init = async () => {
   let devServerOpts: Pick<FastifyServerOptions<Server, FastifyBaseLogger>, 'serverFactory'> | undefined;
   if (import.meta.env.DEV) {
     // eslint-disable-next-line import/no-extraneous-dependencies
-    ({ default: devServer } = await import('vavite/http-dev-server'));
+    const { default: devServer } = await import('vavite/http-dev-server');
     devServerOpts = {
       serverFactory: (handler) => {
         devServer!.on('request', handler);
@@ -53,7 +50,7 @@ const init = async () => {
   });
 
   fastify.register(fastifyStatic, {
-    root: resolve(__dirname, '../client'),
+    root: resolve(import.meta.dirname, '../client'),
     prefix: '/static/',
   });
   fastify.addHook('preHandler', async (req) => {

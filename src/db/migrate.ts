@@ -11,4 +11,6 @@ export const umzug = new Umzug({
   logger: pino({ name: 'umzug' }),
 });
 
-umzug.runAsCLI();
+if (process.argv[1] && import.meta.url.endsWith(process.argv[1])) {
+  umzug.runAsCLI();
+}

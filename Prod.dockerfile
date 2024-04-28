@@ -10,7 +10,7 @@ COPY . .
 ENV APP_ENV=prod
 ENV NODE_ENV=production
 
-RUN npm run build:prod && \
+RUN npm run build && \
   npm prune --production
 
 FROM node:20.12.1-alpine

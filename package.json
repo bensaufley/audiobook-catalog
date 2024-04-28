@@ -61,8 +61,8 @@
   "name": "audiobook-catalog",
   "repository": "https://github.com/bensaufley/audiobook-catalog",
   "scripts": {
-    "build": "APP_ENV=production NODE_ENV=production vite build",
-    "dev": "vite dev",
+    "build": "APP_ENV=production NODE_ENV=production vavite build",
+    "dev": "vavite serve",
     "start": "node .build/server/index.js",
     "test": "vitest",
     "lint": "npm-run-all --parallel --continue-on-error --aggregate-output lint:es lint:css",

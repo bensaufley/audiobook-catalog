@@ -25,7 +25,7 @@ const poll = async (sequelize: Sequelize, log: FastifyLoggerInstance, directory:
 
     log.info('Done importing from %s.', directory);
   } catch (error) {
-    log.error({ error }, 'Error walking %s');
+    log.error({ error }, 'Error walking %s', directory);
   }
   await wait(pollPeriod);
 

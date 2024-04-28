@@ -12,6 +12,7 @@ docker run \
   -v "$(pwd)"/.audiobooks:/audiobooks \
   -e APP_ENV="${APP_ENV:-development}" \
   -e DB_DIR=/usr/src/audiobook-catalog/ \
+  -e DB_NAME="${APP_ENV:-development}" \
   -e LOG_LEVEL=debug \
   -e NODE_ENV="${NODE_ENV:-development}" \
   -p 6451:3000 \
