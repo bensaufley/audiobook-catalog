@@ -1,5 +1,6 @@
 import fastifyStatic from '@fastify/static';
 import Fastify, { type FastifyBaseLogger, type FastifyServerOptions } from 'fastify';
+import { readFile } from 'node:fs/promises';
 import type { Server } from 'node:http';
 import { resolve } from 'node:path';
 
@@ -49,10 +50,13 @@ const init = async () => {
     ...devServerOpts,
   });
 
-  fastify.register(fastifyStatic, {
-    root: resolve(import.meta.dirname, '../client'),
-    prefix: '/static/',
-  });
+  if (import.meta.env.PROD) {
+    fastify.register(fastifyStatic, {
+      root: resolve(import.meta.dirname, '../client'),
+      prefix: '/static/',
+    });
+  }
+
   fastify.addHook('preHandler', async (req) => {
     const userId = req.headers['x-audiobook-catalog-user'];
 
@@ -72,8 +76,16 @@ const init = async () => {
   await fastify.register(books, { prefix: '/books' });
   await fastify.register(users, { prefix: '/users' });
 
+  // eslint-disable-next-line import/no-extraneous-dependencies
+  const viteDevServer = import.meta.env.DEV ? (await import('vavite/vite-dev-server')).default : undefined;
   fastify.get('/*', async (req, res) => {
-    await res.sendFile('index.html');
+    if (import.meta.env.DEV) {
+      const index = await readFile(resolve(import.meta.dirname, '../client/index.html'), 'utf-8');
+      res.header('Content-Type', 'text/html');
+      res.send(await viteDevServer!.transformIndexHtml(req.url, index));
+    } else {
+      await res.sendFile('index.html');
+    }
   });
 
   return fastify;

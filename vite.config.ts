@@ -28,26 +28,20 @@ export default defineConfig({
       config: {
         build: {
           manifest: true,
-          outDir: resolve(dirname, '.build/client'),
+          outDir: '.build/client',
         },
         resolve: viteResolve,
-        root: 'src/client',
-        plugins: [
-          preact(),
-          createHtmlPlugin({
-            entry: 'index.tsx',
-            template: 'index.html',
-          }),
-        ],
+        root: '.',
+        plugins: [preact()],
       },
     },
     {
       name: 'server',
       config: {
         build: {
-          outDir: resolve(dirname, '.build/server'),
+          outDir: '.build/server',
           ssr: 'src/server',
-          target: 'node20',
+          target: 'node22',
         },
       },
     },
@@ -66,6 +60,11 @@ export default defineConfig({
       bundleSirv: false,
       serverEntry: 'src/server/index.ts',
       reloadOn: 'static-deps-change',
+      serveClientAssetsInDev: true,
+    }),
+    createHtmlPlugin({
+      entry: resolve(dirname, 'src/client/index.tsx'),
+      template: 'src/client/index.html',
     }),
   ],
 });
