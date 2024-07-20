@@ -1,6 +1,4 @@
 /* eslint-disable import/no-extraneous-dependencies */
-/// <reference types="preact" />
-
 import preact from '@preact/preset-vite';
 import { resolve } from 'node:path';
 import { vavite } from 'vavite';
@@ -16,6 +14,10 @@ const viteResolve: UserConfig['resolve'] = {
     { find: /^~server(?=\/)/, replacement: resolve(dirname, 'src/server') },
     { find: /^~shared(?=\/)/, replacement: resolve(dirname, 'src/shared') },
     { find: /^~test(?=\/)/, replacement: resolve(dirname, 'test') },
+
+    { find: /^react(?=\/|$)/, replacement: resolve(dirname, 'node_modules/preact/compat') },
+    { find: /^react\/jsx-(dev-)?runtime(?=\/|$)/, replacement: resolve(dirname, 'node_modules/preact/jsx-runtime') },
+    { find: /^react-dom(?=\/|$)/, replacement: resolve(dirname, 'node_modules/preact/compat') },
   ],
   extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json'],
 };

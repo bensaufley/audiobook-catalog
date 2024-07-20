@@ -37,14 +37,29 @@ const UserManagement: FunctionComponent = () => {
   );
 
   return (
-    <form onSubmit={cancelSubmit}>
-      <select value={selection} onChange={handleSelect}>
-        <option value="">{user ? <>Log Out</> : <>&ndash; No User &ndash;</>}</option>
-        {users.map((u) => (
-          <option value={u.id}>{u.username}</option>
-        ))}
-        <option value="--add--">+ New User</option>
-      </select>
+    <form class="d-flex row" onSubmit={cancelSubmit}>
+      <div class={`col-sm-${user ? '6' : '12'}`}>
+        <select aria-label="Select User" class="form-select" value={selection} onChange={handleSelect}>
+          <option value="">{user ? <>Log Out</> : <>&ndash; No User &ndash;</>}</option>
+          {users.map((u) => (
+            <option value={u.id}>{u.username}</option>
+          ))}
+          <option value="--add--">+ New User</option>
+        </select>
+      </div>
+      {user && (
+        <div class="col-sm-6">
+          <button
+            class="btn btn-close"
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              setUser(null);
+            }}
+            aria-label="Log Out"
+          />
+        </div>
+      )}
     </form>
   );
 };

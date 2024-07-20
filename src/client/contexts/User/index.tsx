@@ -28,9 +28,11 @@ const userCookieName = 'audiobook-catalog-user';
 
 const setCookie = (user: UserFields) => {
   cookie.set(userCookieName, JSON.stringify(user), {
-    expires: dayjs().add(2, 'weeks').toDate(),
+    expires: dayjs().add(1, 'month').toDate(),
     sameSite: 'strict',
+    path: '/',
     secure: false, // audiobook-catalog is not served via HTTPS
+    ...(import.meta.env.DEV ? {} : { domain: window.location.host }),
   });
 };
 

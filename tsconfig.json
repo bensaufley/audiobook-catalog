@@ -9,7 +9,12 @@
       "~db/*": ["src/db/*"],
       "~server/*": ["src/server/*"],
       "~shared/*": ["src/shared/*"],
-      "~test/*": ["test/*"]
+      "~test/*": ["test/*"],
+
+      "react": ["./node_modules/preact/compat/"],
+      "react/jsx-runtime": ["./node_modules/preact/jsx-runtime"],
+      "react-dom": ["./node_modules/preact/compat/"],
+      "react-dom/*": ["./node_modules/preact/compat/*"]
     },
     "moduleResolution": "Bundler",
     "resolveJsonModule": true,
@@ -18,7 +23,6 @@
     "checkJs": true,
 
     "jsx": "react-jsx",
-    "jsxImportSource": "preact",
 
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,

@@ -7,6 +7,7 @@
     "music-metadata": "^7.14.0",
     "pino": "^8.20.0",
     "pino-http": "^9.0.0",
+    "react-bootstrap": "^2.10.3",
     "sequelize": "^6.37.2",
     "sqlite3": "^5.1.7",
     "umzug": "^3.8.0"
