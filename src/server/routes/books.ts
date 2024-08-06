@@ -53,7 +53,9 @@ const books: FastifyPluginAsync = async (fastify, _opts) => {
       return;
     }
 
-    await res.header('Content-Type', book.coverType).send(book.cover);
+    res.header('Cache-Control', 'public, max-age=31536000');
+    res.header('Content-Type', book.coverType);
+    await res.send(book.cover);
   });
 
   fastify.get('/:id/download', async ({ params: { id } }: BookRequest, res) => {

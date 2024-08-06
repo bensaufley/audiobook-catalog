@@ -14,10 +14,14 @@ declare module '*.module.css' {
   export default mod;
 }
 
-declare module 'react' {
-  declare interface FunctionComponent<P = Record<string, unknown>> {
-    (props: RenderableProps<P>, context?: any): ComponentChild | null;
-    displayName?: string;
-    defaultProps?: Partial<P> | undefined;
-  }
+declare module '*.svg' {
+  const content: string;
+  export default content;
+}
+
+declare module '*.svg?react' {
+  import type { FunctionComponent, JSX } from 'preact';
+
+  const Svg: FunctionComponent<JSX.HTMLAttributes<SVGSVGElement>>;
+  export default Svg;
 }

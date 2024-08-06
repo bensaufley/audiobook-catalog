@@ -8,7 +8,7 @@ const config = {
         ignoreAtRules: ['define-mixin', 'mixin'],
       },
     ],
-    'custom-property-pattern': '^[a-z][a-zA-Z0-9]+$',
+    'custom-property-pattern': '^([a-z][a-zA-Z0-9]+|bs-[a-z-0-9]+)$',
     'font-family-name-quotes': 'always-where-recommended',
     'keyframes-name-pattern': '^[a-z][a-zA-Z0-9]+$',
     'no-descending-specificity': null,

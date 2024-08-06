@@ -1,19 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&display=swap');
+@import url('bootstrap/dist/css/bootstrap.min.css');
 
 body {
-  --background: #fff;
-  --text: #333;
+  --bs-body-font-family: 'Libre Baskerville', serif;
 
-  background-color: var(--background);
-  color: var(--text);
-  font-family: 'Libre Baskerville', serif;
   font-weight: 400;
-  padding: 1rem;
-
-  @media (prefers-color-scheme: dark) {
-    --background: #333;
-    --text: #fff;
-  }
 }
 
 @media (prefers-reduced-motion) {

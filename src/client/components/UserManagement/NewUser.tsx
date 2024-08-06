@@ -1,57 +1,64 @@
-import type { FunctionComponent, JSX } from 'preact';
-import { useCallback, useState } from 'preact/hooks';
+import { type Signal, useSignal } from '@preact/signals';
+import type { JSX } from 'preact';
+import { Button, Form, Modal } from 'react-bootstrap';
 
-import { useModal } from '~client/contexts/Modal';
-import { useUser } from '~client/contexts/User';
+import useEvent from '~client/hooks/useEvent';
+import { refreshUsers, user } from '~client/signals/User';
 
-const NewUser: FunctionComponent = () => {
-  const { refreshUsers, setUser } = useUser();
-  const { setContent } = useModal();
+const NewUser = ({ signal }: { signal: Signal<boolean> }) => {
+  const username = useSignal('');
 
-  const [username, setUsername] = useState('');
+  const error = useSignal<string>();
 
-  const [error, setError] = useState<string>();
+  const handleChange: JSX.GenericEventHandler<HTMLInputElement> = useEvent(({ currentTarget }) => {
+    username.value = currentTarget.value;
+  });
 
-  const handleChange: JSX.GenericEventHandler<HTMLInputElement> = useCallback(
-    ({ currentTarget }) => {
-      setUsername(currentTarget.value);
-    },
-    [setUsername],
-  );
+  const handleSubmit: JSX.GenericEventHandler<HTMLFormElement> = useEvent(async (e) => {
+    e.preventDefault();
+    error.value = undefined;
+    if (username.value === '--add--') {
+      error.value = 'Invalid username';
+      return;
+    }
+    try {
+      const resp = await fetch('/users/', {
+        method: 'POST',
+        body: JSON.stringify({ username }),
+      });
+      const json = await resp.json();
+      if (!resp.ok) throw new Error(json.message);
 
-  const handleSubmit: JSX.GenericEventHandler<HTMLFormElement> = useCallback(
-    async (e) => {
-      e.preventDefault();
-      setError(undefined);
-      if (username === '--add--') {
-        setError('Invalid username');
-        return;
-      }
-      try {
-        const resp = await fetch('/users/', {
-          method: 'POST',
-          body: JSON.stringify({ username }),
-        });
-        const json = await resp.json();
-        if (!resp.ok) throw new Error(json.message);
-
-        await refreshUsers();
-        setUser(json);
-        setContent(null);
-      } catch (err) {
-        setError((err as Error).message);
-      }
-    },
-    [setError, refreshUsers, setContent, username],
-  );
+      await refreshUsers();
+      user.value = json;
+      // eslint-disable-next-line no-param-reassign
+      signal.value = false;
+    } catch (err) {
+      error.value = (err as Error).message;
+    }
+  });
 
   return (
-    <form onSubmit={handleSubmit}>
-      {error && <p>Error: {error}</p>}
-      <h3>Create New User</h3>
-      <input name="username" onInput={handleChange} />
-      <button type="submit">Create</button>
-    </form>
+    <Modal
+      show={signal.value}
+      onHide={() => {
+        // eslint-disable-next-line no-param-reassign
+        signal.value = false;
+      }}
+    >
+      <Modal.Header>
+        <Modal.Title>Create New User</Modal.Title>
+      </Modal.Header>
+      <Form onSubmit={handleSubmit}>
+        <Modal.Body>
+          {error.value && <p>Error: {error}</p>}
+          <Form.Control name="username" onChange={handleChange} />
+        </Modal.Body>
+        <Modal.Footer>
+          <Button type="submit">Create</Button>
+        </Modal.Footer>
+      </Form>
+    </Modal>
   );
 };
 

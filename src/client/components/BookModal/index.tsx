@@ -1,14 +1,12 @@
-import type { FunctionComponent, JSX } from 'preact';
-import { useCallback, useMemo, useState } from 'preact/hooks';
+import { useComputed, useSignal } from '@preact/signals';
+import type { JSX } from 'preact';
+import { Form, Image, Modal, Stack } from 'react-bootstrap';
 
-import { useUser } from '~client/contexts/User';
-import type { AudiobookJSON } from '~db/models/Audiobook';
+import useEvent from '~client/hooks/useEvent';
+import { selectedBook, selectedBookId } from '~client/signals/Options';
+import { user } from '~client/signals/User';
 
-import styles from '~client/components/BookModal/styles.module.css';
-
-interface Props {
-  book: AudiobookJSON;
-}
+// import styles from '~client/components/BookModal/styles.module.css';
 
 const formatDuration = (duration: number) => {
   const hours = Math.floor(duration / 60 / 60);
@@ -18,88 +16,97 @@ const formatDuration = (duration: number) => {
   return `${hours}:${`0${minutes}`.substr(-2)}:${`0${seconds}`.substr(-2)}`;
 };
 
-const BookModal: FunctionComponent<Props> = ({ book }) => {
-  const searchParam = useMemo(
+const BookModal = () => {
+  const searchParam = useComputed(
     () =>
-      `${encodeURIComponent(book.title)} ${
-        book.Authors?.map(({ firstName = '', lastName }) => `${firstName} ${lastName}`) || ''
+      `${encodeURIComponent(selectedBook.value?.title ?? '')} ${
+        selectedBook.value?.Authors?.map(({ firstName = '', lastName }) => `${firstName} ${lastName}`) || ''
       }`,
-    [book.title, book.Authors],
   );
 
-  const { user } = useUser();
+  const read = useSignal(!!selectedBook.value?.UserAudiobooks?.[0]?.read);
 
-  const [read, setRead] = useState(!!book.UserAudiobooks?.[0]?.read);
+  const handleChangeRead: JSX.GenericEventHandler<HTMLInputElement> = useEvent(async (e) => {
+    const resp = await fetch(`/users/books/${selectedBook.value?.id}/read`, {
+      headers: {
+        'x-audiobook-catalog-user': user.value!.id,
+      },
+      method: 'POST',
+    });
 
-  const handleChangeRead: JSX.GenericEventHandler<HTMLInputElement> = useCallback(
-    async (e) => {
-      const resp = await fetch(`/users/books/${book.id}/read`, {
-        headers: {
-          'x-audiobook-catalog-user': user!.id,
-        },
-        method: 'POST',
-      });
+    if (!resp.ok) return;
 
-      if (!resp.ok) return;
-
-      setRead(e.currentTarget.checked);
-    },
-    [setRead],
-  );
+    read.value = e.currentTarget.checked;
+  });
 
   return (
-    <>
-      <img class={styles.cover} src={`/books/${book.id}/cover`} alt={`Cover for ${book.title}`} />
-      <h3>{book.title}</h3>
-      {book.Authors?.length && (
-        <p class={styles.authors}>
-          by {book.Authors.map(({ firstName, lastName }) => `${firstName || ''} ${lastName}`).join(', ')}
-        </p>
-      )}
-      {!!book.Narrators?.length && (
-        <p class={styles.narrators}>
-          read by {book.Narrators.map(({ firstName, lastName }) => `${firstName || ''} ${lastName}`).join(', ')}
-        </p>
-      )}
-      {book.duration && <p class={styles.duration}>Duration: {formatDuration(book.duration)}</p>}
-      {user && (
-        <label for="read">
-          <input type="checkbox" id="read" name="read" checked={read} onChange={handleChangeRead} />
-          Read
-        </label>
-      )}
-      <div class={styles.outbound}>
-        <p>View In:</p>
-        <ul>
-          <li>
-            <a
-              href={`https://app.thestorygraph.com/browse?search_term=${searchParam}`}
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              The StoryGraph
-            </a>
-          </li>
-          <li>
-            <a
-              href={`https://www.librarything.com/search.php?searchtype=101&searchtype=101&sortchoice=0&search=${searchParam}`}
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              LibraryThing
-            </a>
-          </li>
-        </ul>
-      </div>
-      <div class={styles.buttons}>
-        <a href={`/books/${book.id}/download`}>Download</a>
+    <Modal
+      show={!!selectedBook.value}
+      onHide={() => {
+        selectedBookId.value = undefined;
+      }}
+    >
+      <Modal.Header className="flex-column">
+        <Image
+          fluid
+          rounded
+          alt={`Cover for ${selectedBook.value?.title}`}
+          src={`/books/${selectedBook.value?.id}/cover`}
+        />
+        <Modal.Title className="mt-2">
+          {selectedBook.value?.title}
+          {selectedBook.value?.Authors?.length && (
+            <small class="d-block">
+              by{' '}
+              {selectedBook.value?.Authors.map(({ firstName, lastName }) => `${firstName || ''} ${lastName}`).join(
+                ', ',
+              )}
+            </small>
+          )}
+          {!!selectedBook.value?.Narrators?.length && (
+            <small class="d-block">
+              read by{' '}
+              {selectedBook.value?.Narrators.map(({ firstName, lastName }) => `${firstName || ''} ${lastName}`).join(
+                ', ',
+              )}
+            </small>
+          )}
+        </Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        {selectedBook.value?.duration && <p>Duration: {formatDuration(selectedBook.value?.duration)}</p>}
+        <Stack direction="horizontal" className="gap-2">
+          <span className="d-block me-auto">View In:</span>
+          <a
+            href={`https://app.thestorygraph.com/browse?search_term=${searchParam}`}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            The StoryGraph
+          </a>
+          <a
+            href={`https://www.librarything.com/search.php?searchtype=101&searchtype=101&sortchoice=0&search=${searchParam}`}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            LibraryThing
+          </a>
+        </Stack>
+      </Modal.Body>
+      <Modal.Footer>
+        {user && (
+          <Form className="me-auto">
+            <Form.Check id="read" name="read" checked={read} onChange={handleChangeRead} label="Read" />
+          </Form>
+        )}
+        <a href={`/books/${selectedBook.value?.id}/download`}>Download</a>
         <a
-          href={`bookplayer://download?url="${window.location.protocol}//${window.location.host}/books/${book.id}/download"`}
+          href={`bookplayer://download?url="${window.location.protocol}//${window.location.host}/books/${selectedBook.value?.id}/download"`}
         >
           Bookplayer
         </a>
-      </div>
-    </>
+      </Modal.Footer>
+    </Modal>
   );
 };
 

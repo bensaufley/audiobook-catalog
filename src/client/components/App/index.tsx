@@ -4,21 +4,14 @@ import type { FunctionComponent } from 'preact';
 
 import Books from '~client/components/Books';
 import Nav from '~client/components/Nav';
-import { ModalProvider } from '~client/contexts/Modal';
-import { OptionsProvider } from '~client/contexts/Options';
-import { UserProvider } from '~client/contexts/User';
+import { Modal } from '~client/signals/Modal';
 
 const App: FunctionComponent = () => (
-  <UserProvider>
-    <OptionsProvider>
-      <ModalProvider>
-        <>
-          <Nav />
-          <Books />
-        </>
-      </ModalProvider>
-    </OptionsProvider>
-  </UserProvider>
+  <>
+    <Nav />
+    <Books />
+    <Modal />
+  </>
 );
 
 export default App;

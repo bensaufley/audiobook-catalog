@@ -1,66 +1,109 @@
-import type { FunctionComponent, JSX } from 'preact';
-import { useCallback, useEffect, useState } from 'preact/hooks';
+import { useSignal, useSignalEffect } from '@preact/signals';
+import type { FunctionComponent } from 'preact';
+import { NavDropdown } from 'react-bootstrap';
 
 import NewUser from '~client/components/UserManagement/NewUser';
-import { useModal } from '~client/contexts/Modal';
-import { useUser } from '~client/contexts/User';
-
-const cancelSubmit: JSX.GenericEventHandler<HTMLFormElement> = (e) => e.preventDefault();
+import useEvent from '~client/hooks/useEvent';
+import { read } from '~client/signals/Options';
+import { Read } from '~client/signals/Options/enums';
+import { user, users } from '~client/signals/User';
+import User from '~icons/person-fill.svg?react';
 
 const UserManagement: FunctionComponent = () => {
-  const { setUser, user, users } = useUser();
-  const { setContent } = useModal();
+  const selection = useSignal(user.value?.id || '');
+  const showNewUser = useSignal(false);
 
-  const [selection, setSelection] = useState(user?.id || '');
+  useSignalEffect(() => {
+    selection.value = user.value?.id || '';
+  });
 
-  useEffect(() => {
-    setSelection(user?.id || '');
-  }, [user?.id]);
-
-  const handleSelect: JSX.GenericEventHandler<HTMLSelectElement> = useCallback(
-    ({ currentTarget: { value } }) => {
-      switch (value) {
-        case '': {
-          setUser(null);
-          break;
-        }
-        case '--add--': {
-          setContent(<NewUser />);
-          break;
-        }
-        default: {
-          setUser(users.find(({ id }) => id === value)!);
-        }
+  const handleSelect = useEvent((value: string) => {
+    switch (value) {
+      case '': {
+        user.value = undefined;
+        break;
       }
-    },
-    [users, setContent, setUser],
-  );
+      case '--add--': {
+        showNewUser.value = true;
+        break;
+      }
+      default: {
+        user.value = users.value.find(({ id }) => id === value)!;
+      }
+    }
+  });
 
   return (
-    <form class="d-flex row" onSubmit={cancelSubmit}>
-      <div class={`col-sm-${user ? '6' : '12'}`}>
-        <select aria-label="Select User" class="form-select" value={selection} onChange={handleSelect}>
-          <option value="">{user ? <>Log Out</> : <>&ndash; No User &ndash;</>}</option>
-          {users.map((u) => (
-            <option value={u.id}>{u.username}</option>
-          ))}
-          <option value="--add--">+ New User</option>
-        </select>
-      </div>
-      {user && (
-        <div class="col-sm-6">
-          <button
-            class="btn btn-close"
-            type="button"
-            onClick={(e) => {
-              e.preventDefault();
-              setUser(null);
-            }}
-            aria-label="Log Out"
-          />
-        </div>
-      )}
-    </form>
+    <>
+      <NavDropdown
+        title={
+          <>
+            <User /> User{user.value ? `: ${user.value.username}` : ''}
+          </>
+        }
+        align={{ lg: 'end' }}
+      >
+        {user.value ? (
+          <>
+            <NavDropdown.Header>Filter:</NavDropdown.Header>
+            <NavDropdown.Item
+              as="button"
+              active={read.value === Read.All}
+              onClick={(e: Event) => {
+                e.preventDefault();
+                read.value = Read.All;
+              }}
+            >
+              All
+            </NavDropdown.Item>
+            <NavDropdown.Item
+              as="button"
+              active={read.value === Read.Unread}
+              onClick={(e: Event) => {
+                e.preventDefault();
+                read.value = Read.Unread;
+              }}
+            >
+              Unread
+            </NavDropdown.Item>
+            <NavDropdown.Item
+              as="button"
+              active={read.value === Read.Read}
+              onClick={(e: Event) => {
+                e.preventDefault();
+                read.value = Read.Read;
+              }}
+            >
+              Read
+            </NavDropdown.Item>
+            <NavDropdown.Divider />
+            <NavDropdown.Item
+              as="button"
+              onClick={(e: Event) => {
+                e.preventDefault();
+                handleSelect('');
+              }}
+            >
+              Log Out
+            </NavDropdown.Item>
+          </>
+        ) : (
+          [...users.value, { id: '--add--', username: '+ New User' }].map((u) => (
+            <NavDropdown.Item
+              as="button"
+              active={user.value?.id === u.id}
+              onClick={(e: Event) => {
+                e.preventDefault();
+                handleSelect(u.id);
+              }}
+            >
+              {u.username}
+            </NavDropdown.Item>
+          ))
+        )}
+      </NavDropdown>
+      <NewUser signal={showNewUser} />
+    </>
   );
 };
 

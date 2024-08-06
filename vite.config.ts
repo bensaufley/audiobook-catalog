@@ -4,6 +4,7 @@ import { resolve } from 'node:path';
 import { vavite } from 'vavite';
 import { defineConfig, type UserConfig } from 'vite';
 import { createHtmlPlugin } from 'vite-plugin-html';
+import svgr from 'vite-plugin-svgr';
 
 const dirname = typeof __dirname === 'undefined' ? import.meta.dirname : __dirname;
 
@@ -11,6 +12,7 @@ const viteResolve: UserConfig['resolve'] = {
   alias: [
     { find: /^~client(?=\/)/, replacement: resolve(dirname, 'src/client') },
     { find: /^~db(?=\/)/, replacement: resolve(dirname, 'src/db') },
+    { find: /^~icons(?=\/)/, replacement: resolve(dirname, 'node_modules/bootstrap-icons/icons') },
     { find: /^~server(?=\/)/, replacement: resolve(dirname, 'src/server') },
     { find: /^~shared(?=\/)/, replacement: resolve(dirname, 'src/shared') },
     { find: /^~test(?=\/)/, replacement: resolve(dirname, 'test') },
@@ -34,7 +36,7 @@ export default defineConfig({
         },
         resolve: viteResolve,
         root: '.',
-        plugins: [preact()],
+        plugins: [],
       },
     },
     {
@@ -58,6 +60,20 @@ export default defineConfig({
     },
   },
   plugins: [
+    preact(),
+    svgr({
+      svgrOptions: {
+        // TODO: pending https://github.com/gregberge/svgr/pull/927
+        // jsxRuntime: 'classic-preact',
+        svgProps: {
+          role: 'img',
+        },
+      },
+      // esbuildOptions: {
+      //   jsxFactory: 'h',
+      //   jsxFragment: 'Fragment',
+      // },
+    }),
     vavite({
       bundleSirv: false,
       serverEntry: 'src/server/index.ts',

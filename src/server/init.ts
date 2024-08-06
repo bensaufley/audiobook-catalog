@@ -1,3 +1,4 @@
+import fastifyEtag from '@fastify/etag';
 import fastifyStatic from '@fastify/static';
 import Fastify, { type FastifyBaseLogger, type FastifyServerOptions } from 'fastify';
 import { readFile } from 'node:fs/promises';
@@ -49,6 +50,8 @@ const init = async () => {
     },
     ...devServerOpts,
   });
+
+  fastify.register(fastifyEtag);
 
   if (import.meta.env.PROD) {
     fastify.register(fastifyStatic, {

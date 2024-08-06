@@ -1,10 +1,9 @@
-import type { FunctionComponent, JSX } from 'preact';
-import { useCallback, useState } from 'preact/hooks';
+import { useSignal } from '@preact/signals';
+import type { JSX } from 'preact';
 
-import BookModal from '~client/components/BookModal';
-import { useModal } from '~client/contexts/Modal';
-import { useOptions } from '~client/contexts/Options';
-import { useUser } from '~client/contexts/User';
+import useEvent from '~client/hooks/useEvent';
+import { selectedBookId, updateBook } from '~client/signals/Options';
+import { user } from '~client/signals/User';
 import type { AudiobookJSON } from '~db/models/Audiobook';
 import type { UserAudiobookJSON } from '~db/models/UserAudiobook';
 
@@ -18,56 +17,45 @@ const stopProp: JSX.GenericEventHandler<HTMLElement> = (e) => {
   e.stopPropagation();
 };
 
-const Book: FunctionComponent<Props> = ({ book }) => {
-  const { setContent } = useModal();
-  const { updateBook } = useOptions();
-
+const Book = ({ book }: Props) => {
   const read = book.UserAudiobooks?.some(({ read: r }) => r);
 
-  const { user } = useUser();
+  const onClick = useEvent((e: Event) => {
+    e.preventDefault();
+    selectedBookId.value = book.id;
+  });
 
-  const onClick = useCallback(
-    (e: Event) => {
-      e.preventDefault();
-      setContent(<BookModal book={book} />);
-    },
-    [book],
-  );
+  const loading = useSignal(false);
 
-  const [loading, setLoading] = useState(false);
+  const handleRead = useEvent(async ({ currentTarget: { checked } }: JSX.TargetedEvent<HTMLInputElement>) => {
+    loading.value = true;
 
-  const handleRead = useCallback(
-    async ({ currentTarget: { checked } }: JSX.TargetedEvent<HTMLInputElement>) => {
-      setLoading(true);
+    try {
+      const path = checked ? 'read' : 'unread';
+      await fetch(`/users/books/${book.id}/${path}`, {
+        method: 'POST',
+        headers: { 'x-audiobook-catalog-user': user.value!.id },
+      });
 
-      try {
-        const path = checked ? 'read' : 'unread';
-        await fetch(`/users/books/${book.id}/${path}`, {
-          method: 'POST',
-          headers: { 'x-audiobook-catalog-user': user!.id },
-        });
+      const ua = book.UserAudiobooks?.some(({ UserId }) => UserId === user.value!.id);
+      const UserAudiobooks: UserAudiobookJSON[] = ua
+        ? book.UserAudiobooks!.map((x) => (x.UserId === user.value!.id ? { ...x, read: checked } : x))
+        : [
+            {
+              read: checked,
+              UserId: user.value!.id,
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+              AudiobookId: book.id,
+            },
+          ];
+      updateBook({ ...book, UserAudiobooks });
+    } catch {
+      /* noop */
+    }
 
-        const ua = book.UserAudiobooks?.some(({ UserId }) => UserId === user!.id);
-        const UserAudiobooks: UserAudiobookJSON[] = ua
-          ? book.UserAudiobooks!.map((x) => (x.UserId === user!.id ? { ...x, read: checked } : x))
-          : [
-              {
-                read: checked,
-                UserId: user!.id,
-                createdAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString(),
-                AudiobookId: book.id,
-              },
-            ];
-        updateBook({ ...book, UserAudiobooks });
-      } catch {
-        /* noop */
-      }
-
-      setLoading(false);
-    },
-    [setLoading],
-  );
+    loading.value = false;
+  });
 
   return (
     <div class={styles.container}>
@@ -84,7 +72,9 @@ const Book: FunctionComponent<Props> = ({ book }) => {
           }
         }}
       >
-        {user && <input disabled={loading} type="checkbox" onChange={handleRead} onClick={stopProp} checked={read} />}
+        {user.value && (
+          <input disabled={loading} type="checkbox" onChange={handleRead} onClick={stopProp} checked={read.value} />
+        )}
       </div>
     </div>
   );
