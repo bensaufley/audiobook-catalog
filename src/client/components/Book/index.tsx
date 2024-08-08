@@ -73,7 +73,7 @@ const Book = ({ book }: Props) => {
         }}
       >
         {user.value && (
-          <input disabled={loading} type="checkbox" onChange={handleRead} onClick={stopProp} checked={read.value} />
+          <input disabled={loading} type="checkbox" onChange={handleRead} onClick={stopProp} checked={read} />
         )}
       </div>
     </div>

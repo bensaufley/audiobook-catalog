@@ -55,8 +55,8 @@ export const sortBy = new Signal<SortBy>(SortBy.Author);
 export const sortOrder = new Signal<SortOrder>(SortOrder.Ascending);
 export const selectedBookId = new Signal<string | undefined>();
 
-export const updateBook = (book: AudiobookJSON) => {
-  rawBooks.value = ((prev) => prev?.map((b) => (b.id === book.id ? { ...b, ...book } : b)))(rawBooks.value);
+export const updateBook = (book: Partial<AudiobookJSON>) => {
+  rawBooks.value = rawBooks.peek()?.map((b) => (b.id === book.id ? { ...b, ...book } : b));
 };
 
 // eslint-disable-next-line consistent-return

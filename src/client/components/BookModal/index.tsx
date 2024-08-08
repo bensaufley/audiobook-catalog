@@ -1,10 +1,13 @@
 import { useComputed, useSignal } from '@preact/signals';
 import type { JSX } from 'preact';
-import { Form, Image, Modal, Stack } from 'react-bootstrap';
+import { Button, Form, Image, Modal, Stack } from 'react-bootstrap';
 
 import useEvent from '~client/hooks/useEvent';
-import { selectedBook, selectedBookId } from '~client/signals/Options';
+import { selectedBook, selectedBookId, updateBook } from '~client/signals/Options';
 import { user } from '~client/signals/User';
+import Book from '~icons/book.svg?react';
+import External from '~icons/box-arrow-up-right.svg?react';
+import Download from '~icons/download.svg?react';
 
 // import styles from '~client/components/BookModal/styles.module.css';
 
@@ -37,6 +40,10 @@ const BookModal = () => {
     if (!resp.ok) return;
 
     read.value = e.currentTarget.checked;
+    updateBook({
+      id: selectedBookId.peek()!,
+      UserAudiobooks: selectedBook.peek()!.UserAudiobooks!.map((v) => ({ ...v, read: e.currentTarget.checked })),
+    });
   });
 
   return (
@@ -46,14 +53,8 @@ const BookModal = () => {
         selectedBookId.value = undefined;
       }}
     >
-      <Modal.Header className="flex-column">
-        <Image
-          fluid
-          rounded
-          alt={`Cover for ${selectedBook.value?.title}`}
-          src={`/books/${selectedBook.value?.id}/cover`}
-        />
-        <Modal.Title className="mt-2">
+      <Modal.Header closeButton className="align-items-start">
+        <Modal.Title className="flex-grow-1">
           {selectedBook.value?.title}
           {selectedBook.value?.Authors?.length && (
             <small class="d-block">
@@ -74,37 +75,72 @@ const BookModal = () => {
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
+        <Image
+          fluid
+          rounded
+          alt={`Cover for ${selectedBook.value?.title}`}
+          src={`/books/${selectedBook.value?.id}/cover`}
+          className="mb-4"
+        />
         {selectedBook.value?.duration && <p>Duration: {formatDuration(selectedBook.value?.duration)}</p>}
         <Stack direction="horizontal" className="gap-2">
           <span className="d-block me-auto">View In:</span>
-          <a
+          <Button
+            as="a"
+            variant="outline-primary"
             href={`https://app.thestorygraph.com/browse?search_term=${searchParam}`}
             rel="noopener noreferrer"
             target="_blank"
           >
-            The StoryGraph
-          </a>
-          <a
+            <span class="d-flex gap-2 align-items-center">
+              <span class="flex-grow-1">The StoryGraph</span>
+              <span>
+                <External />
+              </span>
+            </span>
+          </Button>
+          <Button
+            as="a"
+            variant="outline-secondary"
             href={`https://www.librarything.com/search.php?searchtype=101&searchtype=101&sortchoice=0&search=${searchParam}`}
             rel="noopener noreferrer"
             target="_blank"
           >
-            LibraryThing
-          </a>
+            <span class="d-flex gap-2 align-items-center">
+              <span class="flex-grow-1">LibraryThing</span>
+              <span>
+                <External />
+              </span>
+            </span>
+          </Button>
         </Stack>
       </Modal.Body>
       <Modal.Footer>
-        {user && (
+        {user.value && (
           <Form className="me-auto">
-            <Form.Check id="read" name="read" checked={read} onChange={handleChangeRead} label="Read" />
+            <Form.Check type="switch" id="read" name="read" checked={read} onChange={handleChangeRead} label="Read" />
           </Form>
         )}
-        <a href={`/books/${selectedBook.value?.id}/download`}>Download</a>
-        <a
+        <Button as="a" href={`/books/${selectedBook.value?.id}/download`}>
+          <span class="d-flex gap-2 align-items-center">
+            <span>
+              <Download />
+            </span>
+            <span class="flex-grow-1">Download</span>
+          </span>
+        </Button>
+        <Button
+          as="a"
           href={`bookplayer://download?url="${window.location.protocol}//${window.location.host}/books/${selectedBook.value?.id}/download"`}
+          variant="secondary"
         >
-          Bookplayer
-        </a>
+          <span class="d-flex gap-2 align-items-center">
+            <span>
+              <Book />
+            </span>
+            <span class="flex-grow-1">Bookplayer</span>
+          </span>
+        </Button>
       </Modal.Footer>
     </Modal>
   );
