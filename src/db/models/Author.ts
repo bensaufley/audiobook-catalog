@@ -23,7 +23,7 @@ export default class Author extends Model<AuthorAttributes, AuthorCreationAttrib
   public declare readonly updatedAt: Date;
 
   declare static associations: {
-    Audiobooks: Association<Author, Audiobook<unknown>>;
+    Audiobooks: Association<Author, Audiobook>;
   };
 
   public static associate(m: typeof models) {

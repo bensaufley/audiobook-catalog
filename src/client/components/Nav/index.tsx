@@ -1,14 +1,12 @@
 import { useSignal } from '@preact/signals';
+import clsx from 'clsx';
 import type { JSX } from 'preact';
-import { Button, Col, Form, InputGroup, Row } from 'react-bootstrap';
-import Container from 'react-bootstrap/Container';
-import BootstrapNav from 'react-bootstrap/Nav';
-import Navbar from 'react-bootstrap/Navbar';
 
 import UserManagement from '~client/components/UserManagement';
 import { search, size, sortBy, sortOrder } from '~client/signals/Options';
 import { Size } from '~client/signals/Options/enums';
 import { SortBy, SortOrder } from '~client/signals/Options/sort';
+import List from '~icons/list.svg?react';
 import SortDown from '~icons/sort-down.svg?react';
 import SortUp from '~icons/sort-up.svg?react';
 
@@ -16,29 +14,31 @@ const Nav = () => {
   const show = useSignal(false);
 
   return (
-    <Navbar expand="xl" sticky="top" className="bg-body-tertiary">
-      <Container fluid="xl">
-        <Navbar.Brand className="me-6 my-0">Audiobook Catalog</Navbar.Brand>
-        <Navbar.Toggle
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarScroll"
-          aria-controls="navbarScroll"
-          aria-expanded="false"
+    <div class="navbar navbar-expand-xl sticky-top bg-body-tertiary shadow">
+      <div class="container-xl">
+        <h2 class="navbar-brand me-6 my-0">Audiobook Catalog</h2>
+        <button
+          class="navbar-toggler"
+          type="button"
+          aria-expanded={show}
           aria-label="Toggle navigation"
           onClick={() => {
             show.value = !show.peek();
           }}
-        />
-        <Navbar.Collapse show={show.value} className="flex-xl-grow-0">
-          <BootstrapNav>
-            <Form
+        >
+          <List />
+        </button>
+        <div class={clsx('collapse', 'navbar-collapse', show.value && 'show', 'flex-xl-grow-0')}>
+          <div class="navbar-nav">
+            <form
               onSubmit={(e: JSX.TargetedSubmitEvent<HTMLFormElement>) => {
                 e.preventDefault();
               }}
             >
-              <Row>
-                <Col xs={12} xl="auto" className="my-2 my-xl-0">
-                  <Form.Control
+              <div class="row">
+                <div class="my-2 my-xl-0 col-xl-auto col-12">
+                  <input
+                    class="form-control"
                     id="search"
                     type="search"
                     placeholder="Search"
@@ -46,15 +46,16 @@ const Nav = () => {
                       search.value = value;
                     }}
                   />
-                </Col>
-                <Col xs={12} xl="auto" className="my-2 my-xl-0">
-                  <Row>
-                    <Form.Label column htmlFor="sort-by">
+                </div>
+                <div class="my-2 my-xl-0 col-xl-auto col-12">
+                  <div class="row">
+                    <div class="form-label col-form-label col" for="sort-by">
                       Sort By:
-                    </Form.Label>
-                    <Col xs="auto">
-                      <InputGroup>
-                        <Form.Select
+                    </div>
+                    <div class="col-auto">
+                      <div class="input-group">
+                        <select
+                          class="form-select"
                           name="sort-by"
                           id="sort-by"
                           onChange={({ currentTarget: { value } }: JSX.TargetedInputEvent<HTMLSelectElement>) => {
@@ -68,10 +69,10 @@ const Nav = () => {
                               </option>
                             ))}
                           </optgroup>
-                        </Form.Select>
-                        <Button
-                          variant="secondary"
+                        </select>
+                        <button
                           type="button"
+                          class="btn btn-secondary"
                           onClick={(e: Event) => {
                             e.preventDefault();
                             sortOrder.value = ((o) =>
@@ -79,16 +80,17 @@ const Nav = () => {
                           }}
                         >
                           {sortOrder.value === SortOrder.Ascending ? <SortDown /> : <SortUp />}
-                        </Button>
-                      </InputGroup>
-                    </Col>
-                  </Row>
-                </Col>
-                <Col xs={12} xl="auto" className="my-2 my-xl-0 d-flex">
-                  <Form.Range
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="my-2 my-xl-0 col-xl-auto col-12 d-flex">
+                  <input
+                    type="range"
                     id="size"
                     name="size"
-                    className="align-self-center"
+                    class="form-range align-self-center"
                     min={Size.Small}
                     max={Size.XLarge}
                     value={size}
@@ -96,14 +98,14 @@ const Nav = () => {
                       size.value = Number(value) as Size;
                     }}
                   />
-                </Col>
-              </Row>
-            </Form>
+                </div>
+              </div>
+            </form>
             <UserManagement />
-          </BootstrapNav>
-        </Navbar.Collapse>
-      </Container>
-    </Navbar>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 

@@ -4,7 +4,7 @@
  * Licensed under the Creative Commons Attribution 3.0 Unported License.
  */
 
-const configureTheme = () => {
+const configureBootstrapTheme = () => {
   const getStoredTheme = () => localStorage.getItem('theme') as 'dark' | 'light' | null;
   // const setStoredTheme = (theme: string) => localStorage.setItem('theme', theme);
 
@@ -27,4 +27,4 @@ const configureTheme = () => {
   setTheme(getPreferredTheme());
 };
 
-export default configureTheme;
+export default configureBootstrapTheme;

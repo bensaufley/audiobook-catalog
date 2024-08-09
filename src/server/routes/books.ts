@@ -1,5 +1,6 @@
 import type { FastifyPluginAsync, FastifyRequest } from 'fastify';
 import { basename } from 'node:path';
+import { Op } from 'sequelize';
 
 import Audiobook from '~db/models/Audiobook';
 
@@ -46,7 +47,10 @@ const books: FastifyPluginAsync = async (fastify, _opts) => {
   });
 
   fastify.get('/:id/cover', async ({ params: { id } }: BookRequest, res) => {
-    const book = await Audiobook.findOne({ attributes: ['cover', 'coverType'], where: { id } });
+    const book = (await Audiobook.findOne({
+      attributes: ['cover', 'coverType'],
+      where: { id, cover: { [Op.ne]: null } },
+    })) as Audiobook<true> | null;
 
     if (book === null) {
       await res.status(404).send({});

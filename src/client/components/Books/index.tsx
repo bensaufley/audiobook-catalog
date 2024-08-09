@@ -25,7 +25,7 @@ const Books: FunctionComponent = () => {
 
   return (
     <>
-      <div class={clsx(styles.container, 'my-4')} style={{ '--cols': sizeColumns.value }}>
+      <div class={clsx(styles.container, 'm-2')} style={{ '--cols': sizeColumns.value }}>
         {books.value.map((book) => (
           <Book book={book} key={book.id} />
         ))}

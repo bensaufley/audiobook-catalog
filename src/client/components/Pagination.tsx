@@ -1,33 +1,32 @@
 import { useComputed } from '@preact/signals';
+import clsx from 'clsx';
 import type { JSX } from 'preact';
-import { Col, Form, Row } from 'react-bootstrap';
-import BsPagination from 'react-bootstrap/Pagination';
 
 import { page, pages, perPage } from '~client/signals/Options';
+import ChevronDoubleLeft from '~icons/chevron-double-left.svg?react';
+import ChevronDoubleRight from '~icons/chevron-double-right.svg?react';
+import ChevronLeft from '~icons/chevron-left.svg?react';
+import ChevronRight from '~icons/chevron-right.svg?react';
 
 const GROUP_SIZE = 5;
 
 const Pagination = () => {
-  const groups = useComputed((): [number[]] | [number[], number[], number[]] => {
-    if (pages.value <= GROUP_SIZE * 2) return [Array.from({ length: pages.value }, (_, i) => i)];
-    const allPages = Array.from({ length: pages.value }, (_, i) => i);
-    const startGroup = allPages.slice(0, GROUP_SIZE);
-    const endGroup = allPages.slice(-GROUP_SIZE);
-    const midGroup = allPages
-      .slice(page.value - Math.floor(GROUP_SIZE / 2), page.value + Math.ceil(GROUP_SIZE / 2))
-      .filter((p) => !startGroup.includes(p) && !endGroup.includes(p));
-    return [startGroup, midGroup, endGroup];
+  const group = useComputed(() => {
+    const start = Math.max(0, page.value - Math.floor(GROUP_SIZE / 2));
+    const end = Math.min(pages.value, start + GROUP_SIZE);
+    return Array.from({ length: end - start }, (_, i) => i + start);
   });
 
   return (
     <div class="d-flex justify-content-center gap-4 my-4">
-      <Form>
-        <Row>
-          <Form.Label column htmlFor="per-page">
+      <form>
+        <div class="row">
+          <label class="col form-label col-form-label" for="per-page">
             Per Page
-          </Form.Label>
-          <Col>
-            <Form.Select
+          </label>
+          <div class="col">
+            <select
+              class="form-select"
               name="per-page"
               id="per-page"
               onChange={({ currentTarget: { value } }: JSX.TargetedInputEvent<HTMLSelectElement>) => {
@@ -41,56 +40,79 @@ const Pagination = () => {
                   </option>
                 ))}
               </optgroup>
-            </Form.Select>
-          </Col>
-        </Row>
-      </Form>
-      <BsPagination>
-        <BsPagination.Prev
-          onClick={() => {
-            page.value -= 1;
-          }}
-          disabled={page.value === 0}
-        />
-        {groups.value[0].map((p) => (
-          <BsPagination.Item
-            onClick={() => {
-              page.value = p;
-            }}
-            active={p === page.value}
-          >
-            {p + 1}
-          </BsPagination.Item>
-        ))}
-        {groups.value[1] && groups.value[0].at(-1) !== groups.value[1].at(0) && <BsPagination.Ellipsis disabled />}
-        {groups.value[1]?.map((p) => (
-          <BsPagination.Item
-            onClick={() => {
-              page.value = p;
-            }}
-            active={p === page.value}
-          >
-            {p + 1}
-          </BsPagination.Item>
-        ))}
-        {groups.value[2] && groups.value[1]!.at(-1) !== groups.value[2].at(0) && <BsPagination.Ellipsis disabled />}
-        {groups.value[2]?.map((p) => (
-          <BsPagination.Item
-            onClick={() => {
-              page.value = p;
-            }}
-            active={p === page.value}
-          >
-            {p + 1}
-          </BsPagination.Item>
-        ))}
-        <BsPagination.Next
-          onClick={() => {
-            page.value += 1;
-          }}
-          disabled={page.value === pages.value - 1}
-        />
-      </BsPagination>
+            </select>
+          </div>
+        </div>
+      </form>
+      <nav>
+        <ul class="pagination">
+          <li class="page-item">
+            <button
+              type="button"
+              onClick={() => {
+                page.value = 0;
+              }}
+              disabled={page.value === 0}
+              class={clsx('page-link', page.value === 0 && 'disabled')}
+              aria-label="First Page"
+            >
+              <ChevronDoubleLeft />
+            </button>
+          </li>
+          <li class="page-item">
+            <button
+              type="button"
+              onClick={() => {
+                page.value -= 1;
+              }}
+              disabled={page.value === 0}
+              class={clsx('page-link', page.value === 0 && 'disabled')}
+              aria-label="Previous Page"
+            >
+              <ChevronLeft />
+            </button>
+          </li>
+          {group.value.map((p) => (
+            <li class="page-item">
+              <button
+                type="button"
+                class={clsx('page-link', p === page.value && 'active')}
+                onClick={() => {
+                  page.value = p;
+                }}
+              >
+                {p + 1}
+              </button>
+            </li>
+          ))}
+          <li class="page-item">
+            <button
+              type="button"
+              onClick={() => {
+                page.value += 1;
+              }}
+              disabled={page.value === pages.value - 1}
+              class={clsx('page-link', page.value === pages.value - 1 && 'disabled')}
+              aria-label="Next Page"
+            >
+              <ChevronRight />
+            </button>
+          </li>
+          <li class="page-item">
+            <button
+              type="button"
+              onClick={() => {
+                page.value = pages.value - 1;
+              }}
+              disabled={page.value === pages.value - 1}
+              class={clsx('page-link', page.value === pages.value - 1 && 'disabled')}
+              aria-label="Last Page"
+            >
+              <ChevronDoubleRight />
+            </button>
+          </li>
+        </ul>
+      </nav>
     </div>
   );
 };

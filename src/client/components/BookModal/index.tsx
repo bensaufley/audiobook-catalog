@@ -1,7 +1,7 @@
 import { useComputed, useSignal } from '@preact/signals';
 import type { JSX } from 'preact';
-import { Button, Form, Image, Modal, Stack } from 'react-bootstrap';
 
+import Modal, { Body, Footer, Header, Title } from '~client/components/Modal';
 import useEvent from '~client/hooks/useEvent';
 import { selectedBook, selectedBookId, updateBook } from '~client/signals/Options';
 import { user } from '~client/signals/User';
@@ -20,6 +20,8 @@ const formatDuration = (duration: number) => {
 };
 
 const BookModal = () => {
+  const changingRead = useSignal(false);
+
   const searchParam = useComputed(
     () =>
       `${encodeURIComponent(selectedBook.value?.title ?? '')} ${
@@ -29,32 +31,37 @@ const BookModal = () => {
 
   const read = useSignal(!!selectedBook.value?.UserAudiobooks?.[0]?.read);
 
-  const handleChangeRead: JSX.GenericEventHandler<HTMLInputElement> = useEvent(async (e) => {
-    const resp = await fetch(`/users/books/${selectedBook.value?.id}/read`, {
-      headers: {
-        'x-audiobook-catalog-user': user.value!.id,
-      },
-      method: 'POST',
-    });
+  // eslint-disable-next-line prefer-arrow-functions/prefer-arrow-functions
+  const handleChangeRead: JSX.GenericEventHandler<HTMLInputElement> = useEvent(async function changeRead(e) {
+    changingRead.value = true;
+    try {
+      const resp = await fetch(`/users/books/${selectedBook.value?.id}/read`, {
+        headers: {
+          'x-audiobook-catalog-user': user.value!.id,
+        },
+        method: 'POST',
+      });
 
-    if (!resp.ok) return;
+      if (!resp.ok) return;
 
-    read.value = e.currentTarget.checked;
-    updateBook({
-      id: selectedBookId.peek()!,
-      UserAudiobooks: selectedBook.peek()!.UserAudiobooks!.map((v) => ({ ...v, read: e.currentTarget.checked })),
-    });
+      read.value = e.currentTarget.checked;
+      updateBook({
+        id: selectedBookId.peek()!,
+        UserAudiobooks: selectedBook.peek()!.UserAudiobooks!.map((v) => ({ ...v, read: e.currentTarget.checked })),
+      });
+    } finally {
+      changingRead.value = false;
+    }
+  });
+
+  const handleHide = useEvent(() => {
+    selectedBookId.value = undefined;
   });
 
   return (
-    <Modal
-      show={!!selectedBook.value}
-      onHide={() => {
-        selectedBookId.value = undefined;
-      }}
-    >
-      <Modal.Header closeButton className="align-items-start">
-        <Modal.Title className="flex-grow-1">
+    <Modal show={!!selectedBook.value} onHide={handleHide}>
+      <Header onHide={handleHide}>
+        <Title>
           {selectedBook.value?.title}
           {selectedBook.value?.Authors?.length && (
             <small class="d-block">
@@ -72,22 +79,21 @@ const BookModal = () => {
               )}
             </small>
           )}
-        </Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <Image
-          fluid
-          rounded
-          alt={`Cover for ${selectedBook.value?.title}`}
-          src={`/books/${selectedBook.value?.id}/cover`}
-          className="mb-4"
-        />
+        </Title>
+      </Header>
+      <Body>
+        {selectedBook.value && (
+          <img
+            class="img-fluid rounded mb-4"
+            alt={`Cover for ${selectedBook.value.title}`}
+            src={`/books/${selectedBook.value.id}/cover`}
+          />
+        )}
         {selectedBook.value?.duration && <p>Duration: {formatDuration(selectedBook.value?.duration)}</p>}
-        <Stack direction="horizontal" className="gap-2">
+        <div class="hstack gap-2">
           <span className="d-block me-auto">View In:</span>
-          <Button
-            as="a"
-            variant="outline-primary"
+          <a
+            class="btn btn-outline-primary"
             href={`https://app.thestorygraph.com/browse?search_term=${searchParam}`}
             rel="noopener noreferrer"
             target="_blank"
@@ -98,10 +104,9 @@ const BookModal = () => {
                 <External />
               </span>
             </span>
-          </Button>
-          <Button
-            as="a"
-            variant="outline-secondary"
+          </a>
+          <a
+            class="btn btn-outline-secondary"
             href={`https://www.librarything.com/search.php?searchtype=101&searchtype=101&sortchoice=0&search=${searchParam}`}
             rel="noopener noreferrer"
             target="_blank"
@@ -112,27 +117,40 @@ const BookModal = () => {
                 <External />
               </span>
             </span>
-          </Button>
-        </Stack>
-      </Modal.Body>
-      <Modal.Footer>
+          </a>
+        </div>
+      </Body>
+      <Footer>
         {user.value && (
-          <Form className="me-auto">
-            <Form.Check type="switch" id="read" name="read" checked={read} onChange={handleChangeRead} label="Read" />
-          </Form>
+          <form class="me-auto">
+            <div class="form-check form-switch">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                id="read"
+                role="switch"
+                name="read"
+                checked={read}
+                onChange={handleChangeRead}
+                disabled={changingRead}
+              />
+              <label class="form-check-label" for="read">
+                Read
+              </label>
+            </div>
+          </form>
         )}
-        <Button as="a" href={`/books/${selectedBook.value?.id}/download`}>
+        <a class="btn btn-primary" href={`/books/${selectedBook.value?.id}/download`}>
           <span class="d-flex gap-2 align-items-center">
             <span>
               <Download />
             </span>
             <span class="flex-grow-1">Download</span>
           </span>
-        </Button>
-        <Button
-          as="a"
+        </a>
+        <a
           href={`bookplayer://download?url="${window.location.protocol}//${window.location.host}/books/${selectedBook.value?.id}/download"`}
-          variant="secondary"
+          class="btn btn-secondary"
         >
           <span class="d-flex gap-2 align-items-center">
             <span>
@@ -140,8 +158,8 @@ const BookModal = () => {
             </span>
             <span class="flex-grow-1">Bookplayer</span>
           </span>
-        </Button>
-      </Modal.Footer>
+        </a>
+      </Footer>
     </Modal>
   );
 };

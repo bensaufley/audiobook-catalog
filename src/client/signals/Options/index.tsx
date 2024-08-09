@@ -1,5 +1,4 @@
 import { batch, computed, effect, Signal } from '@preact/signals';
-import type { Dispatch, StateUpdater } from 'preact/hooks';
 import { levenshtein } from 'wuzzy';
 
 import { SortBy, sorters, SortOrder } from '~client/signals/Options/sort';
@@ -8,35 +7,6 @@ import type { AudiobookJSON } from '~db/models/Audiobook';
 import { user } from '../User';
 
 import { Read, Size } from './enums';
-
-export interface OptionValues {
-  books: AudiobookJSON[] | undefined;
-  error: string | undefined;
-  filter: string;
-  page: number;
-  pages: number;
-  perPage: number;
-  read: Read;
-  selectedBook: AudiobookJSON | undefined;
-  size: Size;
-  sortBy: SortBy;
-  sortOrder: SortOrder;
-}
-
-export type Options = OptionValues & {
-  changeFilter: Dispatch<StateUpdater<string>>;
-  changePage: Dispatch<StateUpdater<number>>;
-  changePerPage: Dispatch<StateUpdater<number>>;
-  changeRead: Dispatch<StateUpdater<Read>>;
-  changeSize: Dispatch<StateUpdater<Size>>;
-  changeSortBy: Dispatch<StateUpdater<SortBy>>;
-  changeSortOrder: Dispatch<StateUpdater<SortOrder>>;
-  selectBook: (id: string) => void;
-  unselectBook: () => void;
-  updateBook: (book: AudiobookJSON) => void;
-
-  refresh: () => void;
-};
 
 export const refreshToken = new Signal(0);
 export const refresh = () => {
@@ -151,7 +121,7 @@ effect(() => {
   refreshToken.value;
 
   fetch('/books', { headers: { 'x-audiobook-catalog-user': user.value?.id || '' } })
-    .then((resp) => Promise.all([resp.ok, resp.json() as Promise<AudiobookJSON<unknown>[]>]))
+    .then((resp) => Promise.all([resp.ok, resp.json() as Promise<AudiobookJSON[]>]))
     .then(([ok, bks]) => {
       if (!ok) throw bks;
 

@@ -20,7 +20,7 @@ export default class AudiobookNarrator
   public declare NarratorId: string;
 
   public declare static associations: {
-    Audiobook: Association<AudiobookNarrator, Audiobook<unknown>>;
+    Audiobook: Association<AudiobookNarrator, Audiobook>;
     Narrator: Association<AudiobookNarrator, Narrator>;
   };
 

@@ -26,7 +26,7 @@ export default class Narrator
   public declare readonly updatedAt: Date;
 
   declare static associations: {
-    Audiobooks: Association<Narrator, Audiobook<unknown>>;
+    Audiobooks: Association<Narrator, Audiobook>;
   };
 
   public static associate(m: typeof models) {

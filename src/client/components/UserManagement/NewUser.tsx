@@ -1,9 +1,10 @@
 import { type Signal, useSignal } from '@preact/signals';
 import type { JSX } from 'preact';
-import { Button, Form, Modal } from 'react-bootstrap';
 
+import Modal, { Body, Footer, Header, Title } from '~client/components/Modal';
 import useEvent from '~client/hooks/useEvent';
 import { refreshUsers, user } from '~client/signals/User';
+import Check from '~icons/check.svg?react';
 
 const NewUser = ({ signal }: { signal: Signal<boolean> }) => {
   const username = useSignal('');
@@ -46,18 +47,28 @@ const NewUser = ({ signal }: { signal: Signal<boolean> }) => {
         signal.value = false;
       }}
     >
-      <Modal.Header>
-        <Modal.Title>Create New User</Modal.Title>
-      </Modal.Header>
-      <Form onSubmit={handleSubmit}>
-        <Modal.Body>
+      <Header
+        onHide={() => {
+          // eslint-disable-next-line no-param-reassign
+          signal.value = false;
+        }}
+      >
+        <Title>Create New User</Title>
+      </Header>
+      <form onSubmit={handleSubmit}>
+        <Body>
           {error.value && <p>Error: {error}</p>}
-          <Form.Control name="username" onChange={handleChange} />
-        </Modal.Body>
-        <Modal.Footer>
-          <Button type="submit">Create</Button>
-        </Modal.Footer>
-      </Form>
+          <label for="username" class="form-label">
+            Username
+          </label>
+          <input type="text" class="form-control" name="username" onInput={handleChange} />
+        </Body>
+        <Footer>
+          <button class="btn btn-primary" type="submit">
+            <Check /> Create
+          </button>
+        </Footer>
+      </form>
     </Modal>
   );
 };

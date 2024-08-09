@@ -24,7 +24,7 @@ export default class AudiobookAuthor
   public declare readonly updatedAt: Date;
 
   declare static associations: {
-    Audiobook: Association<AudiobookAuthor, Audiobook<unknown>>;
+    Audiobook: Association<AudiobookAuthor, Audiobook>;
     Author: Association<AudiobookAuthor, Author>;
   };
 

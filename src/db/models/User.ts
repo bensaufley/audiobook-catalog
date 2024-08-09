@@ -21,7 +21,7 @@ export default class User extends Model<UserAttributes, UserCreationAttributes> 
   public declare readonly updatedAt: Date;
 
   declare static associations: {
-    Audiobooks: Association<User, Audiobook<unknown>>;
+    Audiobooks: Association<User, Audiobook>;
     UserAudiobooks: Association<User, UserAudiobook>;
   };
 
