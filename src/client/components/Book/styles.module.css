@@ -1,5 +1,5 @@
 .container {
-  perspective: 1200px;
+  perspective: 75rem;
   perspective-origin: center;
   z-index: 0;
 

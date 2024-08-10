@@ -1,14 +1,7 @@
 .container {
   --cols: 2;
 
-  clear: both;
-  display: grid;
-  grid-gap: 0.5rem;
   grid-template-columns: repeat(var(--cols), 1fr);
-  padding: 0.5rem;
-  perspective: 75rem;
-  perspective-origin: center;
-  width: stretch;
 
   @media screen and (width >= 45em) {
     grid-template-columns: repeat(calc(var(--cols) * 2), 1fr);
