@@ -1,6 +1,12 @@
 name: CI
 
 on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Git ref to checkout'
+        required: false
+        type: string
   push:
     branches:
       - main
@@ -21,6 +27,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.ref || github.ref }}
 
       - name: Get Node Version
         id: node-version
@@ -40,12 +48,13 @@ jobs:
           chmod +x ./cc-test-reporter
 
       - name: Run Tests
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+          JEST_JUNIT_OUTPUT_DIR: ./reports/junit/
         run: |
           ./cc-test-reporter before-build
           npx jest --ci --runInBand --reporters=default --reporters=jest-junit
           ./cc-test-reporter after-build --coverage-input-type lcov --exit-code $?
-        env:
-          JEST_JUNIT_OUTPUT_DIR: ./reports/junit/
   lint:
     name: Lint
     runs-on: ubuntu-latest
@@ -58,6 +67,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.ref || github.ref }}
 
       - name: Get Node Version
         id: node-version
@@ -80,24 +91,28 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.ref || github.ref }}
+
+      - name: Make reports dir
+        run: mkdir -p ${{ github.workspace }}/reports
+
       - uses: hadolint/hadolint-action@v3.1.0
         with:
           dockerfile: Dev.dockerfile
           format: sarif
           output-file: ${{ github.workspace }}/reports/Dev.sarif
+
       - uses: hadolint/hadolint-action@v3.1.0
         with:
           dockerfile: Prod.dockerfile
           format: sarif
           output-file: ${{ github.workspace }}/reports/Prod.sarif
+
       - name: Upload SARIF file
         uses: github/codeql-action/upload-sarif@v3
         with:
-          # Path to SARIF file relative to the root of the repository
           sarif_file: ${{ github.workspace }}/reports
-          # Optional category for the results
-          # Used to differentiate multiple results for one commit
-          category: Dockerfile
 
   build:
     uses: ./.github/workflows/_build.yaml

@@ -1,6 +1,7 @@
 name: Build Image
 
 on:
+  workflow_dispatch:
   workflow_call:
     inputs:
       ref:
@@ -16,6 +17,9 @@ on:
         required: false
         type: boolean
         default: false
+    secrets:
+      DOCKER_ACCESS_TOKEN:
+        required: false
 
 jobs:
   build:
@@ -29,7 +33,7 @@ jobs:
 
       - name: Build Image
         run: |
-          docker build -t bnsfly/audiobook-catalog:latest
+          docker build -t bnsfly/audiobook-catalog:latest -f Prod.dockerfile .
           docker tag bnsfly/audiobook-catalog:latest bnsfly/audiobook-catalog:${{ inputs.tag }}
 
       - name: Log into Dockerhub

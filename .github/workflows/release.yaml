@@ -12,3 +12,4 @@ jobs:
       tag: ${{ github.ref_name }}
       ref: ${{ github.ref }}
       push: true
+    secrets: inherit
