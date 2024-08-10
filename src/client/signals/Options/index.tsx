@@ -29,18 +29,25 @@ export const updateBook = (book: Partial<AudiobookJSON>) => {
   rawBooks.value = rawBooks.peek()?.map((b) => (b.id === book.id ? { ...b, ...book } : b));
 };
 
-// eslint-disable-next-line consistent-return
-export const sizeColumns = computed(() => {
-  switch (size.value) {
-    case Size.Small:
-      return 4;
-    case Size.Medium:
-      return 3;
-    case Size.Large:
-      return 2;
-    case Size.XLarge:
-      return 1;
-  }
+export const sizeColumns = computed(
+  () =>
+    ({
+      [Size.Small]: 4,
+      [Size.Medium]: 3,
+      [Size.Large]: 2,
+      [Size.XLarge]: 1,
+    })[size.value],
+);
+
+export const perPageOptions = computed(() => {
+  const base = sizeColumns.value * 6;
+  return [base * 2, base * 4, base * 8, base * 16];
+});
+
+effect(() => {
+  if (perPageOptions.value.includes(perPage.peek())) return;
+
+  perPage.value = perPageOptions.value.at(0)!;
 });
 
 effect(() => {
@@ -125,15 +132,16 @@ effect(() => {
     .then(([ok, bks]) => {
       if (!ok) throw bks;
 
-      batch(() => {
-        rawBooks.value = bks;
-        pages.value = Math.ceil(bks.length / perPage.peek());
-      });
+      rawBooks.value = bks;
     })
     .catch((err) => {
       batch(() => {
         error.value = (err as Error).message;
-        pages.value = 1;
+        rawBooks.value = undefined;
       });
     });
+});
+
+effect(() => {
+  pages.value = Math.ceil((filteredBooks.value?.length || 0) / perPage.value);
 });

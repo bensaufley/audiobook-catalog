@@ -2,7 +2,7 @@ import { useComputed } from '@preact/signals';
 import clsx from 'clsx';
 import type { JSX } from 'preact';
 
-import { page, pages, perPage } from '~client/signals/Options';
+import { page, pages, perPage, perPageOptions } from '~client/signals/Options';
 import ChevronDoubleLeft from '~icons/chevron-double-left.svg?react';
 import ChevronDoubleRight from '~icons/chevron-double-right.svg?react';
 import ChevronLeft from '~icons/chevron-left.svg?react';
@@ -34,9 +34,9 @@ const Pagination = () => {
               }}
             >
               <optgroup label="Per Page">
-                {[...new Array(5)].map((_, i) => (
-                  <option value={(i + 1) * 20} selected={perPage.value === (i + 1) * 20}>
-                    {(i + 1) * 20}
+                {perPageOptions.value.map((n) => (
+                  <option value={n} selected={perPage.value === n}>
+                    {n}
                   </option>
                 ))}
               </optgroup>
