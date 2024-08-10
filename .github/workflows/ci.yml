@@ -1,6 +1,7 @@
 name: CI
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -40,12 +41,13 @@ jobs:
           chmod +x ./cc-test-reporter
 
       - name: Run Tests
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+          JEST_JUNIT_OUTPUT_DIR: ./reports/junit/
         run: |
           ./cc-test-reporter before-build
           npx jest --ci --runInBand --reporters=default --reporters=jest-junit
           ./cc-test-reporter after-build --coverage-input-type lcov --exit-code $?
-        env:
-          JEST_JUNIT_OUTPUT_DIR: ./reports/junit/
   lint:
     name: Lint
     runs-on: ubuntu-latest

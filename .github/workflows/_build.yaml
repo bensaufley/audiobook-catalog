@@ -1,6 +1,7 @@
 name: Build Image
 
 on:
+  workflow_dispatch:
   workflow_call:
     inputs:
       ref:
@@ -16,6 +17,9 @@ on:
         required: false
         type: boolean
         default: false
+    secrets:
+      DOCKER_ACCESS_TOKEN:
+        required: false
 
 jobs:
   build:
