@@ -1,4 +1,4 @@
-FROM node:22.3.0 AS builder
+FROM node:22.6.0 AS builder
 LABEL maintainer="Ben Saufley<contact@bensaufley.com>"
 
 WORKDIR /usr/src/audiobook-catalog
@@ -13,7 +13,7 @@ ENV NODE_ENV=production
 RUN npm run build && \
   npm prune --production
 
-FROM node:22.3.0-alpine
+FROM node:22.6.0-alpine
 
 WORKDIR /usr/src/audiobook-catalog
 

@@ -1,4 +1,4 @@
-FROM node:22.3.0
+FROM node:22.6.0
 LABEL maintainer="Ben Saufley<contact@bensaufley.com>"
 
 WORKDIR /usr/src/audiobook-catalog
