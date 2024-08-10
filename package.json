@@ -2,15 +2,14 @@
   "author": "Ben Saufley<contact@bensaufley.com>",
   "dependencies": {
     "@fastify/etag": "^5.2.0",
-    "@fastify/static": "^7.0.3",
-    "core-js": "^3.36.1",
-    "fastify": "^4.26.2",
+    "@fastify/static": "^7.0.4",
+    "fastify": "^4.28.1",
     "music-metadata": "^7.14.0",
-    "pino": "^8.20.0",
+    "pino": "^8.21.0",
     "pino-http": "^9.0.0",
-    "sequelize": "^6.37.2",
+    "sequelize": "^6.37.3",
     "sqlite3": "^5.1.7",
-    "umzug": "^3.8.0"
+    "umzug": "^3.8.1"
   },
   "devDependencies": {
     "@bensaufley/eslint-config": "^1.1.3",
