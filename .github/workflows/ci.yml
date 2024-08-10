@@ -103,4 +103,5 @@ jobs:
     uses: ./.github/workflows/_build.yaml
     with:
       tag: ${{ github.sha }}
+      ref: ${{ github.ref }}
       push: false

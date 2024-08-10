@@ -3,6 +3,10 @@ name: Build Image
 on:
   workflow_call:
     inputs:
+      ref:
+        description: 'Git ref to checkout'
+        required: true
+        type: string
       tag:
         description: 'Docker image tag'
         required: true
@@ -20,6 +24,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
 
       - name: Build Image
         run: |
