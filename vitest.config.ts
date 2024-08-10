@@ -9,7 +9,7 @@ export default mergeConfig(
     test: {
       coverage: {
         provider: 'istanbul',
-        reporter: ['text', 'json', 'html'],
+        reporter: ['text', 'lcov'],
       },
     },
   }),
