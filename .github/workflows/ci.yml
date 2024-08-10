@@ -2,6 +2,11 @@ name: CI
 
 on:
   workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Git ref to checkout'
+        required: false
+        type: string
   push:
     branches:
       - main
@@ -22,6 +27,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.ref || github.ref }}
 
       - name: Get Node Version
         id: node-version
@@ -60,6 +67,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.ref || github.ref }}
 
       - name: Get Node Version
         id: node-version
@@ -82,6 +91,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.ref || github.ref }}
       - uses: hadolint/hadolint-action@v3.1.0
         with:
           dockerfile: Dev.dockerfile
