@@ -1,0 +1,106 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+
+    env:
+      APP_ENV: test
+      NODE_ENV: test
+      ROOT_DIR: ${{ github.workspace }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Get Node Version
+        id: node-version
+        run: echo ::set-output name=node-version::$(cat .node-version)
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ steps.node-version.outputs.node-version }}
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Setup Code Climate test-reporter
+        run: |
+          curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+          chmod +x ./cc-test-reporter
+
+      - name: Run Tests
+        run: |
+          ./cc-test-reporter before-build
+          npx jest --ci --runInBand --reporters=default --reporters=jest-junit
+          ./cc-test-reporter after-build --coverage-input-type lcov --exit-code $?
+        env:
+          JEST_JUNIT_OUTPUT_DIR: ./reports/junit/
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+
+    env:
+      APP_ENV: test
+      NODE_ENV: test
+      ROOT_DIR: ${{ github.workspace }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Get Node Version
+        id: node-version
+        run: echo ::set-output name=node-version::$(cat .node-version)
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ steps.node-version.outputs.node-version }}
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Lint
+        run: npm run check
+
+  lint-docker:
+    name: Lint Dockerfiles
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: Dev.dockerfile
+          format: sarif
+          output-file: ${{ github.workspace }}/reports/Dev.sarif
+      - uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: Prod.dockerfile
+          format: sarif
+          output-file: ${{ github.workspace }}/reports/Prod.sarif
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          # Path to SARIF file relative to the root of the repository
+          sarif_file: ${{ github.workspace }}/reports
+          # Optional category for the results
+          # Used to differentiate multiple results for one commit
+          category: Dockerfile
+
+  build:
+    uses: ./.github/workflows/_build.yaml
+    with:
+      tag: ${{ github.sha }}
+      push: false

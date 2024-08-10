@@ -1,0 +1,41 @@
+name: Build Image
+
+on:
+  workflow_call:
+    inputs:
+      tag:
+        description: 'Docker image tag'
+        required: true
+        type: string
+      push:
+        description: Whether to push to Dockerhub
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Image
+        run: |
+          docker build -t bnsfly/audiobook-catalog:latest
+          docker tag bnsfly/audiobook-catalog:latest bnsfly/audiobook-catalog:${{ inputs.tag }}
+
+      - name: Log into Dockerhub
+        id: docker-login
+        if: ${{ inputs.push }}
+        env:
+          DOCKER_ACCESS_TOKEN: ${{ secrets.DOCKER_ACCESS_TOKEN }}
+        run: |
+          echo "$DOCKER_ACCESS_TOKEN" | docker login -u bnsfly --password-stdin
+
+      - name: Push image to Dockerhub
+        if: ${{ inputs.push && steps.docker-login.outcome == 'success' }}
+        run: |
+          docker push bnsfly/audiobook-catalog:${{ inputs.tag }}
+          docker push bnsfly/audiobook-catalog:latest
