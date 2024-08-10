@@ -1,0 +1,15 @@
+name: Build and Release Image
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build-and-push:
+    uses: ./.github/workflows/_build.yaml
+    with:
+      tag: ${{ github.ref_name }}
+      ref: ${{ github.ref }}
+      push: true
+    secrets: inherit
