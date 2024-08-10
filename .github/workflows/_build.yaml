@@ -33,7 +33,7 @@ jobs:
 
       - name: Build Image
         run: |
-          docker build -t bnsfly/audiobook-catalog:latest
+          docker build -t bnsfly/audiobook-catalog:latest -f Prod.dockerfile .
           docker tag bnsfly/audiobook-catalog:latest bnsfly/audiobook-catalog:${{ inputs.tag }}
 
       - name: Log into Dockerhub
