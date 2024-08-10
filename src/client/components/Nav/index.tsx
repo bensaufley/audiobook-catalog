@@ -85,19 +85,26 @@ const Nav = () => {
                     </div>
                   </div>
                 </div>
-                <div class="my-2 my-xl-0 col-xl-auto col-12 d-flex">
-                  <input
-                    type="range"
-                    id="size"
-                    name="size"
-                    class="form-range align-self-center"
-                    min={Size.Small}
-                    max={Size.XLarge}
-                    value={size}
-                    onInput={({ currentTarget: { value } }: JSX.TargetedInputEvent<HTMLInputElement>) => {
-                      size.value = Number(value) as Size;
-                    }}
-                  />
+                <div class="my-2 my-xl-0 col-xl-auto col-12">
+                  <div class="row">
+                    <label class="form-label col-form-label col-auto" for="size">
+                      Zoom:
+                    </label>
+                    <div class="col d-flex">
+                      <input
+                        type="range"
+                        id="size"
+                        name="size"
+                        class="form-range align-self-center"
+                        min={Size.Small}
+                        max={Size.XLarge}
+                        value={size}
+                        onInput={({ currentTarget: { value } }: JSX.TargetedInputEvent<HTMLInputElement>) => {
+                          size.value = Number(value) as Size;
+                        }}
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
             </form>
