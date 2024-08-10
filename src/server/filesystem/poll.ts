@@ -1,8 +1,8 @@
-import { FastifyLoggerInstance } from 'fastify';
-import { extname } from 'path';
+import type { FastifyLoggerInstance } from 'fastify';
+import { extname } from 'node:path';
 import type { Sequelize } from 'sequelize';
-import importBook from '~server/filesystem/importBook';
 
+import importBook from '~server/filesystem/importBook';
 import walk from '~server/filesystem/walk';
 import { wait } from '~shared/utilities';
 
@@ -16,15 +16,16 @@ const poll = async (sequelize: Sequelize, log: FastifyLoggerInstance, directory:
 
     let i = files.length;
     while (i--) {
-      const filepath = files[i];
+      const filepath = files[i]!;
       if (!extensions.includes(extname(filepath))) continue;
 
+      // eslint-disable-next-line no-await-in-loop
       await importBook(filepath, sequelize, log);
     }
 
     log.info('Done importing from %s.', directory);
   } catch (error) {
-    log.error({ error }, 'Error walking %s');
+    log.error({ error }, 'Error walking %s', directory);
   }
   await wait(pollPeriod);
 

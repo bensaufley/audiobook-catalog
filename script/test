@@ -12,4 +12,4 @@ docker run \
   -e NODE_ENV=development \
   -e LOG_LEVEL=debug \
   audiobook-catalog:dev \
-  yarn test
+  npm test

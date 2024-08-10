@@ -14,6 +14,10 @@ on:
     branches:
       - main
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name == 'workflow_dispatch' && github.inputs.ref || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test:
     name: Test
@@ -23,6 +27,7 @@ jobs:
       APP_ENV: test
       NODE_ENV: test
       ROOT_DIR: ${{ github.workspace }}
+      CI: true
 
     steps:
       - name: Checkout code
@@ -53,7 +58,7 @@ jobs:
           JEST_JUNIT_OUTPUT_DIR: ./reports/junit/
         run: |
           ./cc-test-reporter before-build
-          npx jest --ci --runInBand --reporters=default --reporters=jest-junit
+          npx vitest --coverage --reporter=default --reporter=junit --outputFile.junit=./reports/junit/junit.xml
           ./cc-test-reporter after-build --coverage-input-type lcov --exit-code $?
   lint:
     name: Lint

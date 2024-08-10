@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 declare namespace NodeJS {
   export interface ProcessEnv {
     APP_ENV: 'development' | 'test' | 'prod';
@@ -11,4 +12,16 @@ declare namespace NodeJS {
 declare module '*.module.css' {
   const mod: Record<string, string>;
   export default mod;
+}
+
+declare module '*.svg' {
+  const content: string;
+  export default content;
+}
+
+declare module '*.svg?react' {
+  import type { FunctionComponent, JSX } from 'preact';
+
+  const Svg: FunctionComponent<JSX.HTMLAttributes<SVGSVGElement>>;
+  export default Svg;
 }

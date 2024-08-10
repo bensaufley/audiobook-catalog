@@ -5,6 +5,7 @@ import Author from '~db/models/Author';
 import Narrator from '~db/models/Narrator';
 import User from '~db/models/User';
 import UserAudiobook from '~db/models/UserAudiobook';
+
 import sequelize from '../sequelize';
 
 const models = {

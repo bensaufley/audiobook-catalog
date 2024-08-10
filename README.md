@@ -28,7 +28,7 @@ This repo adhere's to GitHub's [Scripts to Rule Them All] pattern.
 - `script/update`: builds the dev Docker image, using cache if possible. In most cases, `script/update` is all you need and `script/setup` is unnecessary.
 - `script/migrate`: exposes the [Umzug] CLI inside the dev container. If no arguments are passed, `up` is assumed.
 - `script/server`: runs `script/update` and then starts dev server inside generated Docker image. Server will be visible at <http://localhost:6541>.
-- `script/test`: runs `script/update` and runs `yarn test` inside it. Extra arguments will be passed as arguments to `yarn test`, e.g. `script/test -u` to update Jest snapshots.
+- `script/test`: runs `script/update` and runs `npm test` inside it. Extra arguments will be passed as arguments to `npm test`, e.g. `script/test -u` to update Jest snapshots.
 
 [unraid]: https://unraid.net
 [scripts to rule them all]: https://github.com/github/scripts-to-rule-them-all

@@ -1,13 +1,14 @@
-import Fastify from 'fastify';
+import fastifyEtag from '@fastify/etag';
 import fastifyStatic from '@fastify/static';
-import { resolve } from 'path';
-import type webpackT from 'webpack';
+import Fastify, { type FastifyBaseLogger, type FastifyServerOptions } from 'fastify';
+import { readFile } from 'node:fs/promises';
+import type { Server } from 'node:http';
+import { resolve } from 'node:path';
+
 import { umzug } from '~db/migrations';
 import { ready } from '~db/models';
-import books from '~server/routes/books';
-
-import type * as configT from '../../webpack.config';
 import User from '~db/models/User';
+import books from '~server/routes/books';
 import users from '~server/routes/users';
 
 const logLevels = ['trace', 'debug', 'info', 'warn', 'error'];
@@ -24,6 +25,18 @@ const init = async () => {
 
   await ready;
 
+  let devServerOpts: Pick<FastifyServerOptions<Server, FastifyBaseLogger>, 'serverFactory'> | undefined;
+  if (import.meta.env.DEV) {
+    // eslint-disable-next-line import/no-extraneous-dependencies
+    const { default: devServer } = await import('vavite/http-dev-server');
+    devServerOpts = {
+      serverFactory: (handler) => {
+        devServer!.on('request', handler);
+        return devServer!;
+      },
+    };
+  }
+
   const fastify = Fastify({
     logger: {
       level: sanitizeLogLevel(process.env.LOG_LEVEL),
@@ -35,21 +48,18 @@ const init = async () => {
           }
         : {}),
     },
+    ...devServerOpts,
   });
 
-  if (process.env.APP_ENV === 'development') {
-    const webpack: typeof webpackT = require('webpack');
-    const HMR = require('fastify-webpack-hmr');
-    const { clientConfig }: typeof configT = require('../../webpack.config');
+  fastify.register(fastifyEtag);
 
-    const compiler = webpack(clientConfig);
-    fastify.register(HMR, { compiler, webpackDev: { publicPath: '/static/' } });
+  if (import.meta.env.PROD) {
+    fastify.register(fastifyStatic, {
+      root: resolve(import.meta.dirname, '../client'),
+      prefix: '/static/',
+    });
   }
 
-  fastify.register(fastifyStatic, {
-    root: resolve(__dirname, '../client'),
-    prefix: '/static/',
-  });
   fastify.addHook('preHandler', async (req) => {
     const userId = req.headers['x-audiobook-catalog-user'];
 
@@ -69,8 +79,16 @@ const init = async () => {
   await fastify.register(books, { prefix: '/books' });
   await fastify.register(users, { prefix: '/users' });
 
+  // eslint-disable-next-line import/no-extraneous-dependencies
+  const viteDevServer = import.meta.env.DEV ? (await import('vavite/vite-dev-server')).default : undefined;
   fastify.get('/*', async (req, res) => {
-    await res.sendFile('index.html');
+    if (import.meta.env.DEV) {
+      const index = await readFile(resolve(import.meta.dirname, '../client/index.html'), 'utf-8');
+      res.header('Content-Type', 'text/html');
+      res.send(await viteDevServer!.transformIndexHtml(req.url, index));
+    } else {
+      await res.sendFile('index.html');
+    }
   });
 
   return fastify;

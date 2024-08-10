@@ -1,57 +1,77 @@
 import {
-  Association,
-  BelongsToManyAddAssociationMixin,
+  type Association,
+  type BelongsToManyAddAssociationMixin,
   BLOB,
   FLOAT,
   Model,
-  Optional,
-  Sequelize,
+  type Optional,
+  type Sequelize,
   STRING,
   UUID,
   UUIDV4,
 } from 'sequelize';
+
 import type models from '~db/models';
-import type { AuthorAttributes, default as Author } from '~db/models/Author';
-import type { default as Narrator, NarratorAttributes } from '~db/models/Narrator';
+import type Author from '~db/models/Author';
+import type { AuthorAttributes } from '~db/models/Author';
+import type Narrator from '~db/models/Narrator';
+import type { NarratorAttributes } from '~db/models/Narrator';
 import type User from '~db/models/User';
 import type UserAudiobook from '~db/models/UserAudiobook';
 import type { UserAudiobookJSON } from '~db/models/UserAudiobook';
 
-export interface AudiobookAttributes<T> {
+interface NullCoverProps {
+  cover: null;
+  coverType: null;
+}
+
+interface CoverProps {
+  cover: Buffer;
+  coverType: string;
+}
+
+export type AudiobookAttributes<HasCover extends boolean = boolean> = {
   id: string;
   title: string;
   filepath: string;
-  cover: T extends null ? null : Buffer;
-  coverType: T extends null ? null : string;
   duration: number | null;
-}
+} & (HasCover extends true ? CoverProps : HasCover extends false ? NullCoverProps : CoverProps | NullCoverProps);
 
-type AudiobookCreationAttributes = Optional<AudiobookAttributes<any>, 'id'>;
+type AudiobookCreationAttributes = Optional<AudiobookAttributes<boolean>, 'id'>;
 
-export class Audiobook<T>
-  extends Model<AudiobookAttributes<T>, AudiobookCreationAttributes>
-  implements AudiobookAttributes<T>
-{
+export default class Audiobook<HasCover extends boolean = boolean> extends Model<
+  AudiobookAttributes<HasCover>,
+  AudiobookCreationAttributes
+> {
   declare static associations: {
-    Authors: Association<Audiobook<unknown>, Author>;
-    Narrators: Association<Audiobook<unknown>, Narrator>;
-    UserAudiobooks: Association<Audiobook<unknown>, UserAudiobook>;
-    Users: Association<Audiobook<unknown>, User>;
+    Authors: Association<Audiobook, Author>;
+    Narrators: Association<Audiobook, Narrator>;
+    UserAudiobooks: Association<Audiobook, UserAudiobook>;
+    Users: Association<Audiobook, User>;
   };
 
   public declare id: string;
+
   public declare title: string;
+
   public declare filepath: string;
-  public declare cover: T extends null ? null : Buffer;
-  public declare coverType: T extends null ? null : string;
+
+  public declare cover: HasCover extends false ? null : HasCover extends true ? Buffer : Buffer | null;
+
+  public declare coverType: HasCover extends false ? null : HasCover extends true ? string : string | null;
+
   public declare duration: number | null;
 
   public declare readonly createdAt: Date;
+
   public declare readonly updatedAt: Date;
 
   public declare Authors?: Author[];
+
   public declare Narrators?: Narrator[];
+
   public declare Users?: User[];
+
   public declare UserAudiobooks?: UserAudiobook[];
 
   public declare addAuthor: BelongsToManyAddAssociationMixin<Author, AuthorAttributes>;
@@ -101,9 +121,8 @@ export class Audiobook<T>
   }
 }
 
-export default Audiobook;
-
-export interface AudiobookJSON<T = unknown> extends Omit<Audiobook<T>, 'createdAt' | 'updatedAt' | 'UserAudiobooks'> {
+export interface AudiobookJSON<HasCover extends boolean = boolean>
+  extends Omit<Audiobook<HasCover>, 'createdAt' | 'updatedAt' | 'UserAudiobooks'> {
   createdAt: string;
   updatedAt: string;
   UserAudiobooks: UserAudiobookJSON[];

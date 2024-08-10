@@ -1,6 +1,6 @@
 // @ts-check
 
-const { join } = require('path');
+import { join } from 'node:path';
 
 /** @type {{[key in typeof process.env.APP_ENV]?: import('sequelize').Options}} */
 const config = {
@@ -10,4 +10,4 @@ const config = {
   },
 };
 
-module.exports = config;
+export default config;

@@ -1,38 +1,37 @@
 {
   "compilerOptions": {
-    "target": "esnext",
+    "target": "ESNext",
 
-    "module": "commonjs",
+    "module": "ESNext",
     "baseUrl": "./",
     "paths": {
       "~client/*": ["src/client/*"],
       "~db/*": ["src/db/*"],
+      "~icons/*": ["./node_modules/bootstrap-icons/icons/*"],
       "~server/*": ["src/server/*"],
       "~shared/*": ["src/shared/*"],
       "~test/*": ["test/*"]
     },
+    "moduleResolution": "Bundler",
     "resolveJsonModule": true,
 
     "allowJs": true,
     "checkJs": true,
 
-    "jsx": "preserve",
-    "jsxFactory": "h",
-    "jsxFragmentFactory": "Fragment",
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact",
 
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
 
     "strict": true,
     "exactOptionalPropertyTypes": true,
+    "noUncheckedIndexedAccess": true,
     "noImplicitReturns": false,
 
     "outDir": ".build",
 
     "skipLibCheck": true
   },
-  "include": ["./*.js", "./*.ts", "src", "test"],
-  "ts-node": {
-    "require": ["tsconfig-paths/register"]
-  }
+  "include": ["./*.js", "./*.ts", "src", "test"]
 }
