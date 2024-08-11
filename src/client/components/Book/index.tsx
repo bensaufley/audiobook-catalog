@@ -1,11 +1,10 @@
-import { useSignal } from '@preact/signals';
+import { useComputed, useSignal } from '@preact/signals';
 import type { JSX } from 'preact';
 
 import useEvent from '~client/hooks/useEvent';
-import { selectedBookId, updateBook } from '~client/signals/Options';
+import { selectedBookId, setBookRead } from '~client/signals/Options';
 import { user } from '~client/signals/User';
 import type { AudiobookJSON } from '~db/models/Audiobook';
-import type { UserAudiobookJSON } from '~db/models/UserAudiobook';
 
 import styles from '~client/components/Book/styles.module.css';
 
@@ -18,7 +17,7 @@ const stopProp: JSX.GenericEventHandler<HTMLElement> = (e) => {
 };
 
 const Book = ({ book }: Props) => {
-  const read = book.UserAudiobooks?.some(({ read: r }) => r);
+  const read = useComputed(() => !!book.UserAudiobooks?.find(({ UserId }) => UserId === user.value?.id)?.read);
 
   const onClick = useEvent((e: Event) => {
     e.preventDefault();
@@ -29,31 +28,11 @@ const Book = ({ book }: Props) => {
 
   const handleRead = useEvent(async ({ currentTarget: { checked } }: JSX.TargetedEvent<HTMLInputElement>) => {
     loading.value = true;
-
     try {
-      const path = checked ? 'read' : 'unread';
-      await fetch(`/users/books/${book.id}/${path}`, {
-        method: 'POST',
-        headers: { 'x-audiobook-catalog-user': user.value!.id },
-      });
-
-      const ua = book.UserAudiobooks?.some(({ UserId }) => UserId === user.value!.id);
-      const UserAudiobooks: UserAudiobookJSON[] = ua
-        ? book.UserAudiobooks!.map((x) => (x.UserId === user.value!.id ? { ...x, read: checked } : x))
-        : [
-            {
-              read: checked,
-              UserId: user.value!.id,
-              createdAt: new Date().toISOString(),
-              updatedAt: new Date().toISOString(),
-              AudiobookId: book.id,
-            },
-          ];
-      updateBook({ ...book, UserAudiobooks });
+      await setBookRead(book.id, checked);
     } catch {
       /* noop */
     }
-
     loading.value = false;
   });
 
