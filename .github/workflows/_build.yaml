@@ -43,9 +43,11 @@ jobs:
           trap "docker stop $container_id" EXIT
 
           for i in {1..5}; do
+            echo "Checking container..."
             if docker ps | grep $container_id | grep -qE "ago +Up"; then
               echo "Container started successfully"
-              for i in {1..5}; do
+              for j in {1..5}; do
+                echo "Checking application..."
                 if curl --fail-with-body http://localhost:3000; then
                   echo "Application started successfully"
                   exit 0
