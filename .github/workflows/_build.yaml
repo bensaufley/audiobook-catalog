@@ -36,6 +36,26 @@ jobs:
           docker build -t bnsfly/audiobook-catalog:latest -f Prod.dockerfile .
           docker tag bnsfly/audiobook-catalog:latest bnsfly/audiobook-catalog:${{ inputs.tag }}
 
+      - name: Check that image runs
+        run: |
+          container_id="$(docker run --detach --publish 3000:3000 --rm bnsfly/audiobook-catalog:latest)"
+          trap "docker stop $container_id" EXIT
+
+          for i in {1..5}; do
+            if docker ps | grep $container_id | grep -qE "ago +Up"; then
+              for i in {1..5}; do
+                if curl --fail http://localhost:3000; then
+                  echo "Application started successfully"
+                  exit 0
+                fi
+                sleep 1
+              done
+            fi
+            sleep 1
+          done
+
+          exit 1
+
       - name: Log into Dockerhub
         id: docker-login
         if: ${{ inputs.push }}

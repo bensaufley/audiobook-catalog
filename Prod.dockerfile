@@ -13,7 +13,7 @@ ENV NODE_ENV=production
 RUN npm run build && \
   npm prune --production
 
-FROM node:22.6.0-alpine
+FROM node:22.6.0-slim
 
 WORKDIR /usr/src/audiobook-catalog
 
