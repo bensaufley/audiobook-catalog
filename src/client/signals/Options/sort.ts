@@ -1,4 +1,4 @@
-import type { AudiobookJSON } from '~db/models/Audiobook';
+import type { AudiobookJSON } from '~shared/jsonModels';
 
 export enum SortBy {
   Author = 'Author',
@@ -23,7 +23,7 @@ export const sorters: { [k in SortBy]: (a: AudiobookJSON, b: AudiobookJSON) => n
     if (aAuthors > bAuthors) return 1;
     return 0;
   },
-  [SortBy.DateAdded]: ({ createdAt: a }, { createdAt: b }) => Date.parse(a) - Date.parse(b),
+  [SortBy.DateAdded]: ({ createdAt: a }, { createdAt: b }) => a.getTime() - b.getTime(),
   [SortBy.Title]: ({ title: a }, { title: b }) => {
     if (a < b) return -1;
     if (a > b) return 1;

@@ -1,13 +1,20 @@
 // @ts-check
 
+import { SqliteDialect } from '@sequelize/sqlite3';
 import { join } from 'node:path';
 
-/** @type {{[key in typeof process.env.APP_ENV]?: import('sequelize').Options}} */
+import dbModels from '../models';
+
+/** @type {import('@sequelize/core').Options<import('@sequelize/sqlite3').SqliteDialect>} */
 const config = {
-  [process.env.APP_ENV]: {
-    dialect: 'sqlite',
-    storage: join(process.env.DB_DIR || '/db/', `${process.env.DB_NAME}.sqlite3`),
-  },
+  dialect: SqliteDialect,
+  storage: join(process.env.DB_DIR || '/db/', `${process.env.DB_NAME}.sqlite3`),
+  models: dbModels,
 };
 
-export default config;
+/** @type {{[key in typeof process.env.APP_ENV]?: import('@sequelize/core').Options<import('@sequelize/sqlite3').SqliteDialect>}} */
+const envConfig = {
+  [process.env.APP_ENV]: config,
+};
+
+export default envConfig;

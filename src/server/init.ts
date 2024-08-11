@@ -6,7 +6,6 @@ import type { Server } from 'node:http';
 import { resolve } from 'node:path';
 
 import { umzug } from '~db/migrations';
-import { ready } from '~db/models';
 import User from '~db/models/User';
 import books from '~server/routes/books';
 import users from '~server/routes/users';
@@ -22,8 +21,6 @@ const sanitizeLogLevel = (level?: string) => {
 
 const init = async () => {
   await umzug.up();
-
-  await ready;
 
   let devServerOpts: Pick<FastifyServerOptions<Server, FastifyBaseLogger>, 'serverFactory'> | undefined;
   if (import.meta.env.DEV) {

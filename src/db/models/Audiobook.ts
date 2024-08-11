@@ -1,129 +1,96 @@
 import {
-  type Association,
+  type BelongsToAssociation,
   type BelongsToManyAddAssociationMixin,
-  BLOB,
-  FLOAT,
+  type CreationOptional,
+  DataTypes,
+  type HasManyAssociation,
+  type InferAttributes,
+  type InferCreationAttributes,
   Model,
-  type Optional,
-  type Sequelize,
-  STRING,
-  UUID,
-  UUIDV4,
-} from 'sequelize';
+  type NonAttribute,
+  sql,
+} from '@sequelize/core';
+import {
+  AllowNull,
+  Attribute,
+  BelongsToMany,
+  Default,
+  HasMany,
+  NotNull,
+  PrimaryKey,
+  Table,
+} from '@sequelize/core/decorators-legacy';
 
-import type models from '~db/models';
-import type Author from '~db/models/Author';
-import type { AuthorAttributes } from '~db/models/Author';
-import type Narrator from '~db/models/Narrator';
-import type { NarratorAttributes } from '~db/models/Narrator';
-import type User from '~db/models/User';
-import type UserAudiobook from '~db/models/UserAudiobook';
-import type { UserAudiobookJSON } from '~db/models/UserAudiobook';
+import Author from '~db/models/Author';
+import Narrator from '~db/models/Narrator';
+import User from '~db/models/User';
+import UserAudiobook from '~db/models/UserAudiobook';
+import type { AudiobookJSON } from '~shared/jsonModels';
 
-interface NullCoverProps {
-  cover: null;
-  coverType: null;
-}
+import AudiobookAuthor from './AudiobookAuthor';
+import AudiobookNarrator from './AudiobookNarrator';
 
-interface CoverProps {
-  cover: Buffer;
-  coverType: string;
-}
+@Table({ modelName: 'Audiobook' })
+export default class Audiobook<HasCover extends boolean = boolean>
+  extends Model<InferAttributes<Audiobook<HasCover>>, InferCreationAttributes<Audiobook<HasCover>>>
+  implements AudiobookJSON
+{
+  @Attribute(DataTypes.UUIDV4)
+  @PrimaryKey
+  @Default(sql.uuidV4)
+  public declare id: CreationOptional<string>;
 
-export type AudiobookAttributes<HasCover extends boolean = boolean> = {
-  id: string;
-  title: string;
-  filepath: string;
-  duration: number | null;
-} & (HasCover extends true ? CoverProps : HasCover extends false ? NullCoverProps : CoverProps | NullCoverProps);
-
-type AudiobookCreationAttributes = Optional<AudiobookAttributes<boolean>, 'id'>;
-
-export default class Audiobook<HasCover extends boolean = boolean> extends Model<
-  AudiobookAttributes<HasCover>,
-  AudiobookCreationAttributes
-> {
-  declare static associations: {
-    Authors: Association<Audiobook, Author>;
-    Narrators: Association<Audiobook, Narrator>;
-    UserAudiobooks: Association<Audiobook, UserAudiobook>;
-    Users: Association<Audiobook, User>;
-  };
-
-  public declare id: string;
-
+  @Attribute(DataTypes.TEXT)
+  @NotNull
   public declare title: string;
 
+  @Attribute(DataTypes.TEXT)
+  @NotNull
   public declare filepath: string;
 
+  @Attribute(DataTypes.BLOB)
   public declare cover: HasCover extends false ? null : HasCover extends true ? Buffer : Buffer | null;
 
+  @Attribute(DataTypes.TEXT)
+  @AllowNull
   public declare coverType: HasCover extends false ? null : HasCover extends true ? string : string | null;
 
+  @Attribute(DataTypes.REAL)
+  @AllowNull
   public declare duration: number | null;
 
-  public declare readonly createdAt: Date;
+  public declare readonly createdAt: CreationOptional<Date>;
 
-  public declare readonly updatedAt: Date;
+  public declare readonly updatedAt: CreationOptional<Date>;
 
-  public declare Authors?: Author[];
+  @HasMany(() => AudiobookAuthor, 'AudiobookId')
+  public declare AudiobookAuthors?: NonAttribute<AudiobookAuthor[]>;
 
-  public declare Narrators?: Narrator[];
+  @HasMany(() => AudiobookNarrator, 'AudiobookId')
+  public declare AudiobookNarrators?: NonAttribute<AudiobookNarrator[]>;
 
-  public declare Users?: User[];
+  @HasMany(() => UserAudiobook, 'AudiobookId')
+  public declare UserAudiobooks?: NonAttribute<UserAudiobook[]>;
 
-  public declare UserAudiobooks?: UserAudiobook[];
+  @BelongsToMany(() => Author, { through: () => AudiobookAuthor })
+  public declare Authors?: NonAttribute<Author[]>;
 
-  public declare addAuthor: BelongsToManyAddAssociationMixin<Author, AuthorAttributes>;
+  @BelongsToMany(() => Narrator, { through: () => AudiobookNarrator })
+  public declare Narrators?: NonAttribute<Narrator[]>;
 
-  public declare addNarrator: BelongsToManyAddAssociationMixin<Narrator, NarratorAttributes>;
+  @BelongsToMany(() => User, { through: () => UserAudiobook })
+  public declare Users?: NonAttribute<User[]>;
 
-  public static associate(m: typeof models) {
-    this.belongsToMany(m.Author, { through: m.AudiobookAuthor });
-    this.belongsToMany(m.Narrator, { through: m.AudiobookNarrator });
-    this.hasMany(m.UserAudiobook);
-    this.belongsToMany(m.User, { through: m.UserAudiobook });
-  }
+  public declare addAuthor: BelongsToManyAddAssociationMixin<Author, Author['id']>;
 
-  public static generate(sequelize: Sequelize) {
-    return this.init(
-      {
-        id: {
-          type: UUID,
-          primaryKey: true,
-          defaultValue: UUIDV4,
-          allowNull: false,
-          autoIncrement: false,
-        },
-        title: {
-          type: STRING,
-          allowNull: false,
-        },
-        filepath: {
-          type: STRING,
-          allowNull: false,
-        },
-        cover: {
-          type: BLOB,
-        },
-        coverType: {
-          type: STRING,
-        },
-        duration: {
-          type: FLOAT,
-        },
-      },
-      {
-        modelName: 'Audiobook',
-        sequelize,
-      },
-    );
-  }
-}
+  public declare addNarrator: BelongsToManyAddAssociationMixin<Narrator, Narrator['id']>;
 
-export interface AudiobookJSON<HasCover extends boolean = boolean>
-  extends Omit<Audiobook<HasCover>, 'createdAt' | 'updatedAt' | 'UserAudiobooks'> {
-  createdAt: string;
-  updatedAt: string;
-  UserAudiobooks: UserAudiobookJSON[];
+  public declare static associations: {
+    AudiobookAuthors: HasManyAssociation<Audiobook, AudiobookAuthor>;
+    AudiobookNarrators: HasManyAssociation<Audiobook, AudiobookNarrator>;
+    UserAudiobooks: HasManyAssociation<Audiobook, UserAudiobook>;
+    Authors: BelongsToAssociation<Audiobook, Author>;
+    Narrators: BelongsToAssociation<Audiobook, Narrator>;
+    Users: BelongsToAssociation<Audiobook, User>;
+  };
 }

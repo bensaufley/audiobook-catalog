@@ -5,6 +5,18 @@ const config = {
   extends: ['@bensaufley', require.resolve('@bensaufley/eslint-config/preact.cjs')],
   rules: {
     'implicit-arrow-linebreak': 'off',
+    'import/extensions': [
+      'error',
+      {
+        ignorePackages: true,
+        pattern: {
+          js: 'never',
+          jsx: 'never',
+          ts: 'never',
+          tsx: 'never',
+        },
+      },
+    ],
   },
   overrides: [
     {

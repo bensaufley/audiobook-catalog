@@ -1,55 +1,51 @@
-import { type Association, Model, type Optional, type Sequelize, STRING, UUID, UUIDV4 } from 'sequelize';
+import {
+  type BelongsToManyAssociation,
+  type CreationOptional,
+  DataTypes,
+  type HasManyAssociation,
+  type InferAttributes,
+  type InferCreationAttributes,
+  Model,
+  type NonAttribute,
+  sql,
+} from '@sequelize/core';
+import {
+  Attribute,
+  BelongsToMany,
+  Default,
+  HasMany,
+  NotNull,
+  PrimaryKey,
+  Table,
+} from '@sequelize/core/decorators-legacy';
 
-import type models from '~db/models';
-import type Audiobook from '~db/models/Audiobook';
-import type UserAudiobook from '~db/models/UserAudiobook';
+import Audiobook from '~db/models/Audiobook';
+import UserAudiobook from '~db/models/UserAudiobook';
+import type { UserJSON } from '~shared/jsonModels';
 
-export interface UserAttributes {
-  id: string;
-  username: string;
-}
+@Table({ modelName: 'User' })
+export default class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> implements UserJSON {
+  @Attribute(DataTypes.UUIDV4)
+  @PrimaryKey
+  @Default(sql.uuidV4)
+  public declare id: CreationOptional<string>;
 
-type UserCreationAttributes = Optional<UserAttributes, 'id'>;
-
-export default class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
-  public declare id: string;
-
+  @Attribute(DataTypes.TEXT)
+  @NotNull
   public declare username: string;
 
-  public declare readonly createdAt: Date;
+  public declare readonly createdAt: CreationOptional<Date>;
 
-  public declare readonly updatedAt: Date;
+  public declare readonly updatedAt: CreationOptional<Date>;
 
-  declare static associations: {
-    Audiobooks: Association<User, Audiobook>;
-    UserAudiobooks: Association<User, UserAudiobook>;
+  @HasMany(() => UserAudiobook, 'UserId')
+  public declare UserAudiobooks?: NonAttribute<UserAudiobook[]>;
+
+  @BelongsToMany(() => Audiobook, { through: () => UserAudiobook })
+  public declare Audiobooks?: NonAttribute<Audiobook[]>;
+
+  public declare static associations: {
+    Audiobooks: BelongsToManyAssociation<User, Audiobook>;
+    UserAudiobooks: HasManyAssociation<User, UserAudiobook>;
   };
-
-  public static associate(m: typeof models) {
-    User.hasMany(m.UserAudiobook);
-    User.belongsToMany(m.Audiobook, { through: m.UserAudiobook });
-  }
-
-  public static generate(sequelize: Sequelize) {
-    return this.init(
-      {
-        id: {
-          type: UUID,
-          primaryKey: true,
-          defaultValue: UUIDV4,
-          allowNull: false,
-          autoIncrement: false,
-        },
-        username: {
-          type: STRING,
-          allowNull: false,
-          unique: true,
-        },
-      },
-      {
-        modelName: 'User',
-        sequelize,
-      },
-    );
-  }
 }

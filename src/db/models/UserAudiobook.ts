@@ -1,74 +1,47 @@
-import { type Association, BOOLEAN, Model, type Sequelize, STRING } from 'sequelize';
+import {
+  type BelongsToAssociation,
+  type CreationOptional,
+  DataTypes,
+  type InferAttributes,
+  type InferCreationAttributes,
+  Model,
+} from '@sequelize/core';
+import { Attribute, BelongsTo, Default, NotNull, Table } from '@sequelize/core/decorators-legacy';
 
-import type models from '~db/models';
-import type Audiobook from '~db/models/Audiobook';
-import type User from '~db/models/User';
+import Audiobook from '~db/models/Audiobook';
+import User from '~db/models/User';
+import type { UserAudiobookJSON } from '~shared/jsonModels';
 
-export interface UserAudiobookAttributes {
-  read: boolean;
-
-  AudiobookId: string;
-  UserId: string;
-}
-
-type UserAudiobookCreationAttributes = Partial<UserAudiobookAttributes>;
-
+@Table({ modelName: 'UserAudiobook' })
 export default class UserAudiobook
-  extends Model<UserAudiobookAttributes, UserAudiobookCreationAttributes>
-  implements UserAudiobookAttributes
+  extends Model<InferAttributes<UserAudiobook>, InferCreationAttributes<UserAudiobook>>
+  implements UserAudiobookJSON
 {
-  public declare read: boolean;
+  @Attribute(DataTypes.BOOLEAN)
+  @NotNull
+  @Default(false)
+  public declare read: CreationOptional<boolean>;
 
+  @Attribute(DataTypes.UUIDV4)
+  @NotNull
   public declare AudiobookId: string;
 
+  @Attribute(DataTypes.UUIDV4)
+  @NotNull
   public declare UserId: string;
 
-  public declare readonly createdAt: Date;
+  public declare readonly createdAt: CreationOptional<Date>;
 
-  public declare readonly updatedAt: Date;
+  public declare readonly updatedAt: CreationOptional<Date>;
 
+  @BelongsTo(() => Audiobook, 'AudiobookId')
   public declare Audiobook: Audiobook;
 
+  @BelongsTo(() => User, 'UserId')
   public declare User: User;
 
-  declare static associations: {
-    Audiobook: Association<UserAudiobook, Audiobook>;
-    User: Association<UserAudiobook, User>;
+  public declare static associations: {
+    Audiobook: BelongsToAssociation<UserAudiobook, Audiobook>;
+    User: BelongsToAssociation<UserAudiobook, User>;
   };
-
-  public static associate(m: typeof models) {
-    this.belongsTo(m.Audiobook);
-    this.belongsTo(m.User);
-  }
-
-  public static generate(sequelize: Sequelize) {
-    return this.init(
-      {
-        read: {
-          type: BOOLEAN,
-          defaultValue: false,
-          allowNull: false,
-        },
-        AudiobookId: {
-          type: STRING,
-          allowNull: false,
-          references: 'Audiobooks',
-        },
-        UserId: {
-          type: STRING,
-          allowNull: false,
-          references: 'Users',
-        },
-      },
-      {
-        modelName: 'UserAudiobook',
-        sequelize,
-      },
-    );
-  }
 }
-
-export type UserAudiobookJSON = Pick<UserAudiobook, 'read' | 'UserId' | 'AudiobookId'> & {
-  createdAt: string;
-  updatedAt: string;
-};

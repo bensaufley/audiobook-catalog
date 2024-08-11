@@ -1,57 +1,58 @@
-import { type Association, Model, type Optional, type Sequelize, STRING, UUID, UUIDV4 } from 'sequelize';
+import {
+  type BelongsToManyAssociation,
+  type CreationOptional,
+  DataTypes,
+  type HasManyAssociation,
+  type InferAttributes,
+  type InferCreationAttributes,
+  Model,
+  type NonAttribute,
+  sql,
+} from '@sequelize/core';
+import {
+  Attribute,
+  BelongsToMany,
+  Default,
+  HasMany,
+  NotNull,
+  PrimaryKey,
+  Table,
+} from '@sequelize/core/decorators-legacy';
 
-import type models from '~db/models';
-import type Audiobook from '~db/models/Audiobook';
+import Audiobook from '~db/models/Audiobook';
+import type { AuthorJSON } from '~shared/jsonModels';
 
-export interface AuthorAttributes {
-  id: string;
-  firstName: string | null;
-  lastName: string;
-}
+import AudiobookAuthor from './AudiobookAuthor';
 
-type AuthorCreationAttributes = Optional<AuthorAttributes, 'id'>;
+@Table({ modelName: 'Author' })
+export default class Author
+  extends Model<InferAttributes<Author>, InferCreationAttributes<Author>>
+  implements AuthorJSON
+{
+  @Attribute(DataTypes.UUIDV4)
+  @PrimaryKey
+  @Default(sql.uuidV4)
+  public declare id: CreationOptional<string>;
 
-export default class Author extends Model<AuthorAttributes, AuthorCreationAttributes> implements AuthorAttributes {
-  public declare id: string;
-
+  @Attribute(DataTypes.TEXT)
   public declare firstName: string | null;
 
+  @Attribute(DataTypes.TEXT)
+  @NotNull
   public declare lastName: string;
 
-  public declare readonly createdAt: Date;
+  public declare readonly createdAt: CreationOptional<Date>;
 
-  public declare readonly updatedAt: Date;
+  public declare readonly updatedAt: CreationOptional<Date>;
 
-  declare static associations: {
-    Audiobooks: Association<Author, Audiobook>;
+  @HasMany(() => AudiobookAuthor, 'AuthorId')
+  public declare AudiobookAuthors?: NonAttribute<AudiobookAuthor[]>;
+
+  @BelongsToMany(() => Audiobook, { through: () => AudiobookAuthor })
+  public declare Audiobooks?: NonAttribute<Audiobook[]>;
+
+  public declare static associations: {
+    AudiobookAuthors: HasManyAssociation<Author, AudiobookAuthor>;
+    Audiobooks: BelongsToManyAssociation<Author, Audiobook>;
   };
-
-  public static associate(m: typeof models) {
-    Author.belongsToMany(m.Audiobook, { through: m.AudiobookAuthor });
-  }
-
-  public static generate(sequelize: Sequelize) {
-    return this.init(
-      {
-        id: {
-          type: UUID,
-          primaryKey: true,
-          defaultValue: UUIDV4,
-          allowNull: false,
-          autoIncrement: false,
-        },
-        firstName: {
-          type: STRING,
-        },
-        lastName: {
-          type: STRING,
-          allowNull: false,
-        },
-      },
-      {
-        modelName: 'Author',
-        sequelize,
-      },
-    );
-  }
 }

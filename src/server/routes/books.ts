@@ -1,6 +1,6 @@
+import { Op } from '@sequelize/core';
 import type { FastifyPluginAsync, FastifyRequest } from 'fastify';
 import { basename } from 'node:path';
-import { Op } from 'sequelize';
 
 import Audiobook from '~db/models/Audiobook';
 

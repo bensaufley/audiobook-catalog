@@ -3,12 +3,12 @@
   "dependencies": {
     "@fastify/etag": "^5.2.0",
     "@fastify/static": "^7.0.4",
+    "@sequelize/core": "^7.0.0-alpha.41",
+    "@sequelize/sqlite3": "^7.0.0-alpha.41",
     "fastify": "^4.28.1",
     "music-metadata": "^7.14.0",
     "pino": "^8.21.0",
     "pino-http": "^9.0.0",
-    "sequelize": "^6.37.3",
-    "sqlite3": "^5.1.7",
     "umzug": "^3.8.1"
   },
   "devDependencies": {

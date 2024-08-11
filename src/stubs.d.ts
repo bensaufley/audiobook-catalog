@@ -1,4 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
 declare namespace NodeJS {
   export interface ProcessEnv {
     APP_ENV: 'development' | 'test' | 'prod';

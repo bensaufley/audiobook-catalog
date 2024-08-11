@@ -2,7 +2,7 @@ import { batch, computed, effect, Signal } from '@preact/signals';
 import { levenshtein } from 'wuzzy';
 
 import { SortBy, sorters, SortOrder } from '~client/signals/Options/sort';
-import type { AudiobookJSON } from '~db/models/Audiobook';
+import type { AudiobookJSON, UserAudiobookJSON } from '~shared/jsonModels';
 
 import { user } from '../User';
 
@@ -27,6 +27,38 @@ export const selectedBookId = new Signal<string | undefined>();
 
 export const updateBook = (book: Partial<AudiobookJSON>) => {
   rawBooks.value = rawBooks.peek()?.map((b) => (b.id === book.id ? { ...b, ...book } : b));
+};
+
+export const setBookRead = async (id: string, read: boolean) => {
+  if (!user.peek()?.id) return;
+
+  const book = rawBooks.peek()?.find(({ id: i }) => i === id);
+  if (!book) return;
+
+  const path = read ? 'read' : 'unread';
+  const resp = await fetch(`/users/books/${id}/${path}`, {
+    headers: {
+      'x-audiobook-catalog-user': user.peek()!.id,
+    },
+    method: 'POST',
+  });
+
+  if (!resp.ok) return;
+
+  const ua = book.UserAudiobooks?.some(({ UserId }) => UserId === user.value!.id);
+  const UserAudiobooks: UserAudiobookJSON[] = ua
+    ? book.UserAudiobooks!.map((x) => (x.UserId === user.value!.id ? { ...x, read } : x))
+    : [
+        ...(book.UserAudiobooks ?? []),
+        {
+          read,
+          UserId: user.value!.id,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          AudiobookId: book.id,
+        },
+      ];
+  updateBook({ id, UserAudiobooks });
 };
 
 export const sizeColumns = computed(

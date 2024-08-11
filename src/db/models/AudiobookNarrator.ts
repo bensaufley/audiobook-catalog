@@ -1,56 +1,42 @@
-import { type Association, Model, type Sequelize, STRING } from 'sequelize';
+import {
+  type BelongsToAssociation,
+  type CreationOptional,
+  DataTypes,
+  type InferAttributes,
+  type InferCreationAttributes,
+  Model,
+} from '@sequelize/core';
+import { Attribute, BelongsTo, NotNull, Table } from '@sequelize/core/decorators-legacy';
 
-import type models from '~db/models';
-import type Audiobook from '~db/models/Audiobook';
-import type Narrator from '~db/models/Narrator';
+import Audiobook from '~db/models/Audiobook';
+import Narrator from '~db/models/Narrator';
+import type { AudiobookNarratorJSON } from '~shared/jsonModels';
 
-export interface AudiobookNarratorAttributes {
-  AudiobookId: string;
-  NarratorId: string;
-}
-
-type AudiobookNarratorCreationAttributes = Partial<AudiobookNarratorAttributes>;
-
+@Table({ modelName: 'AudiobookNarrator' })
 export default class AudiobookNarrator
-  extends Model<AudiobookNarratorAttributes, AudiobookNarratorCreationAttributes>
-  implements AudiobookNarratorAttributes
+  extends Model<InferAttributes<AudiobookNarrator>, InferCreationAttributes<AudiobookNarrator>>
+  implements AudiobookNarratorJSON
 {
+  @Attribute(DataTypes.UUIDV4)
+  @NotNull
   public declare AudiobookId: string;
 
+  @Attribute(DataTypes.UUIDV4)
+  @NotNull
   public declare NarratorId: string;
 
+  @BelongsTo(() => Audiobook, 'AudiobookId')
+  public declare Audiobook: Audiobook;
+
+  @BelongsTo(() => Narrator, 'NarratorId')
+  public declare Narrator: Narrator;
+
+  public declare readonly createdAt: CreationOptional<Date>;
+
+  public declare readonly updatedAt: CreationOptional<Date>;
+
   public declare static associations: {
-    Audiobook: Association<AudiobookNarrator, Audiobook>;
-    Narrator: Association<AudiobookNarrator, Narrator>;
+    Audiobook: BelongsToAssociation<AudiobookNarrator, Audiobook>;
+    Narrator: BelongsToAssociation<AudiobookNarrator, Narrator>;
   };
-
-  public declare readonly createdAt: Date;
-
-  public declare readonly updatedAt: Date;
-
-  public static associate(m: typeof models) {
-    this.belongsTo(m.Audiobook);
-    this.belongsTo(m.Narrator);
-  }
-
-  public static generate(sequelize: Sequelize) {
-    return this.init(
-      {
-        AudiobookId: {
-          type: STRING,
-          allowNull: false,
-          references: 'Audiobooks',
-        },
-        NarratorId: {
-          type: STRING,
-          allowNull: false,
-          references: 'Users',
-        },
-      },
-      {
-        modelName: 'AudiobookNarrator',
-        sequelize,
-      },
-    );
-  }
 }

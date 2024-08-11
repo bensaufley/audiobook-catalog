@@ -1,4 +1,4 @@
-import { DATE, STRING } from 'sequelize';
+import { DataTypes } from '@sequelize/core';
 
 import type { Migration } from '~db/migrations';
 
@@ -11,22 +11,22 @@ export const up: Migration = async ({ context: queryInterface }) =>
           allowNull: false,
           autoIncrement: false,
           primaryKey: true,
-          type: STRING,
+          type: DataTypes.TEXT,
         },
         firstName: {
-          type: STRING,
+          type: DataTypes.TEXT,
         },
         lastName: {
-          type: STRING,
+          type: DataTypes.TEXT,
           allowNull: false,
         },
         createdAt: {
           allowNull: false,
-          type: DATE,
+          type: DataTypes.DATE,
         },
         updatedAt: {
           allowNull: false,
-          type: DATE,
+          type: DataTypes.DATE,
         },
       },
       { transaction },
@@ -39,25 +39,25 @@ export const up: Migration = async ({ context: queryInterface }) =>
           allowNull: false,
           autoIncrement: false,
           primaryKey: true,
-          type: STRING,
+          type: DataTypes.TEXT,
         },
         NarratorId: {
           allowNull: false,
           primaryKey: true,
-          type: STRING,
+          type: DataTypes.TEXT,
         },
         AudiobookId: {
           allowNull: false,
           primaryKey: true,
-          type: STRING,
+          type: DataTypes.TEXT,
         },
         createdAt: {
           allowNull: false,
-          type: DATE,
+          type: DataTypes.DATE,
         },
         updatedAt: {
           allowNull: false,
-          type: DATE,
+          type: DataTypes.DATE,
         },
       },
       { transaction },
@@ -66,7 +66,7 @@ export const up: Migration = async ({ context: queryInterface }) =>
     await queryInterface.addConstraint('AudiobookNarrators', {
       fields: ['NarratorId'],
       name: 'audiobookNarratorNarratorReference',
-      type: 'foreign key',
+      type: 'FOREIGN KEY',
       references: {
         table: 'Narrators',
         field: 'id',
@@ -79,7 +79,7 @@ export const up: Migration = async ({ context: queryInterface }) =>
     await queryInterface.addConstraint('AudiobookNarrators', {
       fields: ['AudiobookId'],
       name: 'audiobookNarratorsAudiobookReference',
-      type: 'foreign key',
+      type: 'FOREIGN KEY',
       references: {
         table: 'Audiobooks',
         field: 'id',

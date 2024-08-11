@@ -1,56 +1,43 @@
-import { type Association, Model, type Sequelize, STRING } from 'sequelize';
+import {
+  type BelongsToAssociation,
+  type CreationOptional,
+  DataTypes,
+  type InferAttributes,
+  type InferCreationAttributes,
+  Model,
+} from '@sequelize/core';
+import { Attribute, BelongsTo, NotNull, Table } from '@sequelize/core/decorators-legacy';
 
-import type models from '~db/models';
-import type Audiobook from '~db/models/Audiobook';
-import type Author from '~db/models/Author';
+import Audiobook from '~db/models/Audiobook';
+import type { AudiobookAuthorJSON } from '~shared/jsonModels';
 
-export interface AudiobookAuthorAttributes {
-  AudiobookId: string;
-  AuthorId: string;
-}
+import Author from './Author';
 
-type AudiobookAuthorCreationAttributes = Partial<AudiobookAuthorAttributes>;
-
+@Table({ modelName: 'AudiobookAuthor' })
 export default class AudiobookAuthor
-  extends Model<AudiobookAuthorAttributes, AudiobookAuthorCreationAttributes>
-  implements AudiobookAuthorAttributes
+  extends Model<InferAttributes<AudiobookAuthor>, InferCreationAttributes<AudiobookAuthor>>
+  implements AudiobookAuthorJSON
 {
+  @Attribute(DataTypes.UUIDV4)
+  @NotNull
   public declare AudiobookId: string;
 
+  @Attribute(DataTypes.UUIDV4)
+  @NotNull
   public declare AuthorId: string;
 
-  public declare readonly createdAt: Date;
+  public declare readonly createdAt: CreationOptional<Date>;
 
-  public declare readonly updatedAt: Date;
+  public declare readonly updatedAt: CreationOptional<Date>;
 
-  declare static associations: {
-    Audiobook: Association<AudiobookAuthor, Audiobook>;
-    Author: Association<AudiobookAuthor, Author>;
+  @BelongsTo(() => Audiobook, 'AudiobookId')
+  public declare Audiobook: Audiobook;
+
+  @BelongsTo(() => Author, 'AuthorId')
+  public declare Author: Author;
+
+  public declare static associations: {
+    Audiobook: BelongsToAssociation<AudiobookAuthor, Audiobook>;
+    Author: BelongsToAssociation<AudiobookAuthor, Author>;
   };
-
-  public static associate(m: typeof models) {
-    this.belongsTo(m.Audiobook);
-    this.belongsTo(m.Author);
-  }
-
-  public static generate(sequelize: Sequelize) {
-    return this.init(
-      {
-        AudiobookId: {
-          type: STRING,
-          allowNull: false,
-          references: 'Audiobooks',
-        },
-        AuthorId: {
-          type: STRING,
-          allowNull: false,
-          references: 'Users',
-        },
-      },
-      {
-        modelName: 'AudiobookAuthor',
-        sequelize,
-      },
-    );
-  }
 }

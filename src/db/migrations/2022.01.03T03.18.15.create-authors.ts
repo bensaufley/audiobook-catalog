@@ -1,4 +1,4 @@
-import { DATE, STRING } from 'sequelize';
+import { DataTypes } from '@sequelize/core';
 
 import type { Migration } from '~db/migrations';
 
@@ -11,22 +11,22 @@ export const up: Migration = async ({ context: queryInterface }) =>
           allowNull: false,
           autoIncrement: false,
           primaryKey: true,
-          type: STRING,
+          type: DataTypes.TEXT,
         },
         firstName: {
-          type: STRING,
+          type: DataTypes.TEXT,
         },
         lastName: {
-          type: STRING,
+          type: DataTypes.TEXT,
           allowNull: false,
         },
         createdAt: {
           allowNull: false,
-          type: DATE,
+          type: DataTypes.DATE,
         },
         updatedAt: {
           allowNull: false,
-          type: DATE,
+          type: DataTypes.DATE,
         },
       },
       { transaction },

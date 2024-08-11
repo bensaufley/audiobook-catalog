@@ -1,6 +1,6 @@
+import type { Sequelize } from '@sequelize/core';
 import type { FastifyLoggerInstance } from 'fastify';
 import { extname } from 'node:path';
-import type { Sequelize } from 'sequelize';
 
 import importBook from '~server/filesystem/importBook';
 import walk from '~server/filesystem/walk';

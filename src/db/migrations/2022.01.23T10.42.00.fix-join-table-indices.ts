@@ -1,4 +1,4 @@
-import { DATE, STRING, UUID } from 'sequelize';
+import { DataTypes } from '@sequelize/core';
 
 import type { Migration } from '~db/migrations';
 
@@ -12,24 +12,24 @@ export const up: Migration = async ({ context: queryInterface }) => {
         'AudiobookAuthors',
         {
           AudiobookId: {
-            type: STRING,
-            references: { model: 'Audiobooks', key: 'id' },
+            type: DataTypes.TEXT,
+            references: { table: 'Audiobooks', key: 'id' },
             primaryKey: true,
             allowNull: false,
           },
           AuthorId: {
-            type: STRING,
-            references: { model: 'Authors', key: 'id' },
+            type: DataTypes.TEXT,
+            references: { table: 'Authors', key: 'id' },
             primaryKey: true,
             allowNull: false,
           },
           createdAt: {
             allowNull: false,
-            type: DATE,
+            type: DataTypes.DATE,
           },
           updatedAt: {
             allowNull: false,
-            type: DATE,
+            type: DataTypes.DATE,
           },
         },
         { transaction },
@@ -49,24 +49,24 @@ export const up: Migration = async ({ context: queryInterface }) => {
         'AudiobookNarrators',
         {
           AudiobookId: {
-            type: STRING,
-            references: { model: 'Audiobooks', key: 'id' },
+            type: DataTypes.TEXT,
+            references: { table: 'Audiobooks', key: 'id' },
             primaryKey: true,
             allowNull: false,
           },
           NarratorId: {
-            type: STRING,
-            references: { model: 'Narrators', key: 'id' },
+            type: DataTypes.TEXT,
+            references: { table: 'Narrators', key: 'id' },
             primaryKey: true,
             allowNull: false,
           },
           createdAt: {
             allowNull: false,
-            type: DATE,
+            type: DataTypes.DATE,
           },
           updatedAt: {
             allowNull: false,
-            type: DATE,
+            type: DataTypes.DATE,
           },
         },
         { transaction },
@@ -94,28 +94,28 @@ export const down: Migration = async ({ context: queryInterface }) =>
         id: {
           allowNull: false,
           autoIncrement: false,
-          type: UUID,
+          type: DataTypes.UUIDV4,
           primaryKey: true,
         },
         AudiobookId: {
-          type: STRING,
+          type: DataTypes.TEXT,
           references: 'Audiobooks',
           primaryKey: true,
           allowNull: false,
         },
         AuthorId: {
-          type: STRING,
+          type: DataTypes.TEXT,
           references: 'Authors',
           primaryKey: true,
           allowNull: false,
         },
         createdAt: {
           allowNull: false,
-          type: DATE,
+          type: DataTypes.DATE,
         },
         updatedAt: {
           allowNull: false,
-          type: DATE,
+          type: DataTypes.DATE,
         },
       },
       { transaction },
@@ -133,28 +133,28 @@ export const down: Migration = async ({ context: queryInterface }) =>
         id: {
           allowNull: false,
           autoIncrement: false,
-          type: UUID,
+          type: DataTypes.UUIDV4,
           primaryKey: true,
         },
         AudiobookId: {
-          type: STRING,
+          type: DataTypes.TEXT,
           references: 'Audiobooks',
           primaryKey: true,
           allowNull: false,
         },
         NarratorId: {
-          type: STRING,
+          type: DataTypes.TEXT,
           references: 'Narrators',
           primaryKey: true,
           allowNull: false,
         },
         createdAt: {
           allowNull: false,
-          type: DATE,
+          type: DataTypes.DATE,
         },
         updatedAt: {
           allowNull: false,
-          type: DATE,
+          type: DataTypes.DATE,
         },
       },
       { transaction },

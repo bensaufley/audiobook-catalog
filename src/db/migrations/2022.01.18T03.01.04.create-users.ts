@@ -1,4 +1,4 @@
-import { BOOLEAN, DATE, STRING } from 'sequelize';
+import { DataTypes } from '@sequelize/core';
 
 import type { Migration } from '~db/migrations';
 
@@ -11,20 +11,20 @@ export const up: Migration = async ({ context: queryInterface }) =>
           allowNull: false,
           autoIncrement: false,
           primaryKey: true,
-          type: STRING,
+          type: DataTypes.TEXT,
         },
         username: {
-          type: STRING,
+          type: DataTypes.TEXT,
           allowNull: false,
           unique: true,
         },
         createdAt: {
           allowNull: false,
-          type: DATE,
+          type: DataTypes.DATE,
         },
         updatedAt: {
           allowNull: false,
-          type: DATE,
+          type: DataTypes.DATE,
         },
       },
       { transaction },
@@ -37,32 +37,32 @@ export const up: Migration = async ({ context: queryInterface }) =>
           allowNull: false,
           primaryKey: true,
           references: {
-            model: 'Users',
+            table: 'Users',
             key: 'id',
           },
-          type: STRING,
+          type: DataTypes.TEXT,
         },
         AudiobookId: {
           allowNull: false,
           primaryKey: true,
           references: {
-            model: 'Audiobooks',
+            table: 'Audiobooks',
             key: 'id',
           },
-          type: STRING,
+          type: DataTypes.TEXT,
         },
         read: {
           allowNull: false,
-          type: BOOLEAN,
+          type: DataTypes.BOOLEAN,
           defaultValue: false,
         },
         createdAt: {
           allowNull: false,
-          type: DATE,
+          type: DataTypes.DATE,
         },
         updatedAt: {
           allowNull: false,
-          type: DATE,
+          type: DataTypes.DATE,
         },
       },
       { transaction },

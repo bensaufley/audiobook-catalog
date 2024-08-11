@@ -1,4 +1,4 @@
-import { DATE, STRING } from 'sequelize';
+import { DataTypes } from '@sequelize/core';
 
 import type { Migration } from '~db/migrations';
 
@@ -11,25 +11,25 @@ export const up: Migration = async ({ context: queryInterface }) =>
           allowNull: false,
           autoIncrement: false,
           primaryKey: true,
-          type: STRING,
+          type: DataTypes.TEXT,
         },
         AuthorId: {
           allowNull: false,
           primaryKey: true,
-          type: STRING,
+          type: DataTypes.TEXT,
         },
         AudiobookId: {
           allowNull: false,
           primaryKey: true,
-          type: STRING,
+          type: DataTypes.TEXT,
         },
         createdAt: {
           allowNull: false,
-          type: DATE,
+          type: DataTypes.DATE,
         },
         updatedAt: {
           allowNull: false,
-          type: DATE,
+          type: DataTypes.DATE,
         },
       },
       { transaction },
@@ -38,7 +38,7 @@ export const up: Migration = async ({ context: queryInterface }) =>
     await queryInterface.addConstraint('AudiobookAuthors', {
       fields: ['AuthorId'],
       name: 'audiobookAuthorsAuthorReference',
-      type: 'foreign key',
+      type: 'FOREIGN KEY',
       references: {
         table: 'Authors',
         field: 'id',
@@ -51,7 +51,7 @@ export const up: Migration = async ({ context: queryInterface }) =>
     await queryInterface.addConstraint('AudiobookAuthors', {
       fields: ['AudiobookId'],
       name: 'audiobookAuthorsAudiobookReference',
-      type: 'foreign key',
+      type: 'FOREIGN KEY',
       references: {
         table: 'Audiobooks',
         field: 'id',

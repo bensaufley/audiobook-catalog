@@ -1,4 +1,4 @@
-import { BLOB, DATE, FLOAT, STRING } from 'sequelize';
+import { DataTypes } from '@sequelize/core';
 
 import type { Migration } from '~db/migrations';
 
@@ -11,33 +11,33 @@ export const up: Migration = async ({ context: queryInterface }) =>
           allowNull: false,
           autoIncrement: false,
           primaryKey: true,
-          type: STRING,
+          type: DataTypes.TEXT,
         },
         title: {
-          type: STRING,
+          type: DataTypes.TEXT,
           allowNull: false,
         },
         filepath: {
-          type: STRING,
+          type: DataTypes.TEXT,
           allowNull: false,
           unique: true,
         },
         cover: {
-          type: BLOB,
+          type: DataTypes.BLOB,
         },
         coverType: {
-          type: STRING,
+          type: DataTypes.TEXT,
         },
         duration: {
-          type: FLOAT,
+          type: DataTypes.REAL,
         },
         createdAt: {
           allowNull: false,
-          type: DATE,
+          type: DataTypes.DATE,
         },
         updatedAt: {
           allowNull: false,
-          type: DATE,
+          type: DataTypes.DATE,
         },
       },
       { transaction },
