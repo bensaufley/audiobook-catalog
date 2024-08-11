@@ -43,8 +43,9 @@ jobs:
 
           for i in {1..5}; do
             if docker ps | grep $container_id | grep -qE "ago +Up"; then
+              echo "Container started successfully"
               for i in {1..5}; do
-                if curl --fail http://localhost:3000; then
+                if curl --fail-with-body http://localhost:3000; then
                   echo "Application started successfully"
                   exit 0
                 fi
@@ -54,6 +55,7 @@ jobs:
             sleep 1
           done
 
+          echo "Application failed to start"
           exit 1
 
       - name: Log into Dockerhub
