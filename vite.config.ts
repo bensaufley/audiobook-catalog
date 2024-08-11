@@ -56,7 +56,24 @@ export default defineConfig({
     },
   },
   plugins: [
-    preact(),
+    preact({
+      babel: {
+        presets: [
+          [
+            '@babel/preset-typescript',
+            {
+              jsxPragma: 'h',
+              jsxPragmaFrag: 'Fragment',
+              jsxImportSource: 'preact',
+            },
+          ],
+        ],
+        plugins: [
+          ['@babel/plugin-proposal-decorators', { legacy: true }],
+          ['@babel/plugin-transform-class-properties', { loose: true }],
+        ],
+      },
+    }),
     svgr({
       svgrOptions: {
         // TODO: pending https://github.com/gregberge/svgr/pull/927
