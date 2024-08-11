@@ -120,6 +120,7 @@ jobs:
           sarif_file: ${{ github.workspace }}/reports
 
   build:
+    name: Build and Check Prod Image
     uses: ./.github/workflows/_build.yaml
     with:
       tag: ${{ github.sha }}

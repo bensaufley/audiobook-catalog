@@ -23,6 +23,7 @@ on:
 
 jobs:
   build:
+    name: Build${{ inputs.push && ', Check, and Push' || 'and Check' }} Image
     runs-on: ubuntu-latest
 
     steps:
@@ -35,6 +36,24 @@ jobs:
         run: |
           docker build -t bnsfly/audiobook-catalog:latest -f Prod.dockerfile .
           docker tag bnsfly/audiobook-catalog:latest bnsfly/audiobook-catalog:${{ inputs.tag }}
+
+      - name: Check that image runs
+        run: |
+          container_id="$(docker run --detach --volume "$(pwd)"/.audiobooks:/audiobooks  --publish 3000:3000 --rm bnsfly/audiobook-catalog:latest)"
+          docker logs -f $container_id &
+          trap "docker stop $container_id" EXIT
+
+          for i in {1..10}; do
+            echo "Checking application..."
+            if curl --fail-with-body http://localhost:3000; then
+              echo "Application started successfully"
+              exit 0
+            fi
+            sleep 1
+          done
+
+          echo "Application failed to start"
+          exit 1
 
       - name: Log into Dockerhub
         id: docker-login
