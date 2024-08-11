@@ -38,7 +38,7 @@ jobs:
 
       - name: Check that image runs
         run: |
-          container_id="$(docker run --detach --publish 3000:3000 --rm bnsfly/audiobook-catalog:latest)"
+          container_id="$(docker run --detach --volume "$(pwd)"/.audiobooks:/audiobooks  --publish 3000:3000 --rm bnsfly/audiobook-catalog:latest)"
           docker logs -f $container_id &
           trap "docker stop $container_id" EXIT
 
