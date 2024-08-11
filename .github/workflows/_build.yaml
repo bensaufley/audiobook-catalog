@@ -39,6 +39,7 @@ jobs:
       - name: Check that image runs
         run: |
           container_id="$(docker run --detach --publish 3000:3000 --rm bnsfly/audiobook-catalog:latest)"
+          docker logs -f $container_id &
           trap "docker stop $container_id" EXIT
 
           for i in {1..5}; do
