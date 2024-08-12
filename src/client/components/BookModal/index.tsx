@@ -1,10 +1,11 @@
 import { useComputed, useSignal } from '@preact/signals';
 import type { JSX } from 'preact';
+import { useRef } from 'preact/hooks';
 
 import Modal, { Body, Footer, Header, Title } from '~client/components/Modal';
 import useEvent from '~client/hooks/useEvent';
-import { selectedBook, selectedBookId, updateBook } from '~client/signals/Options';
-import { user } from '~client/signals/User';
+import { selectedBook, selectedBookId, setBookRead } from '~client/signals/books';
+import { currentUserId } from '~client/signals/User';
 import Book from '~icons/book.svg?react';
 import External from '~icons/box-arrow-up-right.svg?react';
 import Download from '~icons/download.svg?react';
@@ -20,6 +21,7 @@ const formatDuration = (duration: number) => {
 };
 
 const BookModal = () => {
+  const checkRef = useRef<HTMLInputElement>(null);
   const changingRead = useSignal(false);
 
   const searchParam = useComputed(
@@ -29,29 +31,20 @@ const BookModal = () => {
       }`,
   );
 
-  const read = useSignal(!!selectedBook.value?.UserAudiobooks?.[0]?.read);
+  const read = useComputed(
+    () => !!selectedBook.value?.UserAudiobooks?.find(({ UserId }) => UserId === currentUserId.value)?.read,
+  );
 
   // eslint-disable-next-line prefer-arrow-functions/prefer-arrow-functions
   const handleChangeRead: JSX.GenericEventHandler<HTMLInputElement> = useEvent(async function changeRead(e) {
+    e.preventDefault();
+    const { checked } = e.currentTarget;
+    checkRef.current!.checked = !checked;
     changingRead.value = true;
-    try {
-      const resp = await fetch(`/users/books/${selectedBook.value?.id}/read`, {
-        headers: {
-          'x-audiobook-catalog-user': user.value!.id,
-        },
-        method: 'POST',
-      });
-
-      if (!resp.ok) return;
-
-      read.value = e.currentTarget.checked;
-      updateBook({
-        id: selectedBookId.peek()!,
-        UserAudiobooks: selectedBook.peek()!.UserAudiobooks!.map((v) => ({ ...v, read: e.currentTarget.checked })),
-      });
-    } finally {
-      changingRead.value = false;
+    if ((await setBookRead(selectedBook.value!.id, checked)) && checkRef.current) {
+      checkRef.current.checked = checked;
     }
+    changingRead.value = false;
   });
 
   const handleHide = useEvent(() => {
@@ -121,7 +114,7 @@ const BookModal = () => {
         </div>
       </Body>
       <Footer>
-        {user.value && (
+        {currentUserId.value && (
           <form class="me-auto">
             <div class="form-check form-switch">
               <input
@@ -131,6 +124,7 @@ const BookModal = () => {
                 role="switch"
                 name="read"
                 checked={read}
+                ref={checkRef}
                 onChange={handleChangeRead}
                 disabled={changingRead}
               />

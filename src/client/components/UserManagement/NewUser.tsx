@@ -3,7 +3,7 @@ import type { JSX } from 'preact';
 
 import Modal, { Body, Footer, Header, Title } from '~client/components/Modal';
 import useEvent from '~client/hooks/useEvent';
-import { refreshUsers, user } from '~client/signals/User';
+import { currentUserId, refreshUsers } from '~client/signals/User';
 import Check from '~icons/check.svg?react';
 
 const NewUser = ({ signal }: { signal: Signal<boolean> }) => {
@@ -31,7 +31,7 @@ const NewUser = ({ signal }: { signal: Signal<boolean> }) => {
       if (!resp.ok) throw new Error(json.message);
 
       await refreshUsers();
-      user.value = json;
+      currentUserId.value = json;
       // eslint-disable-next-line no-param-reassign
       signal.value = false;
     } catch (err) {

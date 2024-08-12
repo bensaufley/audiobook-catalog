@@ -27,7 +27,7 @@ const Books: FunctionComponent = () => {
     <>
       <div class={clsx(styles.container, 'd-grid', 'gap-2', 'm-2')} style={{ '--cols': sizeColumns.value }}>
         {books.value.map((book) => (
-          <Book book={book} key={book.id} />
+          <Book bookId={book.id} key={book.id} />
         ))}
       </div>
       <BookModal />
