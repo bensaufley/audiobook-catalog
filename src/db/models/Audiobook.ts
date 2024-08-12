@@ -5,6 +5,7 @@ import {
   BLOB,
   FLOAT,
   type HasManyGetAssociationsMixin,
+  type InferAttributes,
   Model,
   type Optional,
   type Sequelize,
@@ -22,8 +23,10 @@ import type User from '~db/models/User';
 import type UserAudiobook from '~db/models/UserAudiobook';
 import type { UserAudiobookJSON } from '~db/models/UserAudiobook';
 
-import AudiobookAuthor from './AudiobookAuthor';
-import AudiobookNarrator from './AudiobookNarrator';
+import type AudiobookAuthor from './AudiobookAuthor';
+import type AudiobookNarrator from './AudiobookNarrator';
+import type AudiobookTag from './AudiobookTag';
+import type Tag from './Tag';
 
 interface NullCoverProps {
   cover: null;
@@ -83,13 +86,19 @@ export default class Audiobook<HasCover extends boolean = boolean> extends Model
 
   public declare addNarrator: BelongsToManyAddAssociationMixin<Narrator, NarratorAttributes>;
 
+  public declare addTag: BelongsToManyAddAssociationMixin<Tag, InferAttributes<Tag, { omit: 'associations' }>>;
+
   public declare getAudiobookAuthors: HasManyGetAssociationsMixin<AudiobookAuthor>;
 
   public declare getAudiobookNarrators: HasManyGetAssociationsMixin<AudiobookNarrator>;
 
+  public declare getAudiobookTags: HasManyGetAssociationsMixin<AudiobookTag>;
+
   public declare getAuthors: BelongsToManyGetAssociationsMixin<Author>;
 
   public declare getNarrators: BelongsToManyGetAssociationsMixin<Author>;
+
+  public declare getTags: BelongsToManyGetAssociationsMixin<Tag>;
 
   public static associate(m: typeof models) {
     this.hasMany(m.AudiobookAuthor);
@@ -98,6 +107,8 @@ export default class Audiobook<HasCover extends boolean = boolean> extends Model
     this.belongsToMany(m.Narrator, { through: m.AudiobookNarrator });
     this.hasMany(m.UserAudiobook);
     this.belongsToMany(m.User, { through: m.UserAudiobook });
+    this.hasMany(m.AudiobookTag);
+    this.belongsToMany(m.Tag, { through: m.AudiobookTag });
   }
 
   public static generate(sequelize: Sequelize) {
@@ -133,8 +144,9 @@ export default class Audiobook<HasCover extends boolean = boolean> extends Model
         sequelize,
         hooks: {
           async beforeDestroy(instance): Promise<void> {
-            await AudiobookAuthor.destroy({ where: { AudiobookId: instance.id } });
-            await AudiobookNarrator.destroy({ where: { AudiobookId: instance.id } });
+            await sequelize.models.AudiobookAuthor?.destroy({ where: { AudiobookId: instance.id } });
+            await sequelize.models.AudiobookNarrator?.destroy({ where: { AudiobookId: instance.id } });
+            await sequelize.models.AudiobookTag?.destroy({ where: { AudiobookId: instance.id } });
           },
         },
       },

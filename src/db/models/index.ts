@@ -8,12 +8,17 @@ import UserAudiobook from '~db/models/UserAudiobook';
 
 import sequelize from '../sequelize';
 
+import AudiobookTag from './AudiobookTag';
+import Tag from './Tag';
+
 const models = {
   Audiobook: Audiobook.generate(sequelize),
   AudiobookAuthor: AudiobookAuthor.generate(sequelize),
   AudiobookNarrator: AudiobookNarrator.generate(sequelize),
+  AudiobookTag: AudiobookTag.generate(sequelize),
   Author: Author.generate(sequelize),
   Narrator: Narrator.generate(sequelize),
+  Tag: Tag.generate(sequelize),
   User: User.generate(sequelize),
   UserAudiobook: UserAudiobook.generate(sequelize),
 };
