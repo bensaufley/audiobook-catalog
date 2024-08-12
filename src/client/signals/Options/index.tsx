@@ -3,9 +3,9 @@ import { levenshtein } from 'wuzzy';
 
 import { SortBy, sorters, SortOrder } from '~client/signals/Options/sort';
 import type { AudiobookJSON } from '~db/models/Audiobook';
-import type { UserAudiobookJSON } from '~db/models/UserAudiobook';
 
-import { user } from '../User';
+import { rawBooks } from '../books';
+import { currentUserId } from '../User';
 
 import { Read, Size } from './enums';
 
@@ -14,7 +14,6 @@ export const refresh = () => {
   refreshToken.value = Date.now();
 };
 
-export const rawBooks = new Signal<AudiobookJSON[] | undefined>();
 export const error = new Signal<string | undefined>();
 export const search = new Signal<string>('');
 export const page = new Signal<number>(0);
@@ -24,45 +23,6 @@ export const read = new Signal<Read>(Read.All);
 export const size = new Signal<Size>(Size.Medium);
 export const sortBy = new Signal<SortBy>(SortBy.Author);
 export const sortOrder = new Signal<SortOrder>(SortOrder.Ascending);
-export const selectedBookId = new Signal<string | undefined>();
-
-export const updateBook = (book: Partial<AudiobookJSON>) => {
-  rawBooks.value = rawBooks.peek()?.map((b) => (b.id === book.id ? { ...b, ...book } : b));
-};
-
-export const setBookRead = async (id: string, read: boolean) => {
-  if (!user.peek()?.id) return;
-
-  const book = rawBooks.peek()?.find(({ id: i }) => i === id);
-  if (!book) return;
-
-  const path = read ? 'read' : 'unread';
-  const resp = await fetch(`/users/books/${id}/${path}`, {
-    headers: {
-      'x-audiobook-catalog-user': user.peek()!.id,
-    },
-    method: 'POST',
-  });
-
-  if (!resp.ok) return;
-
-  const ua = book.UserAudiobooks?.some(({ UserId }) => UserId === user.value!.id);
-  const UserAudiobooks: UserAudiobookJSON[] = ua
-    ? book.UserAudiobooks!.map((x) =>
-        x.UserId === user.value!.id ? { ...x, read, updatedAt: new Date().toISOString() } : x,
-      )
-    : [
-        ...(book.UserAudiobooks ?? []),
-        {
-          read,
-          UserId: user.value!.id,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          AudiobookId: book.id,
-        },
-      ];
-  updateBook({ id, UserAudiobooks });
-};
 
 export const sizeColumns = computed(
   () =>
@@ -94,11 +54,26 @@ effect(() => {
   if (page.value > pages.value) page.value = pages.value - 1;
 });
 
-export const selectedBook = computed(() => {
-  if (!selectedBookId.value) return undefined;
+effect(() => {
+  // eslint-disable-next-line no-unused-expressions
+  refreshToken.value;
 
-  return rawBooks.value?.find(({ id }) => id === selectedBookId.value);
+  fetch('/books', { headers: { 'x-audiobook-catalog-user': currentUserId.value || '' } })
+    .then((resp) => Promise.all([resp.ok, resp.json() as Promise<AudiobookJSON[]>]))
+    .then(([ok, bks]) => {
+      if (!ok) throw bks;
+
+      rawBooks.value = bks;
+    })
+    .catch((err) => {
+      batch(() => {
+        error.value = (err as Error).message;
+        rawBooks.value = undefined;
+      });
+    });
 });
+
+// BOOKS
 
 const filteredBooks = computed(() => {
   const lowerFilter = search.value.trim().toLocaleLowerCase();
@@ -157,25 +132,6 @@ const paginatedBooks = computed(() => {
 });
 
 export const books = paginatedBooks;
-
-effect(() => {
-  // eslint-disable-next-line no-unused-expressions
-  refreshToken.value;
-
-  fetch('/books', { headers: { 'x-audiobook-catalog-user': user.value?.id || '' } })
-    .then((resp) => Promise.all([resp.ok, resp.json() as Promise<AudiobookJSON[]>]))
-    .then(([ok, bks]) => {
-      if (!ok) throw bks;
-
-      rawBooks.value = bks;
-    })
-    .catch((err) => {
-      batch(() => {
-        error.value = (err as Error).message;
-        rawBooks.value = undefined;
-      });
-    });
-});
 
 effect(() => {
   pages.value = Math.ceil((filteredBooks.value?.length || 0) / perPage.value);

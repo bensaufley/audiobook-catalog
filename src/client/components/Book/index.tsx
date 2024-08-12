@@ -1,39 +1,37 @@
 import { useComputed, useSignal } from '@preact/signals';
 import type { JSX } from 'preact';
+import { useRef } from 'preact/hooks';
 
 import useEvent from '~client/hooks/useEvent';
-import { selectedBookId, setBookRead } from '~client/signals/Options';
-import { user } from '~client/signals/User';
-import type { AudiobookJSON } from '~db/models/Audiobook';
+import { rawBooks, selectedBookId, setBookRead } from '~client/signals/books';
+import { currentUserId } from '~client/signals/User';
 
 import styles from '~client/components/Book/styles.module.css';
 
 interface Props {
-  book: AudiobookJSON;
+  bookId: string;
 }
 
-const stopProp: JSX.GenericEventHandler<HTMLElement> = (e) => {
-  e.stopPropagation();
-};
-
-const Book = ({ book }: Props) => {
-  const read = useComputed(() => !!book.UserAudiobooks?.find(({ UserId }) => UserId === user.value?.id)?.read);
+const Book = ({ bookId }: Props) => {
+  const checkRef = useRef<HTMLInputElement>(null);
+  const book = useComputed(() => rawBooks.value!.find(({ id }) => id === bookId)!);
+  const read = useComputed(
+    () => !!book.value.UserAudiobooks?.find(({ UserId }) => UserId === currentUserId.value)?.read,
+  );
 
   const onClick = useEvent((e: Event) => {
-    e.preventDefault();
-    selectedBookId.value = book.id;
+    if (e.target === e.currentTarget) selectedBookId.value = bookId;
   });
 
-  const loading = useSignal(false);
+  const changingRead = useSignal(false);
 
-  const handleRead = useEvent(async ({ currentTarget: { checked } }: JSX.TargetedEvent<HTMLInputElement>) => {
-    loading.value = true;
-    try {
-      await setBookRead(book.id, checked);
-    } catch {
-      /* noop */
-    }
-    loading.value = false;
+  const handleRead = useEvent(async (e: JSX.TargetedEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    changingRead.value = true;
+    const { checked } = e.currentTarget;
+    checkRef.current!.checked = !checked;
+    if ((await setBookRead(bookId, checked)) && checkRef.current) checkRef.current.checked = checked;
+    changingRead.value = false;
   });
 
   return (
@@ -43,7 +41,7 @@ const Book = ({ book }: Props) => {
         tabindex={0}
         class={styles.book}
         onClick={onClick}
-        style={{ '--cover': `url('/books/${book.id}/cover')` }}
+        style={{ '--cover': `url('/books/${bookId}/cover')` }}
         onKeyDown={(e) => {
           if (e.key === 'Enter') {
             e.preventDefault();
@@ -51,8 +49,8 @@ const Book = ({ book }: Props) => {
           }
         }}
       >
-        {user.value && (
-          <input disabled={loading} type="checkbox" onChange={handleRead} onClick={stopProp} checked={read} />
+        {currentUserId.value && (
+          <input disabled={changingRead} ref={checkRef} type="checkbox" onChange={handleRead} checked={read.value} />
         )}
       </div>
     </div>

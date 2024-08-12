@@ -1,24 +1,28 @@
-import { type Association, Model, type Optional, type Sequelize, STRING, UUID, UUIDV4 } from 'sequelize';
+import {
+  type Association,
+  type CreationOptional,
+  DATE,
+  type InferAttributes,
+  type InferCreationAttributes,
+  Model,
+  type Sequelize,
+  STRING,
+  UUID,
+  UUIDV4,
+} from 'sequelize';
 
 import type models from '~db/models';
 import type Audiobook from '~db/models/Audiobook';
 import type UserAudiobook from '~db/models/UserAudiobook';
 
-export interface UserAttributes {
-  id: string;
-  username: string;
-}
-
-type UserCreationAttributes = Optional<UserAttributes, 'id'>;
-
-export default class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
-  public declare id: string;
+export default class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
+  public declare id: CreationOptional<string>;
 
   public declare username: string;
 
-  public declare readonly createdAt: Date;
+  public declare readonly createdAt: CreationOptional<Date>;
 
-  public declare readonly updatedAt: Date;
+  public declare readonly updatedAt: CreationOptional<Date>;
 
   declare static associations: {
     Audiobooks: Association<User, Audiobook>;
@@ -45,6 +49,8 @@ export default class User extends Model<UserAttributes, UserCreationAttributes> 
           allowNull: false,
           unique: true,
         },
+        createdAt: DATE,
+        updatedAt: DATE,
       },
       {
         modelName: 'User',
@@ -53,3 +59,5 @@ export default class User extends Model<UserAttributes, UserCreationAttributes> 
     );
   }
 }
+
+export type UserAttributes = InferAttributes<User>;
