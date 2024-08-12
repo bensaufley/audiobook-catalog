@@ -46,7 +46,7 @@ export const refreshUsers = async () => {
 
   try {
     fetchingUsers.value = true;
-    const res = await fetch('/users');
+    const res = await fetch('/api/users');
     const us: User[] = await res.json();
     users.value = us;
   } catch (ex) {

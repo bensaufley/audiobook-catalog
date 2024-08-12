@@ -5,7 +5,7 @@ import sequelize from '~db/sequelize';
 
 // eslint-disable-next-line import/prefer-default-export
 export const umzug = new Umzug({
-  migrations: { glob: 'src/db/migrations/*.*.*.ts' },
+  migrations: { glob: import.meta.resolve('./migrations/*.*.*.ts') },
   context: sequelize.getQueryInterface(),
   storage: new SequelizeStorage({ sequelize }),
   logger: pino({ name: 'umzug' }),

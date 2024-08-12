@@ -41,7 +41,7 @@ const Book = ({ bookId }: Props) => {
         tabindex={0}
         class={styles.book}
         onClick={onClick}
-        style={{ '--cover': `url('/books/${bookId}/cover')` }}
+        style={{ '--cover': `url('/api/books/${bookId}/cover')` }}
         onKeyDown={(e) => {
           if (e.key === 'Enter') {
             e.preventDefault();
