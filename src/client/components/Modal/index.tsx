@@ -1,11 +1,31 @@
 import clsx from 'clsx';
-import type { FunctionComponent } from 'preact';
-import { useRef } from 'preact/hooks';
+import type { FunctionComponent, Ref } from 'preact';
+import { useEffect, useRef } from 'preact/hooks';
 
 import useEvent from '~client/hooks/useEvent';
+import { mergeRefs } from '~shared/utilities';
 
-const Modal: FunctionComponent<{ onHide?: () => void; show?: boolean }> = ({ show, children, onHide }) => {
+const Modal: FunctionComponent<{ innerRef?: Ref<HTMLDivElement>; onHide?: () => void; show?: boolean }> = ({
+  innerRef,
+  show,
+  children,
+  onHide,
+}) => {
   const backgroundRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!show) return undefined;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onHide?.();
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [show]);
+
   const handleHide = useEvent((e: Event) => {
     if (e.target !== backgroundRef.current) return;
     onHide?.();
@@ -21,7 +41,7 @@ const Modal: FunctionComponent<{ onHide?: () => void; show?: boolean }> = ({ sho
         aria-modal
         role="dialog"
         onClick={handleHide}
-        ref={backgroundRef}
+        ref={mergeRefs(innerRef, backgroundRef)}
       >
         <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content">{children}</div>

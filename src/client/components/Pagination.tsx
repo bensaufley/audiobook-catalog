@@ -18,8 +18,8 @@ const Pagination = () => {
   });
 
   return (
-    <div class="d-flex justify-content-center gap-4 my-4">
-      <form>
+    <div class="row justify-content-center gap-4 my-4">
+      <form class="col-12 col-md-auto d-flex justify-content-center justify-content-md-start order-1 order-md-0">
         <div class="row">
           <label class="col form-label col-form-label" for="per-page">
             Per Page
@@ -44,7 +44,7 @@ const Pagination = () => {
           </div>
         </div>
       </form>
-      <nav>
+      <nav class="col-12 col-md-auto d-flex justify-content-center justify-content-md-start order-0 order-md-1">
         <ul class="pagination">
           <li class="page-item">
             <button

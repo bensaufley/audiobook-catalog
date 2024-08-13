@@ -1,15 +1,53 @@
+import { useSignalEffect } from '@preact/signals';
 import clsx from 'clsx';
 import type { FunctionComponent } from 'preact';
+import { useEffect, useRef } from 'preact/hooks';
+import TouchSweep from 'touchsweep';
 
 import Book from '~client/components/Book';
 import BookModal from '~client/components/BookModal';
-import { books, error, sizeColumns } from '~client/signals/Options';
+import { selectedBookId } from '~client/signals/books';
+import { books, error, page, pages, sizeColumns } from '~client/signals/Options';
+import { clamp } from '~shared/utilities';
 
 import Pagination from '../Pagination';
 
 import styles from '~client/components/Books/styles.module.css';
 
 const Books: FunctionComponent = () => {
+  const ref = useRef<HTMLDivElement>(null);
+  const touchSweep = useRef<TouchSweep>();
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return undefined;
+
+    const instance = new TouchSweep(el);
+    touchSweep.current = instance;
+
+    const movePage = (delta: number) => () => {
+      const newVal = clamp(0, page.peek() + delta, pages.peek());
+      if (page.peek() !== newVal) page.value = newVal;
+    };
+
+    const handleSwipeLeft = movePage(1);
+    const handleSwipeRight = movePage(-1);
+
+    el.addEventListener('swipeleft', handleSwipeLeft);
+    el.addEventListener('swiperight', handleSwipeRight);
+
+    return () => {
+      el.removeEventListener('swipeleft', handleSwipeLeft);
+      el.removeEventListener('swiperight', handleSwipeRight);
+      instance.unbind();
+    };
+  }, [error.value, books.value]);
+
+  useSignalEffect(() => {
+    if (!selectedBookId.value) touchSweep.current?.bind();
+    else touchSweep.current?.unbind();
+  });
+
   if (error.value) {
     return (
       <div class="d-flex justify-content-center mx-auto my-4">
@@ -25,7 +63,7 @@ const Books: FunctionComponent = () => {
 
   return (
     <>
-      <div class={clsx(styles.container, 'd-grid', 'gap-2', 'm-2')} style={{ '--cols': sizeColumns.value }}>
+      <div class={clsx(styles.container, 'd-grid', 'gap-2', 'm-2')} style={{ '--cols': sizeColumns.value }} ref={ref}>
         {books.value.map((book) => (
           <Book bookId={book.id} key={book.id} />
         ))}
