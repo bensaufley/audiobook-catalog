@@ -19,7 +19,7 @@ export const setBookRead = async (id: string, read: boolean) => {
     if (!book) return false;
 
     const path = read ? 'read' : 'unread';
-    const resp = await fetch(`/users/books/${id}/${path}`, {
+    const resp = await fetch(`/api/users/books/${id}/${path}`, {
       headers: {
         'x-audiobook-catalog-user': currentUserId.peek()!,
       },

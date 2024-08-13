@@ -58,7 +58,7 @@ effect(() => {
   // eslint-disable-next-line no-unused-expressions
   refreshToken.value;
 
-  fetch('/books', { headers: { 'x-audiobook-catalog-user': currentUserId.value || '' } })
+  fetch('/api/books', { headers: { 'x-audiobook-catalog-user': currentUserId.value || '' } })
     .then((resp) => Promise.all([resp.ok, resp.json() as Promise<AudiobookJSON[]>]))
     .then(([ok, bks]) => {
       if (!ok) throw bks;

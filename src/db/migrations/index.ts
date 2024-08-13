@@ -1,12 +1,26 @@
-import { SequelizeStorage, Umzug } from 'umzug';
+import pino from 'pino';
+import type { QueryInterface } from 'sequelize';
+import { type RunnableMigration, SequelizeStorage, Umzug } from 'umzug';
 
 import sequelize from '~db/sequelize';
 
+const migrations = Object.entries(import.meta.glob('./*.*.*.ts', { eager: true })).map(
+  ([path, mod]): RunnableMigration<QueryInterface> => {
+    const { up, down } = mod as Pick<RunnableMigration<QueryInterface>, 'up' | 'down'>;
+
+    return {
+      name: path,
+      up,
+      ...(down ? { down } : {}),
+    };
+  },
+);
+
 export const umzug = new Umzug({
-  migrations: { glob: '.build/migrations/*.js' },
+  migrations,
   context: sequelize.getQueryInterface(),
   storage: new SequelizeStorage({ sequelize }),
-  logger: console,
+  logger: pino({ name: 'umzug' }),
 });
 
 // export the type helper exposed by umzug, which will have the `context` argument typed correctly

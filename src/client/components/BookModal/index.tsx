@@ -79,7 +79,7 @@ const BookModal = () => {
           <img
             class="img-fluid rounded mb-4"
             alt={`Cover for ${selectedBook.value.title}`}
-            src={`/books/${selectedBook.value.id}/cover`}
+            src={`/api/books/${selectedBook.value.id}/cover`}
           />
         )}
         {selectedBook.value?.duration && <p>Duration: {formatDuration(selectedBook.value?.duration)}</p>}
@@ -134,7 +134,7 @@ const BookModal = () => {
             </div>
           </form>
         )}
-        <a class="btn btn-primary" href={`/books/${selectedBook.value?.id}/download`}>
+        <a class="btn btn-primary" href={`/api/books/${selectedBook.value?.id}/download`}>
           <span class="d-flex gap-2 align-items-center">
             <span>
               <Download />

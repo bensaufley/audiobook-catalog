@@ -8,8 +8,8 @@ import { resolve } from 'node:path';
 import { umzug } from '~db/migrations';
 import { ready } from '~db/models';
 import User from '~db/models/User';
-import books from '~server/routes/books';
-import users from '~server/routes/users';
+
+import api from './routes/api';
 
 const logLevels = ['trace', 'debug', 'info', 'warn', 'error'];
 const sanitizeLogLevel = (level?: string) => {
@@ -37,10 +37,10 @@ const init = async () => {
     };
   }
 
-  const fastify = Fastify({
+  const server = Fastify({
     logger: {
       level: sanitizeLogLevel(process.env.LOG_LEVEL),
-      ...(process.env.APP_ENV === 'development'
+      ...(import.meta.env.DEV
         ? {
             transport: {
               target: 'pino-pretty',
@@ -51,16 +51,19 @@ const init = async () => {
     ...devServerOpts,
   });
 
-  fastify.register(fastifyEtag);
+  server.register(fastifyEtag);
 
   if (import.meta.env.PROD) {
-    fastify.register(fastifyStatic, {
-      root: resolve(import.meta.dirname, '../client'),
-      prefix: '/static/',
+    server.register(fastifyStatic, {
+      root: resolve(import.meta.dirname, '../client/assets'),
+      prefix: '/assets/',
     });
   }
 
-  fastify.addHook('preHandler', async (req) => {
+  server.addHook('preHandler', async (req) => {
+    const path = req.url.startsWith('/') ? req.url : new URL(req.url).pathname;
+    if (!path.startsWith('/api/')) return;
+
     const userId = req.headers['x-audiobook-catalog-user'];
 
     req.log.debug('x-audiobook-catalog-user: %s', userId);
@@ -76,22 +79,21 @@ const init = async () => {
     }
   });
 
-  await fastify.register(books, { prefix: '/books' });
-  await fastify.register(users, { prefix: '/users' });
+  await server.register(api, { prefix: '/api' });
 
   // eslint-disable-next-line import/no-extraneous-dependencies
   const viteDevServer = import.meta.env.DEV ? (await import('vavite/vite-dev-server')).default : undefined;
-  fastify.get('/*', async (req, res) => {
+  server.get('/*', async (req, res) => {
     if (import.meta.env.DEV) {
       const index = await readFile(resolve(import.meta.dirname, '../client/index.html'), 'utf-8');
       res.header('Content-Type', 'text/html');
-      res.send(await viteDevServer!.transformIndexHtml(req.url, index));
-    } else {
-      await res.sendFile('index.html');
+      return res.send(await viteDevServer!.transformIndexHtml(req.url, index));
     }
+
+    return res.sendFile('index.html', resolve(import.meta.dirname, '../client/'));
   });
 
-  return fastify;
+  return server;
 };
 
 export default init;

@@ -23,7 +23,7 @@ const NewUser = ({ signal }: { signal: Signal<boolean> }) => {
       return;
     }
     try {
-      const resp = await fetch('/users/', {
+      const resp = await fetch('/api/users/', {
         method: 'POST',
         body: JSON.stringify({ username }),
       });
