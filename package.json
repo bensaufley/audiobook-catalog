@@ -54,7 +54,7 @@
     "touchsweep": "^2.2.0",
     "tsconfig-paths": "^4.2.0",
     "tsx": "^4.7.2",
-    "typescript": "^5.4.4",
+    "typescript": "^5.5.4",
     "vavite": "^4.1.1",
     "vite": "^5.3.1",
     "vite-plugin-env-compatible": "^2.0.1",
