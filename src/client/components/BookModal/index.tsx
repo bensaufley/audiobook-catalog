@@ -1,14 +1,17 @@
 import { useComputed, useSignal } from '@preact/signals';
 import type { JSX } from 'preact';
-import { useRef } from 'preact/hooks';
+import { useEffect, useRef } from 'preact/hooks';
+import TouchSweep from 'touchsweep';
 
 import Modal, { Body, Footer, Header, Title } from '~client/components/Modal';
 import useEvent from '~client/hooks/useEvent';
 import { selectedBook, selectedBookId, setBookRead } from '~client/signals/books';
+import { page, perPage, sortedBooks } from '~client/signals/Options';
 import { currentUserId } from '~client/signals/User';
 import Book from '~icons/book.svg?react';
 import External from '~icons/box-arrow-up-right.svg?react';
 import Download from '~icons/download.svg?react';
+import { clamp } from '~shared/utilities';
 
 // import styles from '~client/components/BookModal/styles.module.css';
 
@@ -51,8 +54,48 @@ const BookModal = () => {
     selectedBookId.value = undefined;
   });
 
+  const ref = useRef<HTMLDivElement>(null);
+  const touchSweep = useRef<TouchSweep>();
+
+  useEffect(() => {
+    if (!selectedBook.value) return undefined;
+
+    const el = ref.current;
+    if (!el) return undefined;
+
+    touchSweep.current = new TouchSweep(el);
+
+    const moveSelectedBook = (delta: number) => () => {
+      const books = sortedBooks.peek();
+      if (!books?.length) return;
+
+      const index = books.findIndex((book) => book.id === selectedBookId.peek()) ?? -1;
+      if (index < 0) return; // not found
+
+      const newIndex = clamp(0, index + delta, books.length - 1);
+      if (index === newIndex) return; // no change - hitting bounds
+
+      selectedBookId.value = books[newIndex]!.id;
+
+      const pageDelta = Math.floor(newIndex / perPage.peek()) - Math.floor(index / perPage.peek());
+      if (pageDelta) page.value = page.peek() + pageDelta;
+    };
+
+    const handleSwipeLeft = moveSelectedBook(1);
+    const handleSwipeRight = moveSelectedBook(-1);
+
+    el.addEventListener('swipeleft', handleSwipeLeft);
+    el.addEventListener('swiperight', handleSwipeRight);
+
+    return () => {
+      el.removeEventListener('swipeleft', handleSwipeLeft);
+      el.removeEventListener('swiperight', handleSwipeRight);
+      touchSweep.current?.unbind();
+    };
+  }, [selectedBook.value]);
+
   return (
-    <Modal show={!!selectedBook.value} onHide={handleHide}>
+    <Modal show={!!selectedBook.value} innerRef={ref} onHide={handleHide}>
       <Header onHide={handleHide}>
         <Title>
           {selectedBook.value?.title}

@@ -117,7 +117,7 @@ const filteredBooks = computed(() => {
   return fuzzyBooks;
 });
 
-const sortedBooks = computed(() => {
+export const sortedBooks = computed(() => {
   if (!filteredBooks.value) return null;
 
   const sorted = [...filteredBooks.value].sort(sorters[sortBy.value]);
