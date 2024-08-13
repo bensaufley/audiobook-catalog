@@ -8,8 +8,8 @@ import { resolve } from 'node:path';
 import { umzug } from '~db/migrations';
 import { ready } from '~db/models';
 import User from '~db/models/User';
-import books from '~server/routes/books';
-import users from '~server/routes/users';
+
+import api from './routes/api';
 
 const logLevels = ['trace', 'debug', 'info', 'warn', 'error'];
 const sanitizeLogLevel = (level?: string) => {
@@ -79,8 +79,7 @@ const init = async () => {
     }
   });
 
-  await server.register(books, { prefix: '/api/books' });
-  await server.register(users, { prefix: '/api/users' });
+  await server.register(api, { prefix: '/api' });
 
   // eslint-disable-next-line import/no-extraneous-dependencies
   const viteDevServer = import.meta.env.DEV ? (await import('vavite/vite-dev-server')).default : undefined;
