@@ -186,7 +186,7 @@ const BookModal = () => {
           </span>
         </a>
         <a
-          href={`bookplayer://download?url="${window.location.protocol}//${window.location.host}/books/${selectedBook.value?.id}/download"`}
+          href={`bookplayer://download?url="${window.location.protocol}//${window.location.host}/api/books/${selectedBook.value?.id}/download"`}
           class="btn btn-secondary"
         >
           <span class="d-flex gap-2 align-items-center">
