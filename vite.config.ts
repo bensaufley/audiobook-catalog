@@ -38,6 +38,9 @@ export default defineConfig({
     {
       name: 'server',
       config: {
+        define: {
+          'process.env.DB_NAME': JSON.stringify(process.env.DB_NAME || 'books'),
+        },
         build: {
           outDir: '.build/server',
           ssr: 'src/server',

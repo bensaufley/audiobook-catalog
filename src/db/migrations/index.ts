@@ -1,3 +1,4 @@
+import { basename } from 'node:path';
 import pino from 'pino';
 import type { QueryInterface } from 'sequelize';
 import { type RunnableMigration, SequelizeStorage, Umzug } from 'umzug';
@@ -9,7 +10,10 @@ const migrations = Object.entries(import.meta.glob('./*.*.*.ts', { eager: true }
     const { up, down } = mod as Pick<RunnableMigration<QueryInterface>, 'up' | 'down'>;
 
     return {
-      name: path,
+      path,
+      // For backwards-compatibility with earlier version of the codebase:
+      name: `${basename(path, '.ts')}.js`,
+
       up,
       ...(down ? { down } : {}),
     };

@@ -1,4 +1,4 @@
-import type { FastifyLoggerInstance } from 'fastify';
+import type { FastifyBaseLogger } from 'fastify';
 import { extname } from 'node:path';
 import type { Sequelize } from 'sequelize';
 
@@ -8,7 +8,7 @@ import { wait } from '~shared/utilities';
 
 const extensions = ['.m4a', '.m4b'];
 
-const poll = async (sequelize: Sequelize, log: FastifyLoggerInstance, directory: string, pollPeriod: number) => {
+const poll = async (sequelize: Sequelize, log: FastifyBaseLogger, directory: string, pollPeriod: number) => {
   try {
     log.info('Walking %s...', directory);
     const files = await walk(directory);
