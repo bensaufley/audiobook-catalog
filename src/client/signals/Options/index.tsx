@@ -120,7 +120,7 @@ const filteredBooks = computed(() => {
 export const sortedBooks = computed(() => {
   if (!filteredBooks.value) return null;
 
-  const sorted = [...filteredBooks.value].sort(sorters[sortBy.value]);
+  const sorted = filteredBooks.value.toSorted(sorters[sortBy.value]);
   if (sortOrder.value === SortOrder.Descending) sorted.reverse();
   return sorted;
 });

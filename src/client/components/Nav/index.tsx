@@ -63,8 +63,8 @@ const Nav = () => {
                           }}
                         >
                           <optgroup label="Sort By">
-                            {Object.entries(SortBy).map(([k, v]) => (
-                              <option value={k} selected={sortBy.value === k}>
+                            {Object.values(SortBy).map((v) => (
+                              <option value={v} selected={sortBy.value === v}>
                                 {v}
                               </option>
                             ))}
