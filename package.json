@@ -83,6 +83,6 @@
     "check": "npm-run-all --parallel --continue-on-error --aggregate-output typecheck lint",
     "typecheck": "tsc --noEmit"
   },
-  "version": "0.4.3",
+  "version": "0.5.0-0",
   "type": "module"
 }
