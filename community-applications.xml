@@ -5,68 +5,30 @@
   <Registry>https://hub.docker.com/r/bnsfly/audiobook-catalog/</Registry>
   <Network>bridge</Network>
   <MyIP/>
-  <Shell>sh</Shell>
+  <Shell>bash</Shell>
   <Privileged>false</Privileged>
   <Support>https://hub.docker.com/r/bnsfly/audiobook-catalog/</Support>
   <Project>https://github.com/bensaufley/audiobook-catalog</Project>
-  <Overview>An Unraid image to provide a UI for audiobooks hosted on a NAS&#xD;
-&#xD;
-Converted By Community Applications   Always verify this template (and values)  against the support page for the container&#xD;
-&#xD;
-https://hub.docker.com/r/bnsfly/audiobook-catalog/</Overview>
+  <Overview>An Unraid image to provide a UI for audiobooks hosted on a NAS</Overview>
+  <Description>An Unraid image to provide a UI for audiobooks hosted on a NAS&</Description>
   <Category>Tools: Status:Beta</Category>
-  <WebUI>http://0.0.0.0:3000/</WebUI>
+  <WebUI>http://[IP]:[PORT:6451]/</WebUI>
   <TemplateURL/>
   <Icon>/plugins/dynamix.docker.manager/images/question.png</Icon>
   <ExtraParams/>
   <PostArgs/>
   <CPUset/>
-  <DateInstalled>1642472264</DateInstalled>
   <DonateText/>
   <DonateLink/>
-  <Description>An Unraid image to provide a UI for audiobooks hosted on a NAS&#xD;
-&#xD;
-Converted By Community Applications   Always verify this template (and values)  against the support page for the container&#xD;
-&#xD;
-https://hub.docker.com/r/bnsfly/audiobook-catalog/</Description>
   <Networking>
     <Mode>bridge</Mode>
-    <Publish>
-      <Port>
-        <HostPort>6451</HostPort>
-        <ContainerPort>3000</ContainerPort>
-        <Protocol>tcp</Protocol>
-      </Port>
-    </Publish>
+    <Publish />
   </Networking>
-  <Data>
-    <Volume>
-      <HostDir>/mnt/user/audiobooks/m4a/</HostDir>
-      <ContainerDir>/audiobooks</ContainerDir>
-      <Mode>ro</Mode>
-    </Volume>
-    <Volume>
-      <HostDir>/mnt/user/audiobooks/</HostDir>
-      <ContainerDir>/db/</ContainerDir>
-      <Mode>rw</Mode>
-    </Volume>
-  </Data>
-  <Environment>
-    <Variable>
-      <Value>/db/</Value>
-      <Name>DB_PATH</Name>
-      <Mode/>
-    </Variable>
-    <Variable>
-      <Value>/audiobooks/</Value>
-      <Name>AUDIOBOOKS_PATH</Name>
-      <Mode/>
-    </Variable>
-  </Environment>
+  <Data />
+  <Environment />
   <Labels/>
-  <Config Name="Audiobooks Share" Target="/audiobooks" Default="" Mode="ro" Description="Path to directory with audiobooks (audiobooks can be in subdirectories). Mounted to /audiobooks." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/audiobooks/m4a/</Config>
-  <Config Name="Database Mount" Target="/db/" Default="" Mode="rw" Description="Path to a sqlite3 database. File will be created if it does not exist. Directory must exist." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/audiobooks/</Config>
+  <Config Name="Audiobooks Mount" Target="/audiobooks" Default="" Mode="rw" Description="Path to directory with audiobooks (audiobooks can be in subdirectories). Mounted to /audiobooks." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/audiobooks/m4a/</Config>
+  <Config Name="Import Mount" Target="/import" Default="" Mode="rw" Description="Path to directory for new books to be imported. Must not be the same or parent of Audiobooks Share. Mounted to /import." Type="Path" Display="always" Required="false" Mask="false">/mnt/user/audiobooks/import/</Config>
+  <Config Name="Database Mount" Target="/db/" Default="" Mode="rw" Description="Directory for sqlite3 database. File will be created if it does not exist. Directory must exist." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/audiobooks/</Config>
   <Config Name="External Port" Target="3000" Default="6451" Mode="tcp" Description="Port at which UI will be served" Type="Port" Display="always" Required="true" Mask="false">6451</Config>
-  <Config Name="Database Path" Target="DB_PATH" Default="" Mode="" Description="Don't change this" Type="Variable" Display="advanced" Required="true" Mask="false">/db/</Config>
-  <Config Name="Audiobooks Path" Target="AUDIOBOOKS_PATH" Default="" Mode="" Description="don't change this" Type="Variable" Display="advanced" Required="true" Mask="false">/audiobooks/</Config>
 </Container>

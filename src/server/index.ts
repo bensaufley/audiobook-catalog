@@ -4,13 +4,20 @@ import type { AddressInfo } from 'net';
 import type httpDevServer from 'vavite/http-dev-server';
 
 import sequelize from '~db/sequelize';
-import poll from '~server/filesystem/poll';
 import init from '~server/init';
+
+import start from './filesystem/watch';
 
 const server = await init();
 
-const pollPeriod = parseInt(process.env.POLL_PERIOD || '', 10) || 5 * 60_000; // five minute default
-poll(sequelize, server.log, '/audiobooks', pollPeriod);
+const teardown = start(sequelize, server.log);
+
+if (import.meta.hot) {
+  import.meta.hot.accept();
+  import.meta.hot.dispose(() => {
+    teardown();
+  });
+}
 
 try {
   let devServer: typeof httpDevServer | undefined;

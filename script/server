@@ -10,6 +10,7 @@ docker run \
   -v "$(pwd)":/usr/src/audiobook-catalog \
   -v /usr/src/audiobook-catalog/node_modules \
   -v "$(pwd)"/.audiobooks:/audiobooks \
+  -v "$(pwd)"/.import:/import \
   -e APP_ENV="${APP_ENV:-development}" \
   -e DB_DIR=/usr/src/audiobook-catalog/ \
   -e DB_NAME="${APP_ENV:-development}" \

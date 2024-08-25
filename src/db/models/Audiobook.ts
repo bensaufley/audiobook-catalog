@@ -1,8 +1,10 @@
 import {
   type Association,
   type BelongsToManyAddAssociationMixin,
+  type BelongsToManyGetAssociationsMixin,
   BLOB,
   FLOAT,
+  type HasManyGetAssociationsMixin,
   Model,
   type Optional,
   type Sequelize,
@@ -19,6 +21,9 @@ import type { NarratorAttributes } from '~db/models/Narrator';
 import type User from '~db/models/User';
 import type UserAudiobook from '~db/models/UserAudiobook';
 import type { UserAudiobookJSON } from '~db/models/UserAudiobook';
+
+import AudiobookAuthor from './AudiobookAuthor';
+import AudiobookNarrator from './AudiobookNarrator';
 
 interface NullCoverProps {
   cover: null;
@@ -78,8 +83,18 @@ export default class Audiobook<HasCover extends boolean = boolean> extends Model
 
   public declare addNarrator: BelongsToManyAddAssociationMixin<Narrator, NarratorAttributes>;
 
+  public declare getAudiobookAuthors: HasManyGetAssociationsMixin<AudiobookAuthor>;
+
+  public declare getAudiobookNarrators: HasManyGetAssociationsMixin<AudiobookNarrator>;
+
+  public declare getAuthors: BelongsToManyGetAssociationsMixin<Author>;
+
+  public declare getNarrators: BelongsToManyGetAssociationsMixin<Author>;
+
   public static associate(m: typeof models) {
+    this.hasMany(m.AudiobookAuthor);
     this.belongsToMany(m.Author, { through: m.AudiobookAuthor });
+    this.hasMany(m.AudiobookNarrator);
     this.belongsToMany(m.Narrator, { through: m.AudiobookNarrator });
     this.hasMany(m.UserAudiobook);
     this.belongsToMany(m.User, { through: m.UserAudiobook });
@@ -116,6 +131,12 @@ export default class Audiobook<HasCover extends boolean = boolean> extends Model
       {
         modelName: 'Audiobook',
         sequelize,
+        hooks: {
+          async beforeDestroy(instance): Promise<void> {
+            await AudiobookAuthor.destroy({ where: { AudiobookId: instance.id } });
+            await AudiobookNarrator.destroy({ where: { AudiobookId: instance.id } });
+          },
+        },
       },
     );
   }

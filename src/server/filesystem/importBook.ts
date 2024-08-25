@@ -1,19 +1,17 @@
-import type { FastifyLoggerInstance } from 'fastify';
+import type { FastifyBaseLogger } from 'fastify';
 import { parseFile } from 'music-metadata';
+import { format } from 'node:util';
 import type { Sequelize } from 'sequelize';
 
 import Audiobook from '~db/models/Audiobook';
 import Author from '~db/models/Author';
 import Narrator from '~db/models/Narrator';
 
-const importBook = async (filepath: string, sequelize: Sequelize, log: FastifyLoggerInstance) => {
-  log.debug('checking for %s...', filepath);
-  if (await Audiobook.findOne({ where: { filepath } })) {
-    log.debug('found existing Audiobook for %s; skipping.', filepath);
-    return;
-  }
-  log.debug('no entry for %s. Parsing file.', filepath);
-
+const importBook = async (
+  filepath: string,
+  sequelize: Sequelize,
+  log: FastifyBaseLogger,
+): Promise<string | Audiobook> => {
   const {
     common: {
       album,
@@ -31,7 +29,7 @@ const importBook = async (filepath: string, sequelize: Sequelize, log: FastifyLo
   const name = title || album;
   if (!name) {
     log.error('No title for file %s. Skipping', filepath);
-    return;
+    return format('No title for file %s. Skipping', filepath);
   }
   log.info('Importing %s...', name);
 
@@ -82,6 +80,8 @@ const importBook = async (filepath: string, sequelize: Sequelize, log: FastifyLo
   await transaction.commit();
 
   log.info('Done importing %s.', name);
+
+  return audiobook;
 };
 
 export default importBook;

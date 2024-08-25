@@ -3,6 +3,7 @@
   "dependencies": {
     "@fastify/etag": "^5.2.0",
     "@fastify/static": "^7.0.4",
+    "chokidar": "^3.6.0",
     "fastify": "^4.28.1",
     "music-metadata": "^7.14.0",
     "pino": "^8.21.0",
