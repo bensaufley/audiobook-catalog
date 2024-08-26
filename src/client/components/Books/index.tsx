@@ -7,7 +7,7 @@ import TouchSweep from 'touchsweep';
 import Book from '~client/components/Book';
 import BookModal from '~client/components/BookModal';
 import { selectedBookId } from '~client/signals/books';
-import { books, error, page, pages, showUpNext, sizeColumns, upNext } from '~client/signals/Options';
+import { books, error, page, pages, showUpNext, sizeColumns } from '~client/signals/Options';
 import { clamp } from '~shared/utilities';
 
 import Pagination from '../Pagination';
@@ -64,9 +64,9 @@ const Books: FunctionComponent = () => {
   return (
     <>
       <div class={clsx(styles.container, 'd-grid', 'gap-2', 'm-2')} style={{ '--cols': sizeColumns.value }} ref={ref}>
-        {showUpNext.value
-          ? upNext.value.map((book) => <Book bookId={book.id} key={book.id} />)
-          : books.value.map((book) => <Book bookId={book.id} key={book.id} />)}
+        {books.value.map((book) => (
+          <Book bookId={book.id} key={book.id} />
+        ))}
       </div>
       <BookModal />
       {!showUpNext.value && <Pagination />}

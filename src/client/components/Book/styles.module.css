@@ -117,3 +117,33 @@
     transform: scale(0.9);
   }
 }
+
+.grip {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.25rem;
+  color: #fff;
+  filter: drop-shadow(-1px 1px 0 rgb(0 0 0 / 60%)) drop-shadow(1px 1px 0 rgb(0 0 0 / 60%))
+    drop-shadow(-1px -1px 0 rgb(0 0 0 / 60%)) drop-shadow(1px -1px 0 rgb(0 0 0 / 60%));
+  cursor: grab;
+  width: 1.5rem;
+  height: 1.5rem;
+  display: none;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.grabbable {
+  transition: transform 150ms;
+
+  &:active {
+    transform: scale(1.1);
+    z-index: 1030;
+  }
+
+  .grip {
+    display: block;
+  }
+}

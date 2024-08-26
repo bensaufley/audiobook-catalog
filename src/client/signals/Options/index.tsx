@@ -122,11 +122,25 @@ const filteredBooks = computed(() => {
   return fuzzyBooks;
 });
 
-export const sortedBooks = computed(() => {
-  if (!filteredBooks.value) return null;
+export const upNext = computed(() => {
+  if (!rawBooks.value) return [];
 
-  const sorted = filteredBooks.value.toSorted(sorters[sortBy.value]);
-  if (sortOrder.value === SortOrder.Descending) sorted.reverse();
+  return rawBooks.value
+    .filter(({ UpNexts }) => UpNexts?.length)
+    .sort((a, b) => a.UpNexts![0]!.order - b.UpNexts![0]!.order);
+});
+
+export const sortedBooks = computed(() => {
+  let sorted: AudiobookJSON[];
+  if (showUpNext.value) {
+    sorted = upNext.value;
+  } else {
+    if (!filteredBooks.value) return null;
+
+    sorted = filteredBooks.value.toSorted(sorters[sortBy.value]);
+    if (sortOrder.value === SortOrder.Descending) sorted.reverse();
+  }
+
   return sorted;
 });
 
@@ -140,14 +154,6 @@ export const books = paginatedBooks;
 
 effect(() => {
   pages.value = Math.ceil((filteredBooks.value?.length || 0) / perPage.value);
-});
-
-export const upNext = computed(() => {
-  if (!rawBooks.value) return [];
-
-  return rawBooks.value
-    .filter(({ UpNexts }) => UpNexts?.length)
-    .sort((a, b) => a.UpNexts![0]!.order - b.UpNexts![0]!.order);
 });
 
 export const addBookToUpNext = async (id: string) => {

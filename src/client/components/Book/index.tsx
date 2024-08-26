@@ -5,9 +5,10 @@ import { useRef } from 'preact/hooks';
 
 import useEvent from '~client/hooks/useEvent';
 import { rawBooks, selectedBookId, setBookRead } from '~client/signals/books';
-import { addBookToUpNext, removeBookFromUpNext } from '~client/signals/Options';
+import { addBookToUpNext, removeBookFromUpNext, showUpNext } from '~client/signals/Options';
 import { currentUserId } from '~client/signals/User';
 import MinusCircleFill from '~icons/dash-circle-fill.svg?react';
+import GripVertical from '~icons/grip-vertical.svg?react';
 import PlusCircleFill from '~icons/plus-circle-fill.svg?react';
 
 import styles from '~client/components/Book/styles.module.css';
@@ -52,7 +53,7 @@ const Book = ({ bookId }: Props) => {
   });
 
   return (
-    <div class={styles.container}>
+    <div class={clsx(styles.container, showUpNext.value && styles.grabbable)} draggable={showUpNext}>
       <div
         role="button"
         tabindex={0}
@@ -68,6 +69,7 @@ const Book = ({ bookId }: Props) => {
       >
         {currentUserId.value && (
           <>
+            <GripVertical className={styles.grip} />
             {book.value.UpNexts?.length ? (
               <button
                 class={clsx(styles.upNext, styles.remove)}
