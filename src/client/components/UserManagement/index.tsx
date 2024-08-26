@@ -4,7 +4,7 @@ import type { FunctionComponent } from 'preact';
 
 import NewUser from '~client/components/UserManagement/NewUser';
 import useEvent from '~client/hooks/useEvent';
-import { read } from '~client/signals/Options';
+import { read, showUpNext } from '~client/signals/Options';
 import { Read } from '~client/signals/Options/enums';
 import { currentUser, currentUserId, fetchingUsers, users } from '~client/signals/User';
 import User from '~icons/person-fill.svg?react';
@@ -57,12 +57,24 @@ const UserManagement: FunctionComponent = () => {
           {currentUser.value ? (
             <>
               <li>
+                <button
+                  type="button"
+                  class={clsx('dropdown-item', showUpNext.value && 'active')}
+                  onClick={() => {
+                    showUpNext.value = !showUpNext.value;
+                  }}
+                >
+                  Up Next
+                </button>
+              </li>
+              <li class="dropdown-divider" />
+              <li>
                 <h6 class="dropdown-header">Filter:</h6>
               </li>
               <li>
                 <button
                   type="button"
-                  class={clsx('dropdown-item', read.value === Read.All && 'active')}
+                  class={clsx('dropdown-item', !showUpNext.value && read.value === Read.All && 'active')}
                   onClick={(e: Event) => {
                     e.preventDefault();
                     read.value = Read.All;
@@ -74,7 +86,7 @@ const UserManagement: FunctionComponent = () => {
               <li>
                 <button
                   type="button"
-                  class={clsx('dropdown-item', read.value === Read.Unread && 'active')}
+                  class={clsx('dropdown-item', !showUpNext.value && read.value === Read.Unread && 'active')}
                   onClick={(e: Event) => {
                     e.preventDefault();
                     read.value = Read.Unread;
@@ -86,7 +98,7 @@ const UserManagement: FunctionComponent = () => {
               <li>
                 <button
                   type="button"
-                  class={clsx('dropdown-item', read.value === Read.Read && 'active')}
+                  class={clsx('dropdown-item', !showUpNext.value && read.value === Read.Read && 'active')}
                   onClick={(e: Event) => {
                     e.preventDefault();
                     read.value = Read.Read;

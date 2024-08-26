@@ -1,10 +1,14 @@
 import { useComputed, useSignal } from '@preact/signals';
+import clsx from 'clsx';
 import type { JSX } from 'preact';
 import { useRef } from 'preact/hooks';
 
 import useEvent from '~client/hooks/useEvent';
 import { rawBooks, selectedBookId, setBookRead } from '~client/signals/books';
+import { addBookToUpNext, removeBookFromUpNext } from '~client/signals/Options';
 import { currentUserId } from '~client/signals/User';
+import MinusCircleFill from '~icons/dash-circle-fill.svg?react';
+import PlusCircleFill from '~icons/plus-circle-fill.svg?react';
 
 import styles from '~client/components/Book/styles.module.css';
 
@@ -24,6 +28,7 @@ const Book = ({ bookId }: Props) => {
   });
 
   const changingRead = useSignal(false);
+  const changingUpNext = useSignal(false);
 
   const handleRead = useEvent(async (e: JSX.TargetedEvent<HTMLInputElement>) => {
     e.preventDefault();
@@ -32,6 +37,18 @@ const Book = ({ bookId }: Props) => {
     checkRef.current!.checked = !checked;
     if ((await setBookRead(bookId, checked)) && checkRef.current) checkRef.current.checked = checked;
     changingRead.value = false;
+  });
+
+  const addToUpNext = useEvent(async (e: JSX.TargetedEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    changingUpNext.value = true;
+    await addBookToUpNext(bookId);
+  });
+
+  const removeFromUpNext = useEvent(async (e: JSX.TargetedEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    changingUpNext.value = true;
+    await removeBookFromUpNext(bookId);
   });
 
   return (
@@ -50,7 +67,32 @@ const Book = ({ bookId }: Props) => {
         }}
       >
         {currentUserId.value && (
-          <input disabled={changingRead} ref={checkRef} type="checkbox" onChange={handleRead} checked={read.value} />
+          <>
+            {book.value.UpNexts?.length ? (
+              <button
+                class={clsx(styles.upNext, styles.remove)}
+                disabled={changingUpNext}
+                type="button"
+                aria-label="Remove from Up Next"
+                title="Remove from Up Next"
+                onClick={removeFromUpNext}
+              >
+                <MinusCircleFill />
+              </button>
+            ) : (
+              <button
+                class={clsx(styles.upNext, styles.add)}
+                disabled={changingUpNext}
+                type="button"
+                aria-label="Add to Up Next"
+                title="Add to Up Next"
+                onClick={addToUpNext}
+              >
+                <PlusCircleFill />
+              </button>
+            )}
+            <input disabled={changingRead} ref={checkRef} type="checkbox" onChange={handleRead} checked={read.value} />
+          </>
         )}
       </div>
     </div>

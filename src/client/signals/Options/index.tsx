@@ -4,7 +4,7 @@ import { levenshtein } from 'wuzzy';
 import { SortBy, sorters, SortOrder } from '~client/signals/Options/sort';
 import type { AudiobookJSON } from '~db/models/Audiobook';
 
-import { rawBooks } from '../books';
+import { rawBooks, updateBook } from '../books';
 import { currentUserId } from '../User';
 
 import { Read, Size } from './enums';
@@ -23,6 +23,11 @@ export const read = new Signal<Read>(Read.All);
 export const size = new Signal<Size>(Size.Medium);
 export const sortBy = new Signal<SortBy>(SortBy.Author);
 export const sortOrder = new Signal<SortOrder>(SortOrder.Ascending);
+export const showUpNext = new Signal(false);
+
+effect(() => {
+  if (!currentUserId.value) showUpNext.value = false;
+});
 
 export const sizeColumns = computed(
   () =>
@@ -136,3 +141,108 @@ export const books = paginatedBooks;
 effect(() => {
   pages.value = Math.ceil((filteredBooks.value?.length || 0) / perPage.value);
 });
+
+export const upNext = computed(() => {
+  if (!rawBooks.value) return [];
+
+  return rawBooks.value
+    .filter(({ UpNexts }) => UpNexts?.length)
+    .sort((a, b) => a.UpNexts![0]!.order - b.UpNexts![0]!.order);
+});
+
+export const addBookToUpNext = async (id: string) => {
+  try {
+    const userId = currentUserId.peek();
+    if (!userId) return false;
+
+    const resp = await fetch(`/api/users/books/${id}/up-next`, {
+      headers: {
+        'x-audiobook-catalog-user': userId!,
+      },
+      method: 'POST',
+    });
+
+    if (!resp.ok) return false;
+
+    updateBook({
+      id,
+      UpNexts: [
+        {
+          order: (upNext.peek().at(-1)?.UpNexts![0]!.order ?? 0) + 1,
+          AudiobookId: id,
+          UserId: userId,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        },
+      ],
+    });
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+export const removeBookFromUpNext = async (id: string) => {
+  try {
+    const userId = currentUserId.peek();
+    if (!userId) return false;
+
+    const resp = await fetch(`/api/users/books/${id}/up-next`, {
+      headers: {
+        'x-audiobook-catalog-user': userId!,
+      },
+      method: 'DELETE',
+    });
+
+    if (!resp.ok) return false;
+
+    const book = rawBooks.peek()?.find(({ id: i }) => i === id);
+    if (!book) return false;
+
+    const UpNexts = book.UpNexts?.filter(({ UserId }) => UserId !== userId) ?? [];
+    updateBook({ id, UpNexts });
+
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+export const reorderUpNexts = async (ids: string[]) => {
+  try {
+    const userId = currentUserId.peek();
+    if (!userId) return false;
+
+    const resp = await fetch('/api/users/books/up-next', {
+      headers: {
+        'x-audiobook-catalog-user': userId!,
+      },
+      method: 'POST',
+      body: JSON.stringify({ bookIds: ids }),
+    });
+
+    if (!resp.ok) return false;
+
+    const books = rawBooks.peek()!;
+    const newBooks = books.map((book) => {
+      const upNext = book.UpNexts?.find(({ UserId }) => UserId === userId);
+      if (!upNext) return book;
+
+      return {
+        ...book,
+        UpNexts: [
+          {
+            ...upNext,
+            order: ids.indexOf(book.id),
+          },
+        ],
+      };
+    });
+
+    rawBooks.value = newBooks;
+
+    return true;
+  } catch {
+    return false;
+  }
+};

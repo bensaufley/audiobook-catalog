@@ -10,6 +10,7 @@ import sequelize from '../sequelize';
 
 import AudiobookTag from './AudiobookTag';
 import Tag from './Tag';
+import UpNext from './UpNext';
 
 const models = {
   Audiobook: Audiobook.generate(sequelize),
@@ -21,6 +22,7 @@ const models = {
   Tag: Tag.generate(sequelize),
   User: User.generate(sequelize),
   UserAudiobook: UserAudiobook.generate(sequelize),
+  UpNext: UpNext.generate(sequelize),
 };
 
 export const ready = new Promise<void>((resolve) => {

@@ -4,12 +4,14 @@ import { Op } from 'sequelize';
 
 import Audiobook from '~db/models/Audiobook';
 
+import type { UserRequest } from './types';
+
 type BookRequest = FastifyRequest<{
   Params: { id: string };
 }>;
 
 const books: FastifyPluginAsync = async (fastify, _opts) => {
-  fastify.get('/', async ({ log, user }, res) => {
+  fastify.get('/', async ({ log, user }: UserRequest, res) => {
     log.debug('user: %o', user);
     const audiobooks = await Audiobook.findAll({
       attributes: ['id', 'title', 'createdAt', 'duration'],
@@ -17,7 +19,10 @@ const books: FastifyPluginAsync = async (fastify, _opts) => {
         Audiobook.associations.Authors,
         Audiobook.associations.Narrators,
         ...(user
-          ? [{ association: Audiobook.associations.UserAudiobooks, where: { userId: user?.id }, required: false }]
+          ? [
+              { association: Audiobook.associations.UserAudiobooks, where: { userId: user.id }, required: false },
+              { association: Audiobook.associations.UpNexts, where: { userId: user.id }, required: false },
+            ]
           : []),
       ],
       order: [

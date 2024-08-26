@@ -81,3 +81,39 @@
     }
   }
 }
+
+.upNext {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  position: absolute;
+  top: 0.5rem;
+  padding: 0;
+  height: 1.5rem;
+  width: 1.5rem;
+  right: 0.5rem;
+  filter: drop-shadow(-1px 1px 0 rgb(255 255 255 / 60%)) drop-shadow(1px 1px 0 rgb(255 255 255 / 60%))
+    drop-shadow(-1px -1px 0 rgb(255 255 255 / 60%)) drop-shadow(1px -1px 0 rgb(255 255 255 / 60%));
+
+  svg {
+    height: 1.5rem;
+    width: 1.5rem;
+  }
+
+  &[disabled] {
+    opacity: 0.75;
+    pointer-events: none;
+  }
+
+  &.add {
+    color: var(--bs-success);
+  }
+
+  &.remove {
+    color: var(--bs-danger);
+  }
+
+  &:active {
+    transform: scale(0.9);
+  }
+}

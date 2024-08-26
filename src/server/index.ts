@@ -6,11 +6,11 @@ import type httpDevServer from 'vavite/http-dev-server';
 import sequelize from '~db/sequelize';
 import init from '~server/init';
 
-import start from './filesystem/watch';
+import watch from './filesystem/watch';
 
 const server = await init();
 
-const teardown = start(sequelize, server.log);
+const teardown = watch(sequelize, server.log);
 
 if (import.meta.hot) {
   import.meta.hot.accept();

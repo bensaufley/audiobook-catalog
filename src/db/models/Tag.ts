@@ -66,8 +66,8 @@ export default class Tag extends Model<InferAttributes<Tag, { omit: 'association
         sequelize,
         modelName: 'Tag',
         hooks: {
-          async beforeDestroy(instance) {
-            await sequelize.models.AudiobookTag?.destroy({ where: { TagId: instance.id } });
+          async beforeDestroy(tag) {
+            await tag.sequelize.models.AudiobookTag?.destroy({ where: { TagId: tag.id } });
           },
         },
       },
