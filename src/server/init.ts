@@ -10,6 +10,7 @@ import { ready } from '~db/models';
 import User from '~db/models/User';
 
 import api from './routes/api';
+import type { UserRequest } from './routes/api/types';
 
 const logLevels = ['trace', 'debug', 'info', 'warn', 'error'];
 const sanitizeLogLevel = (level?: string) => {
@@ -60,7 +61,8 @@ const init = async () => {
     });
   }
 
-  server.addHook('preHandler', async (req) => {
+  server.addHook('preHandler', async (req: UserRequest) => {
+    req.user = null;
     const path = req.url.startsWith('/') ? req.url : new URL(req.url).pathname;
     if (!path.startsWith('/api/')) return;
 
@@ -70,10 +72,7 @@ const init = async () => {
     if (!userId) return;
 
     try {
-      const user = await User.findOne({ where: { id: userId } });
-
-      if (user) req.user = user;
-      else req.log.warn('No User found for id %s', userId);
+      req.user = await User.findOne({ where: { id: userId } });
     } catch (err) {
       req.log.error(err);
     }
