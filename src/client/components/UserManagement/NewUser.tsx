@@ -8,10 +8,10 @@ import { currentUserId } from '~client/signals/user';
 import { refreshUsers } from '~client/signals/user/helpers';
 import Check from '~icons/check.svg?react';
 
+import { clearError, setError } from '../Errors';
+
 const NewUser = ({ signal }: { signal: Signal<boolean> }) => {
   const username = useSignal('');
-
-  const error = useSignal<string>();
 
   const handleChange: JSX.GenericEventHandler<HTMLInputElement> = useEvent(({ currentTarget }) => {
     username.value = currentTarget.value;
@@ -19,9 +19,9 @@ const NewUser = ({ signal }: { signal: Signal<boolean> }) => {
 
   const handleSubmit: JSX.GenericEventHandler<HTMLFormElement> = useEvent(async (e) => {
     e.preventDefault();
-    error.value = undefined;
+    clearError('user-create');
     if (username.value === '--add--') {
-      error.value = 'Invalid username';
+      setError('Invalid username', 'error', 'user-create');
       return;
     }
     try {
@@ -33,7 +33,7 @@ const NewUser = ({ signal }: { signal: Signal<boolean> }) => {
       // eslint-disable-next-line no-param-reassign
       signal.value = false;
     } catch (err) {
-      error.value = (err as Error).message;
+      setError((err as Error).message ?? 'An unexpected error occurred.', 'error', 'user-create');
     }
   });
 
@@ -55,7 +55,6 @@ const NewUser = ({ signal }: { signal: Signal<boolean> }) => {
       </Header>
       <form onSubmit={handleSubmit}>
         <Body>
-          {error.value && <p>Error: {error}</p>}
           <label for="username" class="form-label">
             Username
           </label>

@@ -11,7 +11,6 @@ export const refresh = () => {
   refreshToken.value = Date.now();
 };
 
-export const error = new Signal<string | undefined>();
 export const search = new Signal<string>('');
 export const page = new Signal<number>(0);
 export const pages = new Signal<number>(1);

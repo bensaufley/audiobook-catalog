@@ -1,6 +1,7 @@
 /* eslint-disable prefer-arrow-functions/prefer-arrow-functions */
 import { Signal } from '@preact/signals';
 
+import { setError } from '~client/components/Errors';
 import { currentUser } from '~client/signals/user';
 
 export type Method = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
@@ -112,21 +113,24 @@ export default function createFetch<Q, B, P, R = never>(
       query = getValue(argsCopy[0] as DeepSignalable<Q>);
       body = getValue(argsCopy[1] as DeepSignalable<B>);
     }
+    const uri =
+      (typeof url === 'function' ? url(params!) : url) + (query ? `?${new URLSearchParams(query).toString()}` : '');
     try {
-      const resp = await fetch(
-        (typeof url === 'function' ? url(params!) : url) + (query ? `?${new URLSearchParams(query).toString()}` : ''),
-        {
-          body: body ? JSON.stringify(body) : null,
-          method,
-          headers: {
-            'Content-Type': 'application/json',
-            'x-audiobook-catalog-user': currentUser.peek()?.id ?? '',
-          },
-          signal: c.signal,
+      const resp = await fetch(uri, {
+        body: body ? JSON.stringify(body) : null,
+        method,
+        headers: {
+          ...(body ? { 'Content-Type': 'application/json' } : {}),
+          'x-audiobook-catalog-user': currentUser.peek()?.id ?? '',
         },
-      );
+        signal: c.signal,
+      });
 
       if (!resp.ok) throw resp;
+
+      if (resp.status === 204) {
+        return { result: 'success', data: undefined as R };
+      }
 
       const json = (await resp.json()) as R;
       return { result: 'success', data: json };
@@ -136,6 +140,8 @@ export default function createFetch<Q, B, P, R = never>(
       let message = 'An unexpected error occurred';
       if (err instanceof Error) message = err.message;
       else if (err instanceof Response) message = err.statusText;
+
+      setError(message, 'error', `fetch-${method}-${uri}`, 10);
 
       return { result: 'error', error: message };
     }

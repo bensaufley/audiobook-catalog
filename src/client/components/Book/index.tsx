@@ -1,59 +1,28 @@
-import { effect, Signal, useComputed, useSignal } from '@preact/signals';
+import { useComputed, useSignal } from '@preact/signals';
 import clsx from 'clsx';
 import type { JSX } from 'preact';
-import { useRef } from 'preact/hooks';
+import { useMemo, useRef } from 'preact/hooks';
 
 import useEvent, { useThrottledEvent } from '~client/hooks/useEvent';
 import { rawBooks, selectedBookId, stagedUpNextReorder, upNext } from '~client/signals/books';
 import {
   addToUpNext as upNextBook,
   removeFromUpNext as unUpNextBook,
-  reorderUpNexts,
   setBookRead,
 } from '~client/signals/books/helpers';
 import { showUpNext } from '~client/signals/options';
 import { currentUserId } from '~client/signals/user';
-import MinusCircleFill from '~icons/dash-circle-fill.svg?react';
+import BookmarkDashFill from '~icons/bookmark-dash-fill.svg?react';
+import BookmarkPlusFill from '~icons/bookmark-plus-fill.svg?react';
 import GripVertical from '~icons/grip-vertical.svg?react';
-import PlusCircleFill from '~icons/plus-circle-fill.svg?react';
-import debounce from '~shared/debounce';
+
+import { draggingBook, draggingElement, dragTarget, persistReorder, reorderBook } from './utils';
 
 import styles from '~client/components/Book/styles.module.css';
 
 interface Props {
   bookId: string;
 }
-
-const draggingBook = new Signal<string | null>(null);
-const draggingElement = new Signal<HTMLDivElement | null>(null);
-const dragTarget = new Signal<string | null>(null);
-
-effect(() => {
-  if (showUpNext.value) return;
-
-  draggingBook.value = null;
-  draggingElement.value = null;
-});
-
-const reorderBook = (bookId: string, targetId: string, before: boolean) => {
-  const order = stagedUpNextReorder.value ?? upNext.peek().map(({ AudiobookId: id }) => id);
-  stagedUpNextReorder.value = order.flatMap((id) => {
-    if (id === targetId) return before ? [bookId, id] : [id, bookId];
-    if (id === bookId) return [];
-    return [id];
-  });
-};
-
-const persistReorder = debounce(async () => {
-  const staged = stagedUpNextReorder.peek();
-
-  if (!staged) return;
-  if (staged.every((v, i) => upNext.peek()[i]?.AudiobookId === v)) return;
-
-  if (await reorderUpNexts(staged!)) {
-    stagedUpNextReorder.value = null;
-  }
-});
 
 const Book = ({ bookId }: Props) => {
   const ref = useRef<HTMLDivElement>(null);
@@ -84,12 +53,14 @@ const Book = ({ bookId }: Props) => {
     e.preventDefault();
     changingUpNext.value = true;
     await upNextBook(bookId);
+    changingUpNext.value = false;
   });
 
   const removeFromUpNext = useEvent(async (e: JSX.TargetedEvent<HTMLButtonElement>) => {
     e.preventDefault();
     changingUpNext.value = true;
     await unUpNextBook(bookId);
+    changingUpNext.value = false;
   });
 
   const handleDragStart = useEvent<JSX.DragEventHandler<HTMLDivElement>>((e) => {
@@ -113,21 +84,26 @@ const Book = ({ bookId }: Props) => {
     dragTarget.value = null;
   });
 
-  const handleDragOverFn = useThrottledEvent<JSX.DragEventHandler<HTMLDivElement>>((e) => {
+  const handleDragOverFn = useThrottledEvent<JSX.DragEventHandler<HTMLDivElement>>(() => {
     if (!draggingBook.value || draggingBook.value === bookId) return;
 
-    const { clientX } = e;
-    const { left, width } = ref.current!.getBoundingClientRect();
+    const order = stagedUpNextReorder.value ?? upNext.peek().map(({ AudiobookId: id }) => id);
 
-    const elCenterX = left + width / 2;
+    const draggingBookIndex = order.indexOf(draggingBook.value);
+    const thisBookIndex = order.indexOf(bookId);
 
-    reorderBook(draggingBook.value!, bookId, clientX < elCenterX);
+    reorderBook(draggingBook.value!, bookId, draggingBookIndex > thisBookIndex);
   });
 
   const handleDragOver = useEvent<JSX.DragEventHandler<HTMLDivElement>>((e) => {
     e.preventDefault();
     if (showUpNext.value && draggingBook.value) handleDragOverFn(e);
   });
+
+  const isUpNext = useMemo(
+    () => upNext.value.some(({ AudiobookId }) => AudiobookId === bookId),
+    [upNext.value, bookId],
+  );
 
   return (
     <div
@@ -157,7 +133,7 @@ const Book = ({ bookId }: Props) => {
         {currentUserId.value && (
           <>
             <GripVertical className={styles.grip} />
-            {book.value.UpNexts?.length ? (
+            {isUpNext ? (
               <button
                 class={clsx(styles.upNext, styles.remove)}
                 disabled={changingUpNext}
@@ -166,7 +142,7 @@ const Book = ({ bookId }: Props) => {
                 title="Remove from Up Next"
                 onClick={removeFromUpNext}
               >
-                <MinusCircleFill />
+                <BookmarkDashFill />
               </button>
             ) : (
               <button
@@ -177,7 +153,7 @@ const Book = ({ bookId }: Props) => {
                 title="Add to Up Next"
                 onClick={addToUpNext}
               >
-                <PlusCircleFill />
+                <BookmarkPlusFill />
               </button>
             )}
             <input disabled={changingRead} ref={checkRef} type="checkbox" onChange={handleRead} checked={read.value} />
