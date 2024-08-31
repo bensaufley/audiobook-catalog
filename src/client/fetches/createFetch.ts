@@ -1,7 +1,7 @@
 /* eslint-disable prefer-arrow-functions/prefer-arrow-functions */
 import { Signal } from '@preact/signals';
 
-import { currentUser } from '~client/signals/User';
+import { currentUser } from '~client/signals/user';
 
 export type Method = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 

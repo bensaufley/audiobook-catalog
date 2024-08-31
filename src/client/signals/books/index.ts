@@ -9,7 +9,7 @@ import type { UpNextJSON } from '~db/models/UpNext';
 import { page, pages, perPage, read, refreshToken, search, showUpNext, sortBy, sortOrder } from '../options';
 import { Read } from '../options/enums';
 import { sorters, SortOrder } from '../options/sort';
-import { currentUser } from '../User';
+import { currentUser } from '../user';
 
 export const rawBooks = new Signal<AudiobookJSON[] | undefined>();
 export const tags = new Signal<TagJSON[] | undefined>();

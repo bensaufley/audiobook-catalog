@@ -12,7 +12,7 @@ import {
   setBookRead,
 } from '~client/signals/books/helpers';
 import { showUpNext } from '~client/signals/options';
-import { currentUserId } from '~client/signals/User';
+import { currentUserId } from '~client/signals/user';
 import MinusCircleFill from '~icons/dash-circle-fill.svg?react';
 import GripVertical from '~icons/grip-vertical.svg?react';
 import PlusCircleFill from '~icons/plus-circle-fill.svg?react';

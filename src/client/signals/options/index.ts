@@ -2,7 +2,7 @@ import { computed, effect, Signal } from '@preact/signals';
 
 import { SortBy, SortOrder } from '~client/signals/options/sort';
 
-import { currentUserId } from '../User';
+import { currentUserId } from '../user';
 
 import { Read, Size } from './enums';
 

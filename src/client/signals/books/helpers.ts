@@ -2,7 +2,7 @@ import { addBookToUpNext, readBook, removeBookFromUpNext, reorderBooks, unreadBo
 import type { AudiobookJSON } from '~db/models/Audiobook';
 import type { UserAudiobookJSON } from '~db/models/UserAudiobook';
 
-import { currentUserId } from '../User';
+import { currentUserId } from '../user';
 
 import { rawBooks, upNext } from '.';
 

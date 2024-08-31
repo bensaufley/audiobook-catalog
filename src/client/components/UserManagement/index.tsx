@@ -6,7 +6,7 @@ import NewUser from '~client/components/UserManagement/NewUser';
 import useEvent from '~client/hooks/useEvent';
 import { read, showUpNext } from '~client/signals/options';
 import { Read } from '~client/signals/options/enums';
-import { currentUser, currentUserId, fetchingUsers, users } from '~client/signals/User';
+import { currentUser, currentUserId, fetchingUsers, users } from '~client/signals/user';
 import User from '~icons/person-fill.svg?react';
 
 const UserManagement: FunctionComponent = () => {

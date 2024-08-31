@@ -4,8 +4,8 @@ import type { JSX } from 'preact';
 import Modal, { Body, Footer, Header, Title } from '~client/components/Modal';
 import { createUser } from '~client/fetches';
 import useEvent from '~client/hooks/useEvent';
-import { currentUserId } from '~client/signals/User';
-import { refreshUsers } from '~client/signals/User/helpers';
+import { currentUserId } from '~client/signals/user';
+import { refreshUsers } from '~client/signals/user/helpers';
 import Check from '~icons/check.svg?react';
 
 const NewUser = ({ signal }: { signal: Signal<boolean> }) => {

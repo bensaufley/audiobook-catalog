@@ -8,7 +8,7 @@ import useEvent from '~client/hooks/useEvent';
 import { selectedBook, selectedBookId, sortedBooks } from '~client/signals/books';
 import { setBookRead } from '~client/signals/books/helpers';
 import { page, perPage } from '~client/signals/options';
-import { currentUserId } from '~client/signals/User';
+import { currentUserId } from '~client/signals/user';
 import Book from '~icons/book.svg?react';
 import External from '~icons/box-arrow-up-right.svg?react';
 import Download from '~icons/download.svg?react';

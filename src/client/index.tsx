@@ -1,7 +1,7 @@
 import { render } from 'preact';
 
 import App from '~client/components/App';
-import { refreshUsers } from '~client/signals/User/helpers';
+import { refreshUsers } from '~client/signals/user/helpers';
 
 import configureBootstrapTheme from './configureBootstrapTheme';
 
