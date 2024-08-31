@@ -3,7 +3,6 @@
 
 html,
 body {
-  overflow-x: hidden;
   overscroll-behavior-x: contain;
 }
 

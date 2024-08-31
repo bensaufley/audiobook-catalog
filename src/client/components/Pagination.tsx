@@ -18,7 +18,7 @@ const Pagination = () => {
   });
 
   return (
-    <div class="row justify-content-center gap-4 my-4">
+    <div class="row justify-content-center gap-4 my-4 mx-0">
       <form class="col-12 col-md-auto d-flex justify-content-center justify-content-md-start order-1 order-md-0">
         <div class="row">
           <label class="col form-label col-form-label" for="per-page">
