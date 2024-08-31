@@ -4,15 +4,14 @@ import type { JSX } from 'preact';
 import { useRef } from 'preact/hooks';
 
 import useEvent, { useThrottledEvent } from '~client/hooks/useEvent';
-import { rawBooks, selectedBookId, setBookRead } from '~client/signals/books';
+import { rawBooks, selectedBookId, stagedUpNextReorder, upNext } from '~client/signals/books';
 import {
-  addBookToUpNext,
-  removeBookFromUpNext,
+  addToUpNext as upNextBook,
+  removeFromUpNext as unUpNextBook,
   reorderUpNexts,
-  showUpNext,
-  stagedUpNextReorder,
-  upNext,
-} from '~client/signals/Options';
+  setBookRead,
+} from '~client/signals/books/helpers';
+import { showUpNext } from '~client/signals/options';
 import { currentUserId } from '~client/signals/User';
 import MinusCircleFill from '~icons/dash-circle-fill.svg?react';
 import GripVertical from '~icons/grip-vertical.svg?react';
@@ -37,7 +36,7 @@ effect(() => {
 });
 
 const reorderBook = (bookId: string, targetId: string, before: boolean) => {
-  const order = stagedUpNextReorder.value ?? upNext.peek().map(({ id }) => id);
+  const order = stagedUpNextReorder.value ?? upNext.peek().map(({ AudiobookId: id }) => id);
   stagedUpNextReorder.value = order.flatMap((id) => {
     if (id === targetId) return before ? [bookId, id] : [id, bookId];
     if (id === bookId) return [];
@@ -49,9 +48,11 @@ const persistReorder = debounce(async () => {
   const staged = stagedUpNextReorder.peek();
 
   if (!staged) return;
-  if (staged.every((v, i) => upNext.peek()[i]?.id === v)) return;
+  if (staged.every((v, i) => upNext.peek()[i]?.AudiobookId === v)) return;
 
-  reorderUpNexts(staged!);
+  if (await reorderUpNexts(staged!)) {
+    stagedUpNextReorder.value = null;
+  }
 });
 
 const Book = ({ bookId }: Props) => {
@@ -82,13 +83,13 @@ const Book = ({ bookId }: Props) => {
   const addToUpNext = useEvent(async (e: JSX.TargetedEvent<HTMLButtonElement>) => {
     e.preventDefault();
     changingUpNext.value = true;
-    await addBookToUpNext(bookId);
+    await upNextBook(bookId);
   });
 
   const removeFromUpNext = useEvent(async (e: JSX.TargetedEvent<HTMLButtonElement>) => {
     e.preventDefault();
     changingUpNext.value = true;
-    await removeBookFromUpNext(bookId);
+    await unUpNextBook(bookId);
   });
 
   const handleDragStart = useEvent<JSX.DragEventHandler<HTMLDivElement>>((e) => {

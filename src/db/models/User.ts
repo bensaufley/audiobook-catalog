@@ -3,6 +3,7 @@ import {
   type CreationOptional,
   DATE,
   type HasManyAddAssociationMixin,
+  type HasManyGetAssociationsMixin,
   type InferAttributes,
   type InferCreationAttributes,
   Model,
@@ -28,6 +29,8 @@ export default class User extends Model<InferAttributes<User>, InferCreationAttr
   public declare readonly updatedAt: CreationOptional<Date>;
 
   public declare addUpNext: HasManyAddAssociationMixin<UpNext, string>;
+
+  public declare getUpNexts: HasManyGetAssociationsMixin<UpNext>;
 
   declare static associations: {
     Audiobooks: Association<User, Audiobook>;

@@ -2,7 +2,7 @@ import { useComputed } from '@preact/signals';
 import clsx from 'clsx';
 import type { JSX } from 'preact';
 
-import { page, pages, perPage, perPageOptions } from '~client/signals/Options';
+import { page, pages, perPage, perPageOptions } from '~client/signals/options';
 import ChevronDoubleLeft from '~icons/chevron-double-left.svg?react';
 import ChevronDoubleRight from '~icons/chevron-double-right.svg?react';
 import ChevronLeft from '~icons/chevron-left.svg?react';

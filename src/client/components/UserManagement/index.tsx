@@ -4,8 +4,8 @@ import type { FunctionComponent } from 'preact';
 
 import NewUser from '~client/components/UserManagement/NewUser';
 import useEvent from '~client/hooks/useEvent';
-import { read, showUpNext } from '~client/signals/Options';
-import { Read } from '~client/signals/Options/enums';
+import { read, showUpNext } from '~client/signals/options';
+import { Read } from '~client/signals/options/enums';
 import { currentUser, currentUserId, fetchingUsers, users } from '~client/signals/User';
 import User from '~icons/person-fill.svg?react';
 

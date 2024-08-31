@@ -9,6 +9,7 @@ import {
 } from 'sequelize';
 
 import type Audiobook from './Audiobook';
+import type { InferJSONAttributes } from './types';
 import type User from './User';
 
 import type models from '.';
@@ -80,3 +81,5 @@ export default class UpNext extends Model<
     );
   }
 }
+
+export type UpNextJSON = InferJSONAttributes<UpNext>;

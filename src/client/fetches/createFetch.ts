@@ -51,7 +51,10 @@ export default function createFetch<B, R = never>(
   url: URL,
   needs: Needs.Body,
 ): (body: DeepSignalable<B>) => Promise<Response<R>>; // body-only
-export default function createFetch<P, R = never>(method: Method, url: (params: P) => URL): () => Promise<Response<R>>; // params-only
+export default function createFetch<P, R = never>(
+  method: Method,
+  url: (params: P) => URL,
+): (params: P) => Promise<Response<R>>; // params-only
 export default function createFetch<Q, B, R = never>(
   method: Method,
   url: URL,

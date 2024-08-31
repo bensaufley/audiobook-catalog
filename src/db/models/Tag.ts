@@ -37,6 +37,7 @@ export default class Tag extends Model<InferAttributes<Tag, { omit: 'association
 
   public declare associations: {
     Audiobooks?: Audiobook[];
+    AudiobookTags?: AudiobookTag[];
   };
 
   public static generate(sequelize: Sequelize) {
@@ -74,3 +75,5 @@ export default class Tag extends Model<InferAttributes<Tag, { omit: 'association
     );
   }
 }
+
+export type TagJSON = InferAttributes<Tag>;

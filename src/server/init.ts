@@ -61,6 +61,7 @@ const init = async () => {
     });
   }
 
+  server.decorateRequest<User | undefined>('user', undefined);
   server.addHook('preHandler', async (req: UserRequest) => {
     req.user = null;
     const path = req.url.startsWith('/') ? req.url : new URL(req.url).pathname;

@@ -5,8 +5,9 @@ import TouchSweep from 'touchsweep';
 
 import Modal, { Body, Footer, Header, Title } from '~client/components/Modal';
 import useEvent from '~client/hooks/useEvent';
-import { selectedBook, selectedBookId, setBookRead } from '~client/signals/books';
-import { page, perPage, sortedBooks } from '~client/signals/Options';
+import { selectedBook, selectedBookId, sortedBooks } from '~client/signals/books';
+import { setBookRead } from '~client/signals/books/helpers';
+import { page, perPage } from '~client/signals/options';
 import { currentUserId } from '~client/signals/User';
 import Book from '~icons/book.svg?react';
 import External from '~icons/box-arrow-up-right.svg?react';

@@ -6,8 +6,8 @@ import TouchSweep from 'touchsweep';
 
 import Book from '~client/components/Book';
 import BookModal from '~client/components/BookModal';
-import { selectedBookId } from '~client/signals/books';
-import { books, error, page, pages, showUpNext, sizeColumns } from '~client/signals/Options';
+import { books, selectedBookId } from '~client/signals/books';
+import { error, page, pages, showUpNext, sizeColumns } from '~client/signals/options';
 import { clamp } from '~shared/utilities';
 
 import Pagination from '../Pagination';

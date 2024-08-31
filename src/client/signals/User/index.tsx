@@ -3,7 +3,6 @@ import dayjs from 'dayjs';
 import cookie from 'js-cookie';
 
 import type { UserAttributes } from '~db/models/User';
-import type User from '~db/models/User';
 
 const userCookieName = 'audiobook-catalog-user';
 
@@ -40,19 +39,3 @@ effect(() => {
 export const users = new Signal<UserAttributes[]>([]);
 
 export const fetchingUsers = new Signal(false);
-
-export const refreshUsers = async () => {
-  if (fetchingUsers.peek()) return;
-
-  try {
-    fetchingUsers.value = true;
-    const res = await fetch('/api/users');
-    const us: User[] = await res.json();
-    users.value = us;
-  } catch (ex) {
-    // eslint-disable-next-line no-console
-    console.error(ex);
-  } finally {
-    fetchingUsers.value = false;
-  }
-};

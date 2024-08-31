@@ -3,9 +3,9 @@ import clsx from 'clsx';
 import type { JSX } from 'preact';
 
 import UserManagement from '~client/components/UserManagement';
-import { search, size, sortBy, sortOrder } from '~client/signals/Options';
-import { Size } from '~client/signals/Options/enums';
-import { SortBy, SortOrder } from '~client/signals/Options/sort';
+import { search, size, sortBy, sortOrder } from '~client/signals/options';
+import { Size } from '~client/signals/options/enums';
+import { SortBy, SortOrder } from '~client/signals/options/sort';
 import List from '~icons/list.svg?react';
 import SortDown from '~icons/sort-down.svg?react';
 import SortUp from '~icons/sort-up.svg?react';
