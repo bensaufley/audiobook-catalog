@@ -53,7 +53,7 @@ const Books: FunctionComponent = () => {
   }
 
   return (
-    <>
+    <div>
       <div class={clsx(styles.container, 'd-grid', 'gap-2', 'm-2')} style={{ '--cols': sizeColumns.value }} ref={ref}>
         {books.value.map((book) => (
           <Book bookId={book.id} key={book.id} />
@@ -61,7 +61,7 @@ const Books: FunctionComponent = () => {
       </div>
       <BookModal />
       {!showUpNext.value && <Pagination />}
-    </>
+    </div>
   );
 };
 

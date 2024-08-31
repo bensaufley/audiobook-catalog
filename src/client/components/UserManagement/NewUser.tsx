@@ -2,13 +2,12 @@ import { type Signal, useSignal } from '@preact/signals';
 import type { JSX } from 'preact';
 
 import Modal, { Body, Footer, Header, Title } from '~client/components/Modal';
+import { clearToast, Level, setError } from '~client/components/Toasts/utils';
 import { createUser } from '~client/fetches';
 import useEvent from '~client/hooks/useEvent';
 import { currentUserId } from '~client/signals/user';
 import { refreshUsers } from '~client/signals/user/helpers';
 import Check from '~icons/check.svg?react';
-
-import { clearError, setError } from '../Errors';
 
 const NewUser = ({ signal }: { signal: Signal<boolean> }) => {
   const username = useSignal('');
@@ -19,9 +18,9 @@ const NewUser = ({ signal }: { signal: Signal<boolean> }) => {
 
   const handleSubmit: JSX.GenericEventHandler<HTMLFormElement> = useEvent(async (e) => {
     e.preventDefault();
-    clearError('user-create');
+    clearToast('user-create', Level.Error);
     if (username.value === '--add--') {
-      setError('Invalid username', 'error', 'user-create');
+      setError('Invalid username', 'user-create');
       return;
     }
     try {
@@ -33,7 +32,7 @@ const NewUser = ({ signal }: { signal: Signal<boolean> }) => {
       // eslint-disable-next-line no-param-reassign
       signal.value = false;
     } catch (err) {
-      setError((err as Error).message ?? 'An unexpected error occurred.', 'error', 'user-create');
+      setError((err as Error).message ?? 'An unexpected error occurred.', 'user-create');
     }
   });
 

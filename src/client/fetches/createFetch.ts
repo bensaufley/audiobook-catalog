@@ -1,7 +1,7 @@
 /* eslint-disable prefer-arrow-functions/prefer-arrow-functions */
 import { Signal } from '@preact/signals';
 
-import { setError } from '~client/components/Errors';
+import { clearToast, Level, setError } from '~client/components/Toasts/utils';
 import { currentUser } from '~client/signals/user';
 
 export type Method = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
@@ -115,6 +115,8 @@ export default function createFetch<Q, B, P, R = never>(
     }
     const uri =
       (typeof url === 'function' ? url(params!) : url) + (query ? `?${new URLSearchParams(query).toString()}` : '');
+    const errorKey = `fetch-${method}-${uri}`;
+    clearToast(errorKey, Level.Error);
     try {
       const resp = await fetch(uri, {
         body: body ? JSON.stringify(body) : null,
@@ -141,7 +143,7 @@ export default function createFetch<Q, B, P, R = never>(
       if (err instanceof Error) message = err.message;
       else if (err instanceof Response) message = err.statusText;
 
-      setError(message, 'error', `fetch-${method}-${uri}`, 10);
+      setError(message, errorKey, { selfDismiss: 10 });
 
       return { result: 'error', error: message };
     }
