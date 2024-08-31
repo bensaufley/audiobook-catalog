@@ -39,31 +39,32 @@ const removeFromUpNext = checkForUser(async ({ log, params: { bookId }, user }: 
   }
 });
 
-const reorderUpNext = checkForUser(
-  async ({ log, body: { bookIds }, user }: UserRequest<{ Body: { bookIds: string[] } }, true>, res) => {
-    try {
-      let upNexts: UpNext[] | undefined;
-      sequelize.transaction(async (transaction) => {
-        await UpNext.destroy({ where: { UserId: user.id }, transaction });
-        upNexts = await UpNext.bulkCreate(
-          bookIds.map(
-            (id, index) => ({
-              UserId: user.id,
-              AudiobookId: id,
-              order: index,
-            }),
-            { transaction },
-          ),
-        );
-      });
+const reorderUpNext = checkForUser(async (req: UserRequest<{ Body: { bookIds: string[] } }, true>, res) => {
+  const {
+    log,
+    body: { bookIds },
+    user,
+  } = req;
+  try {
+    let upNexts: UpNext[] | undefined;
+    await sequelize.transaction(async (transaction) => {
+      await UpNext.destroy({ where: { UserId: user.id }, transaction });
+      upNexts = await UpNext.bulkCreate(
+        bookIds.map((id, index) => ({
+          UserId: user.id,
+          AudiobookId: id,
+          order: index,
+        })),
+        { transaction },
+      );
+    });
 
-      await res.status(200).send({ upNexts });
-    } catch (error) {
-      log.error(error, 'Error reordering up nexts');
-      await res.status(500).send({ error });
-    }
-  },
-);
+    await res.status(200).send({ upNexts });
+  } catch (error) {
+    log.error(error, 'Error reordering up nexts');
+    await res.status(500).send({ error: (error as Error).message });
+  }
+});
 
 const users: FastifyPluginAsync = async (fastify, _opts) => {
   fastify.decorateRequest<User | undefined>('user', undefined);
@@ -79,7 +80,6 @@ const users: FastifyPluginAsync = async (fastify, _opts) => {
 
   fastify.post('/', async ({ body }: FastifyRequest<{ Body: string }>, res) => {
     const { username } = JSON.parse(body);
-    console.log('body.username: ', username);
     const user = await User.create({ username });
 
     await res.send(user);

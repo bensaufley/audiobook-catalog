@@ -5,6 +5,7 @@ const config = {
   extends: ['@bensaufley', require.resolve('@bensaufley/eslint-config/preact.cjs')],
   rules: {
     'implicit-arrow-linebreak': 'off',
+    'no-redeclare': 'off',
   },
   overrides: [
     {

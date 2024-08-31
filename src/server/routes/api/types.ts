@@ -10,7 +10,7 @@ export type UserRequest<
 export const checkForUser =
   <Req extends FastifyRequest & { user?: User }>(
     handler: (req: Req & { user: User }, res: FastifyReply) => void | Promise<void>,
-  ): ((req: Req, res: FastifyReply) => void) =>
+  ): ((req: Req, res: FastifyReply) => Promise<void>) =>
   async (req: Req, res: FastifyReply) => {
     if (!req.user) {
       req.log.warn({ params: req.params }, 'No User found for request');

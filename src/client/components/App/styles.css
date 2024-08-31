@@ -13,6 +13,23 @@ body {
   font-weight: 400;
 }
 
+/* 75em = var(--bs-breakpoint-xl) = 1200px */
+@media screen and (width >= 75em) {
+  #root {
+    display: flex;
+    flex-flow: column nowrap;
+    min-height: 100vh;
+
+    .navbar {
+      flex: 0 0 3.5rem;
+
+      + div {
+        flex: 1 0 auto;
+      }
+    }
+  }
+}
+
 @media (prefers-reduced-motion) {
   &,
   * {

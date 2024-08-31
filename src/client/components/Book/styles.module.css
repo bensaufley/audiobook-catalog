@@ -3,6 +3,12 @@
   perspective-origin: center;
   z-index: 0;
 
+  span {
+    position: absolute;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
   &:hover {
     z-index: 100;
 
@@ -136,11 +142,21 @@
 }
 
 .grabbable {
+  cursor: grab;
   transition: transform 150ms;
 
   &:active {
+    cursor: grabbing;
     transform: scale(1.1);
     z-index: 1030;
+  }
+
+  .book {
+    cursor: grab;
+
+    &:active {
+      cursor: grabbing;
+    }
   }
 
   .grip {

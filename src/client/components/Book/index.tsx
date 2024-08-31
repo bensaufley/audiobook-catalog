@@ -1,15 +1,23 @@
-import { useComputed, useSignal } from '@preact/signals';
+import { effect, Signal, useComputed, useSignal } from '@preact/signals';
 import clsx from 'clsx';
 import type { JSX } from 'preact';
 import { useRef } from 'preact/hooks';
 
-import useEvent from '~client/hooks/useEvent';
+import useEvent, { useThrottledEvent } from '~client/hooks/useEvent';
 import { rawBooks, selectedBookId, setBookRead } from '~client/signals/books';
-import { addBookToUpNext, removeBookFromUpNext, showUpNext } from '~client/signals/Options';
+import {
+  addBookToUpNext,
+  removeBookFromUpNext,
+  reorderUpNexts,
+  showUpNext,
+  stagedUpNextReorder,
+  upNext,
+} from '~client/signals/Options';
 import { currentUserId } from '~client/signals/User';
 import MinusCircleFill from '~icons/dash-circle-fill.svg?react';
 import GripVertical from '~icons/grip-vertical.svg?react';
 import PlusCircleFill from '~icons/plus-circle-fill.svg?react';
+import debounce from '~shared/debounce';
 
 import styles from '~client/components/Book/styles.module.css';
 
@@ -17,14 +25,45 @@ interface Props {
   bookId: string;
 }
 
+const draggingBook = new Signal<string | null>(null);
+const draggingElement = new Signal<HTMLDivElement | null>(null);
+const dragTarget = new Signal<string | null>(null);
+
+effect(() => {
+  if (showUpNext.value) return;
+
+  draggingBook.value = null;
+  draggingElement.value = null;
+});
+
+const reorderBook = (bookId: string, targetId: string, before: boolean) => {
+  const order = stagedUpNextReorder.value ?? upNext.peek().map(({ id }) => id);
+  stagedUpNextReorder.value = order.flatMap((id) => {
+    if (id === targetId) return before ? [bookId, id] : [id, bookId];
+    if (id === bookId) return [];
+    return [id];
+  });
+};
+
+const persistReorder = debounce(async () => {
+  const staged = stagedUpNextReorder.peek();
+
+  if (!staged) return;
+  if (staged.every((v, i) => upNext.peek()[i]?.id === v)) return;
+
+  reorderUpNexts(staged!);
+});
+
 const Book = ({ bookId }: Props) => {
+  const ref = useRef<HTMLDivElement>(null);
   const checkRef = useRef<HTMLInputElement>(null);
+
   const book = useComputed(() => rawBooks.value!.find(({ id }) => id === bookId)!);
   const read = useComputed(
     () => !!book.value.UserAudiobooks?.find(({ UserId }) => UserId === currentUserId.value)?.read,
   );
 
-  const onClick = useEvent((e: Event) => {
+  const onClick = useEvent((e: JSX.TargetedEvent<HTMLElement>) => {
     if (e.target === e.currentTarget) selectedBookId.value = bookId;
   });
 
@@ -52,8 +91,54 @@ const Book = ({ bookId }: Props) => {
     await removeBookFromUpNext(bookId);
   });
 
+  const handleDragStart = useEvent<JSX.DragEventHandler<HTMLDivElement>>((e) => {
+    e.stopImmediatePropagation();
+    draggingBook.value = bookId;
+    draggingElement.value = ref.current!;
+  });
+
+  const handleDrop = useEvent<JSX.DragEventHandler<HTMLDivElement>>((e) => {
+    e.preventDefault();
+    persistReorder();
+    draggingBook.value = null;
+    draggingElement.value = null;
+  });
+
+  const handleDragEnter = useEvent<JSX.DragEventHandler<HTMLDivElement>>(() => {
+    dragTarget.value = bookId;
+  });
+
+  const handleDragLeave = useEvent<JSX.DragEventHandler<HTMLDivElement>>(() => {
+    dragTarget.value = null;
+  });
+
+  const handleDragOverFn = useThrottledEvent<JSX.DragEventHandler<HTMLDivElement>>((e) => {
+    if (!draggingBook.value || draggingBook.value === bookId) return;
+
+    const { clientX } = e;
+    const { left, width } = ref.current!.getBoundingClientRect();
+
+    const elCenterX = left + width / 2;
+
+    reorderBook(draggingBook.value!, bookId, clientX < elCenterX);
+  });
+
+  const handleDragOver = useEvent<JSX.DragEventHandler<HTMLDivElement>>((e) => {
+    e.preventDefault();
+    if (showUpNext.value && draggingBook.value) handleDragOverFn(e);
+  });
+
   return (
-    <div class={clsx(styles.container, showUpNext.value && styles.grabbable)} draggable={showUpNext}>
+    <div
+      class={clsx(styles.container, showUpNext.value && styles.grabbable)}
+      draggable={showUpNext}
+      onDragOver={handleDragOver}
+      onDragStart={handleDragStart}
+      onDragEnter={handleDragEnter}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+      ref={ref}
+    >
       <div
         role="button"
         tabindex={0}
@@ -67,6 +152,7 @@ const Book = ({ bookId }: Props) => {
           }
         }}
       >
+        <span>{book.value.title}</span>
         {currentUserId.value && (
           <>
             <GripVertical className={styles.grip} />

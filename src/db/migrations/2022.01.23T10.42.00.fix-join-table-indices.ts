@@ -79,7 +79,7 @@ export const up: Migration = async ({ context: queryInterface }) => {
       step = 'drop table _AudiobookNarrators';
       await queryInterface.dropTable('_AudiobookNarrators', { transaction });
     } catch (err) {
-      console.log(step, err, (err as Error).stack);
+      console.error(step, err, (err as Error).stack);
       throw err;
     }
   });

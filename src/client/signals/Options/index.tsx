@@ -1,6 +1,7 @@
 import { batch, computed, effect, Signal } from '@preact/signals';
 import { levenshtein } from 'wuzzy';
 
+import { reorderBooks } from '~client/fetches';
 import { SortBy, sorters, SortOrder } from '~client/signals/Options/sort';
 import type { AudiobookJSON } from '~db/models/Audiobook';
 
@@ -130,10 +131,16 @@ export const upNext = computed(() => {
     .sort((a, b) => a.UpNexts![0]!.order - b.UpNexts![0]!.order);
 });
 
+export const stagedUpNextReorder = new Signal<string[] | null>(null);
+
 export const sortedBooks = computed(() => {
   let sorted: AudiobookJSON[];
   if (showUpNext.value) {
-    sorted = upNext.value;
+    if (stagedUpNextReorder.value) {
+      sorted = stagedUpNextReorder.value.map((id) => upNext.value.find(({ id: i }) => i === id)!);
+    } else {
+      sorted = upNext.value;
+    }
   } else {
     if (!filteredBooks.value) return null;
 
@@ -219,15 +226,9 @@ export const reorderUpNexts = async (ids: string[]) => {
     const userId = currentUserId.peek();
     if (!userId) return false;
 
-    const resp = await fetch('/api/users/books/up-next', {
-      headers: {
-        'x-audiobook-catalog-user': userId!,
-      },
-      method: 'POST',
-      body: JSON.stringify({ bookIds: ids }),
-    });
+    const resp = await reorderBooks({ bookIds: ids });
 
-    if (!resp.ok) return false;
+    if (resp.result === 'error') return false;
 
     const books = rawBooks.peek()!;
     const newBooks = books.map((book) => {

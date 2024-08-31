@@ -2,6 +2,7 @@ import { type Signal, useSignal } from '@preact/signals';
 import type { JSX } from 'preact';
 
 import Modal, { Body, Footer, Header, Title } from '~client/components/Modal';
+import { createUser } from '~client/fetches';
 import useEvent from '~client/hooks/useEvent';
 import { currentUserId, refreshUsers } from '~client/signals/User';
 import Check from '~icons/check.svg?react';
@@ -23,15 +24,11 @@ const NewUser = ({ signal }: { signal: Signal<boolean> }) => {
       return;
     }
     try {
-      const resp = await fetch('/api/users/', {
-        method: 'POST',
-        body: JSON.stringify({ username }),
-      });
-      const json = await resp.json();
-      if (!resp.ok) throw new Error(json.message);
+      const resp = await createUser({ username });
+      if (resp.result === 'error') throw new Error(resp.error);
 
       await refreshUsers();
-      currentUserId.value = json;
+      currentUserId.value = resp.data;
       // eslint-disable-next-line no-param-reassign
       signal.value = false;
     } catch (err) {

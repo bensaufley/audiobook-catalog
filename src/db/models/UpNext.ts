@@ -67,7 +67,6 @@ export default class UpNext extends Model<
         },
         hooks: {
           async beforeValidate(upNext) {
-            console.log('beforeCreate: ', JSON.stringify(upNext));
             if (typeof upNext.dataValues.order === 'number') return;
 
             const maxOrder: number | undefined = await upNext.sequelize.models.UpNext!.max('order', {
