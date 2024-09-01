@@ -59,7 +59,7 @@ const Books: FunctionComponent = () => {
           <Book bookId={book.id} key={book.id} />
         ))}
       </div>
-      <BookModal />
+      <BookModal key={selectedBookId.value} />
       {!showUpNext.value && <Pagination />}
     </div>
   );

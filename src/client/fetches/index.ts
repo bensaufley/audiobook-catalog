@@ -7,7 +7,25 @@ import createFetch, { Needs } from './createFetch';
 
 export const getBooks = createFetch<{ audiobooks: AudiobookJSON[] }>('GET', '/api/books');
 
-export const getTags = createFetch<{ tags: TagJSON[] }>('GET', '/api/books/tags');
+export const getTags = createFetch<{ tags: TagJSON[] }>('GET', '/api/tags');
+
+export const createTag = createFetch<{ color: string; name: string; bookId?: string | undefined }, { tag: TagJSON }>(
+  'POST',
+  '/api/tags',
+  Needs.Body,
+);
+
+export const tagBook = createFetch<{ name: string }, string>(
+  'POST',
+  (bookId) => `/api/books/${bookId}/tag`,
+  Needs.Query,
+);
+
+export const untagBook = createFetch<{ name: string }, string>(
+  'DELETE',
+  (bookId) => `/api/books/${bookId}/tag`,
+  Needs.Query,
+);
 
 export const getUpNext = createFetch<{ upNexts: Pick<UpNextJSON, 'AudiobookId' | 'order'>[] }>(
   'GET',

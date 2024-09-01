@@ -1,7 +1,10 @@
 import {
+  type BelongsToManyAddAssociationMixin,
   type BelongsToManyGetAssociationsMixin,
+  type BelongsToManyRemoveAssociationMixin,
   type CreationOptional,
   DataTypes,
+  type HasManyAddAssociationMixin,
   type HasManyGetAssociationsMixin,
   type InferAttributes,
   type InferCreationAttributes,
@@ -15,7 +18,10 @@ import type AudiobookTag from './AudiobookTag';
 
 import type models from '.';
 
-export default class Tag extends Model<InferAttributes<Tag, { omit: 'associations' }>, InferCreationAttributes<Tag>> {
+export default class Tag extends Model<
+  InferAttributes<Tag, { omit: 'associations' }>,
+  InferCreationAttributes<Tag, { omit: 'associations' }>
+> {
   public declare id: CreationOptional<string>;
 
   public declare name: string;
@@ -25,6 +31,12 @@ export default class Tag extends Model<InferAttributes<Tag, { omit: 'association
   public declare createdAt: CreationOptional<Date>;
 
   public declare updatedAt: CreationOptional<Date>;
+
+  public declare addAudiobook: BelongsToManyAddAssociationMixin<Audiobook, Audiobook['id']>;
+
+  public declare removeAudiobook: BelongsToManyRemoveAssociationMixin<Audiobook, Audiobook['id']>;
+
+  public declare addAudiobookTag: HasManyAddAssociationMixin<AudiobookTag, AudiobookTag['AudiobookId']>;
 
   public declare getAudiobookTags: HasManyGetAssociationsMixin<AudiobookTag>;
 
@@ -39,6 +51,10 @@ export default class Tag extends Model<InferAttributes<Tag, { omit: 'association
     Audiobooks?: Audiobook[];
     AudiobookTags?: AudiobookTag[];
   };
+
+  public declare Audiobooks?: Audiobook[];
+
+  public declare AudiobookTags?: AudiobookTag[];
 
   public static generate(sequelize: Sequelize) {
     return this.init(

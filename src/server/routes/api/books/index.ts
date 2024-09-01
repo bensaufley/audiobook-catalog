@@ -1,7 +1,6 @@
 import type { FastifyPluginAsync } from 'fastify';
 
 import Audiobook from '~db/models/Audiobook';
-import Tag from '~db/models/Tag';
 import UpNext from '~db/models/UpNext';
 import sequelize from '~db/sequelize';
 
@@ -32,15 +31,6 @@ const books: FastifyPluginAsync = async (fastify, _opts) => {
       await res.send({ audiobooks, total, more: page && perPage ? page * perPage < total : false });
     },
   );
-
-  fastify.get('/tags', async (_req: UserRequest, res) => {
-    const tags = await Tag.findAll({
-      attributes: ['id', 'name', 'color'],
-      include: [Tag.associations.AudiobookTags!],
-      order: [['name', 'ASC']],
-    });
-    await res.send({ tags });
-  });
 
   fastify.get('/up-next', async ({ user }: UserRequest, res) => {
     if (!user) {

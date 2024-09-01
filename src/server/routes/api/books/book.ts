@@ -3,6 +3,7 @@ import { basename } from 'path';
 import { Op } from 'sequelize';
 
 import Audiobook from '~db/models/Audiobook';
+import Tag from '~db/models/Tag';
 import UpNext from '~db/models/UpNext';
 import UserAudiobook from '~db/models/UserAudiobook';
 
@@ -67,6 +68,31 @@ const book: FastifyPluginAsync = async (fastify, _opts) => {
 
   fastify.post('/read', setBookReadStatus(true));
   fastify.post('/unread', setBookReadStatus(false));
+
+  fastify.post<BookParams & { Querystring: { name: string } }>(
+    '/tag',
+    async ({ query: { name }, params: { bookId } }, res) => {
+      const tag = await Tag.findOne({ where: { name } });
+      if (!tag) {
+        return res.status(404).send({ error: 'Tag not found' });
+      }
+      await tag.addAudiobook(bookId);
+      return res.status(204).send();
+    },
+  );
+
+  fastify.delete<BookParams & { Querystring: { name: string } }>(
+    '/tag',
+    async ({ query: { name }, params: { bookId } }, res) => {
+      if (!bookId || !name) return res.status(400).send({ error: 'Missing bookId or tag name' });
+
+      const tag = await Tag.findOne({ where: { name } });
+      if (!tag) return res.status(404).send({ error: 'Tag not found' });
+
+      await tag.removeAudiobook(bookId);
+      return res.status(204).send();
+    },
+  );
 
   fastify.post<{ Params: { bookId: string } }>(
     '/up-next',
