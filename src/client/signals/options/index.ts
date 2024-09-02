@@ -19,6 +19,8 @@ export const read = new Signal<Read>(Read.All);
 export const size = new Signal<Size>(Size.Medium);
 export const sortBy = new Signal<SortBy>(SortBy.Author);
 export const sortOrder = new Signal<SortOrder>(SortOrder.Ascending);
+export const filterByTagUnionType = new Signal<'or' | 'and'>('or');
+export const filterByTag = new Signal<string[]>([]);
 export const showUpNext = new Signal(false);
 
 effect(() => {

@@ -1,4 +1,5 @@
 import {
+  type Association,
   type BelongsToManyAddAssociationMixin,
   type BelongsToManyGetAssociationsMixin,
   type BelongsToManyRemoveAssociationMixin,
@@ -18,10 +19,7 @@ import type AudiobookTag from './AudiobookTag';
 
 import type models from '.';
 
-export default class Tag extends Model<
-  InferAttributes<Tag, { omit: 'associations' }>,
-  InferCreationAttributes<Tag, { omit: 'associations' }>
-> {
+export default class Tag extends Model<InferAttributes<Tag>, InferCreationAttributes<Tag>> {
   public declare id: CreationOptional<string>;
 
   public declare name: string;
@@ -47,9 +45,9 @@ export default class Tag extends Model<
     this.belongsToMany(m.Audiobook, { through: m.AudiobookTag });
   }
 
-  public declare associations: {
-    Audiobooks?: Audiobook[];
-    AudiobookTags?: AudiobookTag[];
+  public declare static readonly associations: {
+    Audiobooks: Association<Audiobook>;
+    AudiobookTags: Association<AudiobookTag>;
   };
 
   public declare Audiobooks?: Audiobook[];

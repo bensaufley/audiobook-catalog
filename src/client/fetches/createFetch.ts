@@ -2,6 +2,7 @@
 import { Signal } from '@preact/signals';
 
 import { clearToast, Level, setError } from '~client/components/Toasts/utils';
+import { isFastApiErrorResponse } from '~client/shared/errors';
 import { currentUser } from '~client/signals/user';
 
 export type Method = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
@@ -141,7 +142,15 @@ export default function createFetch<Q, B, P, R = never>(
 
       let message = 'An unexpected error occurred';
       if (err instanceof Error) message = err.message;
-      else if (err instanceof Response) message = err.statusText;
+      else if (err instanceof Response) {
+        try {
+          const json = await err.json();
+          if (isFastApiErrorResponse(json)) message = `${json.error}: ${json.message}`;
+          else if ('detail' in json) message = json.detail;
+        } catch {
+          message = err.statusText;
+        }
+      }
 
       setError(message, errorKey, { selfDismiss: 10 });
 

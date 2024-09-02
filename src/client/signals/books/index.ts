@@ -6,7 +6,19 @@ import type { AudiobookJSON } from '~db/models/Audiobook';
 import type { TagJSON } from '~db/models/Tag';
 import type { UpNextJSON } from '~db/models/UpNext';
 
-import { page, pages, perPage, read, refreshToken, search, showUpNext, sortBy, sortOrder } from '../options';
+import {
+  filterByTag,
+  filterByTagUnionType,
+  page,
+  pages,
+  perPage,
+  read,
+  refreshToken,
+  search,
+  showUpNext,
+  sortBy,
+  sortOrder,
+} from '../options';
 import { Read } from '../options/enums';
 import { sorters, SortOrder } from '../options/sort';
 import { currentUser } from '../user';
@@ -23,15 +35,29 @@ export const selectedBook = computed(() => {
   return rawBooks.value?.find(({ id }) => id === selectedBookId.value);
 });
 
+const taggedBooks = computed(() => {
+  const t = tags.value;
+  if (filterByTag.value.length === 0 || !t?.length || !rawBooks.value?.length) return rawBooks.value;
+
+  return rawBooks.value?.filter(
+    ({ id }) =>
+      t
+        .filter(({ name }) => filterByTag.value.includes(name))
+        [
+          filterByTagUnionType.value === 'or' ? 'some' : 'every'
+        ](({ AudiobookTags }) => AudiobookTags?.some(({ AudiobookId }) => AudiobookId === id)) ?? false,
+  );
+});
+
 const filteredBooks = computed(() => {
   const lowerFilter = search.value.trim().toLocaleLowerCase();
 
-  if (!rawBooks.value) return undefined;
+  if (!taggedBooks.value) return undefined;
 
   const readBooks =
     read.value === Read.All
-      ? rawBooks.value
-      : rawBooks.value.filter(
+      ? taggedBooks.value
+      : taggedBooks.value.filter(
           ({ UserAudiobooks }) => UserAudiobooks?.some(({ read: r }) => r) === (read.value === Read.Read),
         );
 
@@ -60,7 +86,7 @@ const filteredBooks = computed(() => {
         ),
     );
     threshold += 0.05;
-  } while (fuzzyBooks.length > Math.max(2, Math.min(rawBooks.value.length / 4, 20)));
+  } while (fuzzyBooks.length > Math.max(2, Math.min(rawBooks.value!.length / 4, 20)));
 
   return fuzzyBooks;
 });

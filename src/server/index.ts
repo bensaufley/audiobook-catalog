@@ -12,13 +12,6 @@ const server = await init();
 
 const teardown = watch(sequelize, server.log);
 
-if (import.meta.hot) {
-  import.meta.hot.accept();
-  import.meta.hot.dispose(() => {
-    teardown();
-  });
-}
-
 try {
   let devServer: typeof httpDevServer | undefined;
   if (import.meta.env.DEV) {
@@ -32,4 +25,12 @@ try {
 } catch (err) {
   server.log.error(err);
   process.exit(1);
+}
+
+if (import.meta.hot) {
+  import.meta.hot.accept();
+  import.meta.hot.dispose(() => {
+    server.close();
+    teardown();
+  });
 }

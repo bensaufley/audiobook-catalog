@@ -90,7 +90,7 @@ export default class Audiobook<HasCover extends boolean = boolean> extends Model
 
   public declare addNarrator: BelongsToManyAddAssociationMixin<Narrator, NarratorAttributes>;
 
-  public declare addTag: BelongsToManyAddAssociationMixin<Tag, InferAttributes<Tag, { omit: 'associations' }>>;
+  public declare addTag: BelongsToManyAddAssociationMixin<Tag, InferAttributes<Tag>>;
 
   public declare getAudiobookAuthors: HasManyGetAssociationsMixin<AudiobookAuthor>;
 
@@ -165,5 +165,5 @@ export interface AudiobookJSON<HasCover extends boolean = boolean>
   createdAt: string;
   updatedAt: string;
   UserAudiobooks?: UserAudiobookJSON[];
-  UpNexts?: InferJSONAttributes<UpNext, { omit: 'associations' }>[];
+  UpNexts?: InferJSONAttributes<UpNext>[];
 }

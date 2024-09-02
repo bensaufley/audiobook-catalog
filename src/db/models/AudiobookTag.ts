@@ -1,4 +1,5 @@
 import {
+  type Association,
   type CreationOptional,
   DataTypes,
   type InferAttributes,
@@ -12,10 +13,7 @@ import type Tag from './Tag';
 
 import type models from '.';
 
-export default class AudiobookTag extends Model<
-  InferAttributes<AudiobookTag, { omit: 'associations' }>,
-  InferCreationAttributes<AudiobookTag>
-> {
+export default class AudiobookTag extends Model<InferAttributes<AudiobookTag>, InferCreationAttributes<AudiobookTag>> {
   public declare AudiobookId: string;
 
   public declare TagId: string;
@@ -29,9 +27,9 @@ export default class AudiobookTag extends Model<
     this.belongsTo(m.Tag);
   }
 
-  public declare associations: {
-    Audiobook: Audiobook;
-    Tag: Tag;
+  public declare static readonly associations: {
+    Audiobook: Association<Audiobook>;
+    Tag: Association<Tag>;
   };
 
   public static generate(sequelize: Sequelize) {

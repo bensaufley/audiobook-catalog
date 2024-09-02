@@ -33,5 +33,6 @@
 
     "skipLibCheck": true
   },
-  "include": ["./*.js", "./*.ts", "src", "test"]
+  "include": ["./*.js", "./*.ts", "src", "test"],
+  "exclude": ["node_modules/@types/react", "node_modules/@types/react-transition-group"]
 }

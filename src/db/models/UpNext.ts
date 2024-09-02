@@ -1,4 +1,5 @@
 import {
+  type Association,
   type BelongsToGetAssociationMixin,
   type CreationOptional,
   DataTypes,
@@ -14,10 +15,7 @@ import type User from './User';
 
 import type models from '.';
 
-export default class UpNext extends Model<
-  InferAttributes<UpNext, { omit: 'associations' }>,
-  InferCreationAttributes<UpNext, { omit: 'associations' }>
-> {
+export default class UpNext extends Model<InferAttributes<UpNext>, InferCreationAttributes<UpNext>> {
   public declare AudiobookId: string;
 
   public declare UserId: string;
@@ -37,9 +35,9 @@ export default class UpNext extends Model<
     this.belongsTo(m.User);
   }
 
-  public declare associations: {
-    Audiobook: Audiobook;
-    User: User;
+  public declare static readonly associations: {
+    Audiobook: Association<Audiobook>;
+    User: Association<User>;
   };
 
   public static generate(sequelize: Sequelize) {

@@ -15,6 +15,8 @@ export const createTag = createFetch<{ color: string; name: string; bookId?: str
   Needs.Body,
 );
 
+export const deleteTag = createFetch<{ name: string }>('DELETE', '/api/tags', Needs.Body);
+
 export const tagBook = createFetch<{ name: string }, string>(
   'POST',
   (bookId) => `/api/books/${bookId}/tag`,
