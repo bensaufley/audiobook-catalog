@@ -46,7 +46,7 @@ const TagPicker = () => {
   });
 
   return (
-    <div class="btn-group">
+    <div class="btn-group ms-auto">
       <button
         onClick={(e) => {
           e.preventDefault();

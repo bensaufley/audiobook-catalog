@@ -8,7 +8,7 @@ const tags: FastifyPluginAsync = async (fastify, _opts) => {
   fastify.get('/', async (_req, res) => {
     const result = await Tag.findAll({
       attributes: ['id', 'name', 'color'],
-      include: [Tag.associations.AudiobookTags!],
+      include: [Tag.associations.AudiobookTags],
       order: [[sequelize.fn('lower', sequelize.col('name')), 'ASC']],
     });
     await res.send({
@@ -18,16 +18,13 @@ const tags: FastifyPluginAsync = async (fastify, _opts) => {
 
   fastify.post<{ Body: { color: string; name: string; bookId?: string } }>('/', {
     handler: async ({ body: { color, name, bookId } }, res) => {
-      if (!/#[0-9a-fA-F]{6}/.test(color)) {
-        return res.status(400).send({ error: 'Invalid color' });
-      }
       const tag = await Tag.create(
         {
           color,
           name,
         },
         {
-          include: [Tag.associations.AudiobookTags!],
+          include: [Tag.associations.AudiobookTags],
         },
       );
       if (bookId) {
@@ -50,18 +47,18 @@ const tags: FastifyPluginAsync = async (fastify, _opts) => {
   });
 
   fastify.delete<{ Body: { name: string } }>('/', {
-    handler: async ({ body: { name } }, res) => {
+    handler: async ({ log, body: { name } }, res) => {
       const tag = await Tag.findOne({
-        attributes: ['id', [sequelize.fn('count', sequelize.col('AudiobookTags.AudiobookId')), 'booksCount']],
         where: { name },
         group: ['id'],
         include: [Tag.associations.AudiobookTags],
       });
+      log.debug({ tag }, 'Deleting tag');
       if (!tag) return res.status(404).send({ error: 'Tag not found' });
-      if ((tag as Tag & { booksCount: number }).booksCount > 0) {
+      if (tag.AudiobookTags!.length > 0) {
         return res.status(400).send({ error: 'Tag is in use' });
       }
-      console.debug({ tag }, 'Deleting tag');
+      log.debug({ tag }, 'Deleting tag');
       return res.status(204).send();
     },
     schema: {
