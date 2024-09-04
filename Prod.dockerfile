@@ -7,7 +7,6 @@ RUN npm install && npm cache clean --force
 
 COPY . .
 
-ENV APP_ENV=prod
 ENV NODE_ENV=production
 
 RUN npm run build && \
@@ -22,7 +21,6 @@ COPY package.json package-lock.json ./
 COPY --from=builder /usr/src/audiobook-catalog/node_modules ./node_modules
 COPY --from=builder /usr/src/audiobook-catalog/.build ./.build
 
-ENV APP_ENV=prod
 ENV NODE_ENV=production
 
 CMD [ "npm", "start" ]

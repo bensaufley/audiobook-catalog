@@ -1,11 +1,12 @@
 /* eslint-disable import/no-extraneous-dependencies */
 declare namespace NodeJS {
   export interface ProcessEnv {
-    APP_ENV: 'development' | 'test' | 'prod';
     DB_DIR: string;
     DB_NAME: string;
     LOG_LEVEL?: 'trace' | 'debug' | 'info' | 'warn' | 'error';
+    NODE_ENV: 'test' | 'development' | 'production';
     POLL_PERIOD?: string;
+    ROOT_DIR: string;
   }
 }
 

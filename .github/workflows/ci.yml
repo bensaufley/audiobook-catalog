@@ -24,7 +24,6 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      APP_ENV: test
       NODE_ENV: test
       ROOT_DIR: ${{ github.workspace }}
       CI: true
@@ -65,7 +64,6 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      APP_ENV: test
       NODE_ENV: test
       ROOT_DIR: ${{ github.workspace }}
 

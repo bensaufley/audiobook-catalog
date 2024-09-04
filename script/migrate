@@ -15,10 +15,9 @@ docker run \
   -it \
   -v "$(pwd)":/usr/src/audiobook-catalog \
   -v /usr/src/audiobook-catalog/node_modules \
-  -e APP_ENV="${APP_ENV:-development}" \
   -e DB_DIR=/usr/src/audiobook-catalog/ \
   -e LOG_LEVEL=debug \
   -e NODE_ENV="${NODE_ENV:-development}" \
-  -e DB_NAME="$([ "$NODE_ENV" = 'production' ] && echo 'books' || echo "${APP_ENV:-development}")" \
+  -e DB_NAME="$([ "$NODE_ENV" = 'production' ] && echo 'books' || echo "${NODE_ENV:-development}")" \
   audiobook-catalog:dev \
   npx tsx "./src/db/migrate.ts" "${args[@]}"

@@ -8,7 +8,8 @@
       "~client/*": ["src/client/*"],
       "~db/*": ["src/db/*"],
       "~icons/*": ["./node_modules/bootstrap-icons/icons/*"],
-      "~server/*": ["src/server/*"],
+      "~server/*": ["src/*"],
+      "~routes/*": ["src/routes/*"],
       "~shared/*": ["src/shared/*"],
       "~test/*": ["test/*"]
     },
