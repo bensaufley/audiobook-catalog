@@ -28,9 +28,14 @@ try {
 }
 
 if (import.meta.hot) {
-  import.meta.hot.accept();
-  import.meta.hot.dispose(() => {
-    server.close();
-    teardown();
+  import.meta.hot.accept(() => {
+    server.log.info('Reloading server...');
+    server
+      .close()
+      .then(teardown)
+      .then(init)
+      .then((newServer) => {
+        Object.assign(server, newServer);
+      });
   });
 }

@@ -125,7 +125,7 @@ const Filters = () => {
                 &nbsp;
               </div>
               <span>{name}</span>
-              {true /* AudiobookTags?.length === 0 */ && (
+              {AudiobookTags?.length === 0 && (
                 <X
                   className="ms-auto"
                   width="1.5rem"

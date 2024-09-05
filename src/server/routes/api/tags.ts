@@ -53,12 +53,12 @@ const tags: FastifyPluginAsync = async (fastify, _opts) => {
         group: ['id'],
         include: [Tag.associations.AudiobookTags],
       });
-      log.debug({ tag }, 'Deleting tag');
-      if (!tag) return res.status(404).send({ error: 'Tag not found' });
+      if (!tag) return res.status(404).send({ status: 'error', detail: 'Tag not found' });
       if (tag.AudiobookTags!.length > 0) {
-        return res.status(400).send({ error: 'Tag is in use' });
+        return res.status(400).send({ status: 'error', detail: 'Tag is in use' });
       }
       log.debug({ tag }, 'Deleting tag');
+      await tag.destroy();
       return res.status(204).send();
     },
     schema: {
