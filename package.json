@@ -73,13 +73,16 @@
     "vitest": "^2.0.5",
     "wuzzy": "^0.1.8"
   },
+  "engines": {
+    "node": ">=22.0.0"
+  },
   "license": "MIT",
   "main": ".build/server/index.js",
   "name": "audiobook-catalog",
   "repository": "https://github.com/bensaufley/audiobook-catalog",
   "scripts": {
     "build:app": "APP_ENV=production NODE_ENV=production vavite build",
-    "build:scripts": "./script/build/binaries.sh",
+    "build:scripts": "tsx ./script/build/binaries.ts",
     "build": "npm-run-all --parallel --continue-on-error --aggregate-output build:app build:scripts",
     "check": "npm-run-all --parallel --continue-on-error --aggregate-output typecheck lint",
     "dev": "vavite serve",
