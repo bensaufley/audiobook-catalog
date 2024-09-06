@@ -5,6 +5,7 @@ import {
   BLOB,
   FLOAT,
   type HasManyGetAssociationsMixin,
+  type InferAttributes,
   Model,
   type Optional,
   type Sequelize,
@@ -22,8 +23,12 @@ import type User from '~db/models/User';
 import type UserAudiobook from '~db/models/UserAudiobook';
 import type { UserAudiobookJSON } from '~db/models/UserAudiobook';
 
-import AudiobookAuthor from './AudiobookAuthor';
-import AudiobookNarrator from './AudiobookNarrator';
+import type AudiobookAuthor from './AudiobookAuthor';
+import type AudiobookNarrator from './AudiobookNarrator';
+import type AudiobookTag from './AudiobookTag';
+import type Tag from './Tag';
+import type { InferJSONAttributes } from './types';
+import type UpNext from './UpNext';
 
 interface NullCoverProps {
   cover: null;
@@ -53,6 +58,8 @@ export default class Audiobook<HasCover extends boolean = boolean> extends Model
     Narrators: Association<Audiobook, Narrator>;
     UserAudiobooks: Association<Audiobook, UserAudiobook>;
     Users: Association<Audiobook, User>;
+    UpNexts: Association<Audiobook, UpNext>;
+    UserUpNexts: Association<Audiobook, User>;
   };
 
   public declare id: string;
@@ -83,13 +90,19 @@ export default class Audiobook<HasCover extends boolean = boolean> extends Model
 
   public declare addNarrator: BelongsToManyAddAssociationMixin<Narrator, NarratorAttributes>;
 
+  public declare addTag: BelongsToManyAddAssociationMixin<Tag, InferAttributes<Tag>>;
+
   public declare getAudiobookAuthors: HasManyGetAssociationsMixin<AudiobookAuthor>;
 
   public declare getAudiobookNarrators: HasManyGetAssociationsMixin<AudiobookNarrator>;
 
+  public declare getAudiobookTags: HasManyGetAssociationsMixin<AudiobookTag>;
+
   public declare getAuthors: BelongsToManyGetAssociationsMixin<Author>;
 
   public declare getNarrators: BelongsToManyGetAssociationsMixin<Author>;
+
+  public declare getTags: BelongsToManyGetAssociationsMixin<Tag>;
 
   public static associate(m: typeof models) {
     this.hasMany(m.AudiobookAuthor);
@@ -98,6 +111,10 @@ export default class Audiobook<HasCover extends boolean = boolean> extends Model
     this.belongsToMany(m.Narrator, { through: m.AudiobookNarrator });
     this.hasMany(m.UserAudiobook);
     this.belongsToMany(m.User, { through: m.UserAudiobook });
+    this.hasMany(m.AudiobookTag);
+    this.belongsToMany(m.Tag, { through: m.AudiobookTag });
+    this.hasMany(m.UpNext, { as: { singular: 'UpNext', plural: 'UpNexts' } });
+    this.belongsToMany(m.User, { as: { singular: 'UserUpNext', plural: 'UserUpNexts' }, through: m.UpNext });
   }
 
   public static generate(sequelize: Sequelize) {
@@ -132,9 +149,10 @@ export default class Audiobook<HasCover extends boolean = boolean> extends Model
         modelName: 'Audiobook',
         sequelize,
         hooks: {
-          async beforeDestroy(instance): Promise<void> {
-            await AudiobookAuthor.destroy({ where: { AudiobookId: instance.id } });
-            await AudiobookNarrator.destroy({ where: { AudiobookId: instance.id } });
+          async beforeDestroy(audiobook) {
+            await audiobook.sequelize.models.AudiobookAuthor?.destroy({ where: { AudiobookId: audiobook.id } });
+            await audiobook.sequelize.models.AudiobookNarrator?.destroy({ where: { AudiobookId: audiobook.id } });
+            await audiobook.sequelize.models.AudiobookTag?.destroy({ where: { AudiobookId: audiobook.id } });
           },
         },
       },
@@ -146,5 +164,6 @@ export interface AudiobookJSON<HasCover extends boolean = boolean>
   extends Omit<Audiobook<HasCover>, 'createdAt' | 'updatedAt' | 'UserAudiobooks'> {
   createdAt: string;
   updatedAt: string;
-  UserAudiobooks: UserAudiobookJSON[];
+  UserAudiobooks?: UserAudiobookJSON[];
+  UpNexts?: InferJSONAttributes<UpNext>[];
 }

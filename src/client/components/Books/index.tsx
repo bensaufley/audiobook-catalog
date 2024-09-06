@@ -6,8 +6,8 @@ import TouchSweep from 'touchsweep';
 
 import Book from '~client/components/Book';
 import BookModal from '~client/components/BookModal';
-import { selectedBookId } from '~client/signals/books';
-import { books, error, page, pages, sizeColumns } from '~client/signals/Options';
+import { books, selectedBookId } from '~client/signals/books';
+import { page, pages, showUpNext, sizeColumns } from '~client/signals/options';
 import { clamp } from '~shared/utilities';
 
 import Pagination from '../Pagination';
@@ -41,36 +41,27 @@ const Books: FunctionComponent = () => {
       el.removeEventListener('swiperight', handleSwipeRight);
       instance.unbind();
     };
-  }, [error.value, books.value]);
+  }, [books.value]);
 
   useSignalEffect(() => {
     if (!selectedBookId.value) touchSweep.current?.bind();
     else touchSweep.current?.unbind();
   });
 
-  if (error.value) {
-    return (
-      <div class="d-flex justify-content-center mx-auto my-4">
-        <h2>Error</h2>
-        <p>{error}</p>
-      </div>
-    );
-  }
-
   if (!books.value) {
     return <h2 class="d-flex justify-content-center mx-auto my-4">Loading&hellip;</h2>;
   }
 
   return (
-    <>
+    <div>
       <div class={clsx(styles.container, 'd-grid', 'gap-2', 'm-2')} style={{ '--cols': sizeColumns.value }} ref={ref}>
         {books.value.map((book) => (
           <Book bookId={book.id} key={book.id} />
         ))}
       </div>
-      <BookModal />
-      <Pagination />
-    </>
+      <BookModal key={selectedBookId.value} />
+      {!showUpNext.value && <Pagination />}
+    </div>
   );
 };
 

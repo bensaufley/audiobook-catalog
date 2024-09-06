@@ -104,13 +104,13 @@ jobs:
 
       - uses: hadolint/hadolint-action@v3.1.0
         with:
-          dockerfile: Dev.dockerfile
+          dockerfile: Dockerfile.dev
           format: sarif
           output-file: ${{ github.workspace }}/reports/Dev.sarif
 
       - uses: hadolint/hadolint-action@v3.1.0
         with:
-          dockerfile: Prod.dockerfile
+          dockerfile: Dockerfile.prod
           format: sarif
           output-file: ${{ github.workspace }}/reports/Prod.sarif
 

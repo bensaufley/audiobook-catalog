@@ -3,12 +3,14 @@ import clsx from 'clsx';
 import type { JSX } from 'preact';
 
 import UserManagement from '~client/components/UserManagement';
-import { search, size, sortBy, sortOrder } from '~client/signals/Options';
-import { Size } from '~client/signals/Options/enums';
-import { SortBy, SortOrder } from '~client/signals/Options/sort';
+import { size, sortBy, sortOrder } from '~client/signals/options';
+import { Size } from '~client/signals/options/enums';
+import { SortBy, SortOrder } from '~client/signals/options/sort';
 import List from '~icons/list.svg?react';
 import SortDown from '~icons/sort-down.svg?react';
 import SortUp from '~icons/sort-up.svg?react';
+
+import Filters from './Filters';
 
 const Nav = () => {
   const show = useSignal(false);
@@ -36,17 +38,6 @@ const Nav = () => {
               }}
             >
               <div class="row">
-                <div class="my-2 my-xl-0 col-xl-auto col-12">
-                  <input
-                    class="form-control"
-                    id="search"
-                    type="search"
-                    placeholder="Search"
-                    onChange={({ currentTarget: { value } }: JSX.TargetedInputEvent<HTMLInputElement>) => {
-                      search.value = value;
-                    }}
-                  />
-                </div>
                 <div class="my-2 my-xl-0 col-xl-auto col-12">
                   <div class="row">
                     <div class="form-label col-form-label col" for="sort-by">
@@ -108,6 +99,7 @@ const Nav = () => {
                 </div>
               </div>
             </form>
+            <Filters />
             <UserManagement />
           </div>
         </div>

@@ -8,14 +8,21 @@ import UserAudiobook from '~db/models/UserAudiobook';
 
 import sequelize from '../sequelize';
 
+import AudiobookTag from './AudiobookTag';
+import Tag from './Tag';
+import UpNext from './UpNext';
+
 const models = {
   Audiobook: Audiobook.generate(sequelize),
   AudiobookAuthor: AudiobookAuthor.generate(sequelize),
   AudiobookNarrator: AudiobookNarrator.generate(sequelize),
+  AudiobookTag: AudiobookTag.generate(sequelize),
   Author: Author.generate(sequelize),
   Narrator: Narrator.generate(sequelize),
+  Tag: Tag.generate(sequelize),
   User: User.generate(sequelize),
   UserAudiobook: UserAudiobook.generate(sequelize),
+  UpNext: UpNext.generate(sequelize),
 };
 
 export const ready = new Promise<void>((resolve) => {

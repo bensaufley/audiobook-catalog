@@ -1,23 +1,7 @@
-#!/bin/bash -e
+#!/usr/bin/env bash
+
+set -eo pipefail
 
 cd "$(dirname "$0")/.."
 
-script/update
-
-docker run \
-  --rm \
-  -it \
-  -v "$(pwd)":/usr/src/audiobook-catalog \
-  -v /usr/src/audiobook-catalog/node_modules \
-  -v "$(pwd)"/.audiobooks:/audiobooks \
-  -v "$(pwd)"/.import:/import \
-  -e APP_ENV="${APP_ENV:-development}" \
-  -e DB_DIR=/usr/src/audiobook-catalog/ \
-  -e DB_NAME="${APP_ENV:-development}" \
-  -e LOG_LEVEL=debug \
-  -e NODE_ENV="${NODE_ENV:-development}" \
-  -p 6451:3000 \
-  -p 6452:6452 \
-  -p 6453:6453 \
-  audiobook-catalog:dev \
-  npm run dev
+script/cmd npm run dev

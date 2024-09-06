@@ -6,18 +6,11 @@ import type httpDevServer from 'vavite/http-dev-server';
 import sequelize from '~db/sequelize';
 import init from '~server/init';
 
-import start from './filesystem/watch';
+import watch from './filesystem/watch';
 
 const server = await init();
 
-const teardown = start(sequelize, server.log);
-
-if (import.meta.hot) {
-  import.meta.hot.accept();
-  import.meta.hot.dispose(() => {
-    teardown();
-  });
-}
+const teardown = watch(sequelize, server.log);
 
 try {
   let devServer: typeof httpDevServer | undefined;
@@ -32,4 +25,17 @@ try {
 } catch (err) {
   server.log.error(err);
   process.exit(1);
+}
+
+if (import.meta.hot) {
+  import.meta.hot.accept(() => {
+    server.log.info('Reloading server...');
+    server
+      .close()
+      .then(teardown)
+      .then(init)
+      .then((newServer) => {
+        Object.assign(server, newServer);
+      });
+  });
 }

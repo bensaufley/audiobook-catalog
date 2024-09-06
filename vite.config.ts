@@ -77,7 +77,7 @@ export default defineConfig({
     vavite({
       bundleSirv: false,
       serverEntry: 'src/server/index.ts',
-      reloadOn: 'static-deps-change',
+      reloadOn: 'any-change',
       serveClientAssetsInDev: true,
     }),
     createHtmlPlugin({

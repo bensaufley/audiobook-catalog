@@ -2,14 +2,15 @@ import { type Signal, useSignal } from '@preact/signals';
 import type { JSX } from 'preact';
 
 import Modal, { Body, Footer, Header, Title } from '~client/components/Modal';
+import { clearToast, Level, setError } from '~client/components/Toasts/utils';
+import { createUser } from '~client/fetches';
 import useEvent from '~client/hooks/useEvent';
-import { currentUserId, refreshUsers } from '~client/signals/User';
+import { currentUserId } from '~client/signals/user';
+import { refreshUsers } from '~client/signals/user/helpers';
 import Check from '~icons/check.svg?react';
 
 const NewUser = ({ signal }: { signal: Signal<boolean> }) => {
   const username = useSignal('');
-
-  const error = useSignal<string>();
 
   const handleChange: JSX.GenericEventHandler<HTMLInputElement> = useEvent(({ currentTarget }) => {
     username.value = currentTarget.value;
@@ -17,25 +18,21 @@ const NewUser = ({ signal }: { signal: Signal<boolean> }) => {
 
   const handleSubmit: JSX.GenericEventHandler<HTMLFormElement> = useEvent(async (e) => {
     e.preventDefault();
-    error.value = undefined;
+    clearToast('user-create', Level.Error);
     if (username.value === '--add--') {
-      error.value = 'Invalid username';
+      setError('Invalid username', 'user-create');
       return;
     }
     try {
-      const resp = await fetch('/api/users/', {
-        method: 'POST',
-        body: JSON.stringify({ username }),
-      });
-      const json = await resp.json();
-      if (!resp.ok) throw new Error(json.message);
+      const resp = await createUser({ username });
+      if (resp.result === 'error') throw new Error(resp.error);
 
       await refreshUsers();
-      currentUserId.value = json;
+      currentUserId.value = resp.data;
       // eslint-disable-next-line no-param-reassign
       signal.value = false;
     } catch (err) {
-      error.value = (err as Error).message;
+      setError((err as Error).message ?? 'An unexpected error occurred.', 'user-create');
     }
   });
 
@@ -57,7 +54,6 @@ const NewUser = ({ signal }: { signal: Signal<boolean> }) => {
       </Header>
       <form onSubmit={handleSubmit}>
         <Body>
-          {error.value && <p>Error: {error}</p>}
           <label for="username" class="form-label">
             Username
           </label>

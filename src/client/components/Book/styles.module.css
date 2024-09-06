@@ -3,6 +3,12 @@
   perspective-origin: center;
   z-index: 0;
 
+  span {
+    position: absolute;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
   &:hover {
     z-index: 100;
 
@@ -79,5 +85,81 @@
         content: '✓';
       }
     }
+  }
+}
+
+.upNext {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  position: absolute;
+  top: 0.5rem;
+  padding: 0;
+  height: 1.5rem;
+  width: 1.5rem;
+  right: 0.5rem;
+  filter: drop-shadow(-1px 1px 0 rgb(255 255 255 / 60%)) drop-shadow(1px 1px 0 rgb(255 255 255 / 60%))
+    drop-shadow(-1px -1px 0 rgb(255 255 255 / 60%)) drop-shadow(1px -1px 0 rgb(255 255 255 / 60%));
+
+  svg {
+    height: 1.5rem;
+    width: 1.5rem;
+  }
+
+  &[disabled] {
+    opacity: 0.75;
+    pointer-events: none;
+  }
+
+  &.add {
+    color: var(--bs-success);
+  }
+
+  &.remove {
+    color: var(--bs-danger);
+  }
+
+  &:active {
+    transform: scale(0.9);
+  }
+}
+
+.grip {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.25rem;
+  color: #fff;
+  filter: drop-shadow(-1px 1px 0 rgb(0 0 0 / 60%)) drop-shadow(1px 1px 0 rgb(0 0 0 / 60%))
+    drop-shadow(-1px -1px 0 rgb(0 0 0 / 60%)) drop-shadow(1px -1px 0 rgb(0 0 0 / 60%));
+  cursor: grab;
+  width: 1.5rem;
+  height: 1.5rem;
+  display: none;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.grabbable {
+  cursor: grab;
+  transition: transform 150ms;
+
+  &:active {
+    cursor: grabbing;
+    transform: scale(1.1);
+    z-index: 1030;
+  }
+
+  .book {
+    cursor: grab;
+
+    &:active {
+      cursor: grabbing;
+    }
+  }
+
+  .grip {
+    display: block;
   }
 }

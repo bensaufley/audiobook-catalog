@@ -2,6 +2,8 @@ import {
   type Association,
   type CreationOptional,
   DATE,
+  type HasManyAddAssociationMixin,
+  type HasManyGetAssociationsMixin,
   type InferAttributes,
   type InferCreationAttributes,
   Model,
@@ -15,6 +17,8 @@ import type models from '~db/models';
 import type Audiobook from '~db/models/Audiobook';
 import type UserAudiobook from '~db/models/UserAudiobook';
 
+import type UpNext from './UpNext';
+
 export default class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   public declare id: CreationOptional<string>;
 
@@ -24,14 +28,22 @@ export default class User extends Model<InferAttributes<User>, InferCreationAttr
 
   public declare readonly updatedAt: CreationOptional<Date>;
 
+  public declare addUpNext: HasManyAddAssociationMixin<UpNext, string>;
+
+  public declare getUpNexts: HasManyGetAssociationsMixin<UpNext>;
+
   declare static associations: {
     Audiobooks: Association<User, Audiobook>;
     UserAudiobooks: Association<User, UserAudiobook>;
+    UpNexts: Association<User, UpNext>;
+    UpNextBooks: Association<User, Audiobook>;
   };
 
   public static associate(m: typeof models) {
     User.hasMany(m.UserAudiobook);
     User.belongsToMany(m.Audiobook, { through: m.UserAudiobook });
+    User.hasMany(m.UpNext, { as: { singular: 'UpNext', plural: 'UpNexts' } });
+    User.belongsToMany(m.Audiobook, { as: 'UpNextBook', through: m.UpNext });
   }
 
   public static generate(sequelize: Sequelize) {
@@ -55,6 +67,12 @@ export default class User extends Model<InferAttributes<User>, InferCreationAttr
       {
         modelName: 'User',
         sequelize,
+        hooks: {
+          async beforeDestroy(user) {
+            await user.sequelize.models.UserAudiobook?.destroy({ where: { UserId: user.id } });
+            await user.sequelize.models.UpNext?.destroy({ where: { UserId: user.id } });
+          },
+        },
       },
     );
   }
