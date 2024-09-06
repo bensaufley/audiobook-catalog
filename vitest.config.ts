@@ -12,6 +12,14 @@ export default mergeConfig(
       coverage: {
         provider: 'istanbul',
         reporter: ['text', 'lcov'],
+        exclude: [
+          'node_modules/**',
+          '.build/**',
+          '*.spec.ts{,x}',
+          '*.test.ts{,x}',
+          'test/support/**',
+          'script/build/binaries.ts',
+        ],
       },
       environment: 'jsdom',
     },
