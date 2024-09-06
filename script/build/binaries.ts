@@ -2,7 +2,8 @@
 
 import { build } from 'esbuild';
 import aliasPath from 'esbuild-plugin-alias-path';
-import { chmod, readdir, readFile, rm, stat, writeFile } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
+import { chmod, mkdir, readdir, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import { basename, extname, resolve } from 'node:path';
 import { rimraf } from 'rimraf';
 
@@ -13,9 +14,12 @@ const dirname = import.meta.dirname ?? __dirname;
 const buildDir = resolve(dirname, '../../.build/bin');
 if (!buildDir.endsWith('.build/bin')) {
   throw new Error('Error resolving build directory');
-} else if ((await stat(buildDir)).isDirectory()) {
-  await rimraf(`${buildDir}/*`, { glob: true });
+} else if (!existsSync(buildDir)) {
+  await mkdir(buildDir, { recursive: true });
 }
+
+if ((await stat(buildDir)).isDirectory()) await rimraf(`${buildDir}/*`, { glob: true });
+else throw new Error('Error resolving build directory');
 
 const tree = (dir: string): Promise<readonly [string, string][]> =>
   readdir(dir).then((files) =>
