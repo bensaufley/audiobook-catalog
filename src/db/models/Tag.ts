@@ -1,6 +1,7 @@
 import {
   type Association,
   type BelongsToManyAddAssociationMixin,
+  type BelongsToManyAddAssociationsMixin,
   type BelongsToManyGetAssociationsMixin,
   type BelongsToManyRemoveAssociationMixin,
   type CreationOptional,
@@ -31,6 +32,8 @@ export default class Tag extends Model<InferAttributes<Tag>, InferCreationAttrib
   public declare updatedAt: CreationOptional<Date>;
 
   public declare addAudiobook: BelongsToManyAddAssociationMixin<Audiobook, Audiobook['id']>;
+
+  public declare addAudiobooks: BelongsToManyAddAssociationsMixin<Audiobook, Audiobook['id']>;
 
   public declare removeAudiobook: BelongsToManyRemoveAssociationMixin<Audiobook, Audiobook['id']>;
 

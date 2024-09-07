@@ -1,7 +1,8 @@
+import '../db/models';
+
 import minimist from 'minimist';
 import { exit } from 'process';
 
-import { ready } from '../db/models';
 import AudiobookTag from '../db/models/AudiobookTag';
 import Tag from '../db/models/Tag';
 
@@ -58,8 +59,6 @@ if (!tags.length) {
 if (args.debug) {
   console.debug('Arguments:', args);
 }
-
-await ready;
 
 const responses = await Promise.allSettled(
   tags.map(async (tag) => {

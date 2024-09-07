@@ -14,6 +14,7 @@ export const readBooks = new Signal<string[] | undefined>();
 export const tags = new Signal<TagJSON[] | undefined>();
 export const upNext = new Signal<Pick<UpNextJSON, 'AudiobookId' | 'order'>[]>([]);
 
+export const bulkTag = new Signal<string | undefined>();
 export const stagedUpNextReorder = new Signal<string[] | null>(null);
 
 export const selectedBookId = new Signal<string | undefined>();

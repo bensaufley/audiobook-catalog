@@ -1,12 +1,15 @@
+import '~db/models';
+
 import fastifyEtag from '@fastify/etag';
 import fastifyStatic from '@fastify/static';
+import swagger from '@fastify/swagger';
+import swaggerUi from '@fastify/swagger-ui';
 import Fastify, { type FastifyBaseLogger, type FastifyServerOptions } from 'fastify';
 import { readFile } from 'node:fs/promises';
 import type { Server } from 'node:http';
 import { resolve } from 'node:path';
 
 import { umzug } from '~db/migrations';
-import { ready } from '~db/models';
 import User from '~db/models/User';
 
 import api from './routes/api';
@@ -23,8 +26,6 @@ const sanitizeLogLevel = (level?: string) => {
 
 const init = async () => {
   await umzug.up();
-
-  await ready;
 
   let devServerOpts: Pick<FastifyServerOptions<Server, FastifyBaseLogger>, 'serverFactory'> | undefined;
   if (import.meta.env.DEV) {
@@ -52,10 +53,20 @@ const init = async () => {
     ...devServerOpts,
   });
 
+  await server.register(swagger, {
+    openapi: {
+      info: {
+        version: process.env.APP_VERSION ?? 'unknown',
+        title: 'Audiobook Catalog API',
+      },
+    },
+  });
+  await server.register(swaggerUi, { prefix: '/api/docs', routePrefix: '/api/docs' });
+
   server.register(fastifyEtag);
 
   if (import.meta.env.PROD) {
-    server.register(fastifyStatic, {
+    await server.register(fastifyStatic, {
       root: resolve(import.meta.dirname, '../client/assets'),
       prefix: '/assets/',
     });
@@ -83,14 +94,19 @@ const init = async () => {
 
   // eslint-disable-next-line import/no-extraneous-dependencies
   const viteDevServer = import.meta.env.DEV ? (await import('vavite/vite-dev-server')).default : undefined;
-  server.get('/*', async (req, res) => {
-    if (import.meta.env.DEV) {
-      const index = await readFile(resolve(import.meta.dirname, '../client/index.html'), 'utf-8');
-      res.header('Content-Type', 'text/html');
-      return res.send(await viteDevServer!.transformIndexHtml(req.url, index));
-    }
+  server.get('/*', {
+    handler: async (req, res) => {
+      if (import.meta.env.DEV) {
+        const index = await readFile(resolve(import.meta.dirname, '../client/index.html'), 'utf-8');
+        res.header('Content-Type', 'text/html');
+        return res.send(await viteDevServer!.transformIndexHtml(req.url, index));
+      }
 
-    return res.sendFile('index.html', resolve(import.meta.dirname, '../client/'));
+      return res.sendFile('index.html', resolve(import.meta.dirname, '../client/'));
+    },
+    schema: {
+      hide: true,
+    },
   });
 
   return server;
