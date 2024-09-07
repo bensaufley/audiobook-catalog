@@ -9,6 +9,8 @@ export const getBooks = createFetch<{ audiobooks: AudiobookJSON[] }>('GET', '/ap
 
 export const getTags = createFetch<{ tags: TagJSON[] }>('GET', '/api/tags');
 
+export const getRead = createFetch<{ bookIds: string[] }>('GET', '/api/books/read');
+
 export const createTag = createFetch<{ color: string; name: string; bookId?: string | undefined }, { tag: TagJSON }>(
   'POST',
   '/api/tags',

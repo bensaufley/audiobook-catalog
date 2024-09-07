@@ -1,42 +1,27 @@
 import { addBookToUpNext, readBook, removeBookFromUpNext, reorderBooks, unreadBook } from '~client/fetches';
 import type { AudiobookJSON } from '~db/models/Audiobook';
-import type { UserAudiobookJSON } from '~db/models/UserAudiobook';
 
 import { currentUserId } from '../user';
 
-import { rawBooks, upNext } from '.';
+import { rawBooks, readBooks, upNext } from '.';
 
 export const updateBook = (book: Partial<AudiobookJSON>) => {
   rawBooks.value = rawBooks.peek()?.map((b) => (b.id === book.id ? { ...b, ...book } : b));
 };
 
 export const setBookRead = async (id: string, read: boolean) => {
+  if (!currentUserId.peek()) return false;
+
   try {
-    if (!currentUserId.peek()) return false;
-
-    const book = rawBooks.peek()?.find(({ id: i }) => i === id);
-    if (!book) return false;
-
     const resp = await (read ? readBook(id) : unreadBook(id));
 
     if (resp.result === 'error') return false;
 
-    const ua = book.UserAudiobooks?.some(({ UserId }) => UserId === currentUserId.value!);
-    const UserAudiobooks: UserAudiobookJSON[] = ua
-      ? book.UserAudiobooks!.map((x) =>
-          x.UserId === currentUserId.value! ? { ...x, read, updatedAt: new Date().toISOString() } : x,
-        )
-      : [
-          ...(book.UserAudiobooks ?? []),
-          {
-            read,
-            UserId: currentUserId.value!,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-            AudiobookId: book.id,
-          },
-        ];
-    updateBook({ id, UserAudiobooks });
+    if (read) {
+      readBooks.value = (readBooks.peek() ?? []).concat(id);
+    } else {
+      readBooks.value = readBooks.peek()?.filter((i) => i !== id);
+    }
 
     return true;
   } catch {
@@ -94,4 +79,9 @@ export const reorderUpNexts = async (ids: string[]) => {
   } catch {
     return false;
   }
+};
+
+export const equalArray = <T>(a: T[], b: T[]): boolean => {
+  if (a.length !== b.length) return false;
+  return a.every((v) => b.includes(v)) && b.every((v) => a.includes(v));
 };

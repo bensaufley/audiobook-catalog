@@ -6,7 +6,8 @@ import TouchSweep from 'touchsweep';
 
 import Book from '~client/components/Book';
 import BookModal from '~client/components/BookModal';
-import { books, selectedBookId } from '~client/signals/books';
+import { selectedBookId } from '~client/signals/books';
+import { books } from '~client/signals/books/filters';
 import { page, pages, showUpNext, sizeColumns } from '~client/signals/options';
 import { clamp } from '~shared/utilities';
 

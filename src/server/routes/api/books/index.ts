@@ -4,6 +4,7 @@ import Audiobook from '~db/models/Audiobook';
 import UpNext from '~db/models/UpNext';
 import sequelize from '~db/sequelize';
 
+import UserAudiobook from '../../../../db/models/UserAudiobook';
 import { checkForUser, type UserRequest } from '../types';
 
 import book from './book';
@@ -30,6 +31,14 @@ const books: FastifyPluginAsync = async (fastify, _opts) => {
       });
       await res.send({ audiobooks, total, more: page && perPage ? page * perPage < total : false });
     },
+  );
+
+  fastify.get(
+    '/read',
+    checkForUser(async ({ user }, res) => {
+      const read = await UserAudiobook.findAll({ where: { UserId: user.id, read: true } });
+      return res.status(200).send({ bookIds: read.map((r) => r.AudiobookId) });
+    }),
   );
 
   fastify.get('/up-next', async ({ user }: UserRequest, res) => {

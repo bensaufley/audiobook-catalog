@@ -4,7 +4,7 @@ import type { JSX } from 'preact';
 import { useMemo, useRef } from 'preact/hooks';
 
 import useEvent, { useThrottledEvent } from '~client/hooks/useEvent';
-import { rawBooks, selectedBookId, stagedUpNextReorder, upNext } from '~client/signals/books';
+import { rawBooks, readBooks, selectedBookId, stagedUpNextReorder, upNext } from '~client/signals/books';
 import {
   addToUpNext as upNextBook,
   removeFromUpNext as unUpNextBook,
@@ -29,9 +29,7 @@ const Book = ({ bookId }: Props) => {
   const checkRef = useRef<HTMLInputElement>(null);
 
   const book = useComputed(() => rawBooks.value!.find(({ id }) => id === bookId)!);
-  const read = useComputed(
-    () => !!book.value.UserAudiobooks?.find(({ UserId }) => UserId === currentUserId.value)?.read,
-  );
+  const read = useComputed(() => readBooks.value?.includes(bookId) ?? false);
 
   const onClick = useEvent((e: JSX.TargetedEvent<HTMLElement>) => {
     if (e.target === e.currentTarget) selectedBookId.value = bookId;

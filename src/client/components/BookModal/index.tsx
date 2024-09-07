@@ -6,7 +6,7 @@ import TouchSweep from 'touchsweep';
 
 import Modal, { Body, Footer, Header } from '~client/components/Modal';
 import useEvent from '~client/hooks/useEvent';
-import { selectedBook, selectedBookId, sortedBooks } from '~client/signals/books';
+import { readBooks, selectedBook, selectedBookId } from '~client/signals/books';
 import { setBookRead } from '~client/signals/books/helpers';
 import { page, perPage } from '~client/signals/options';
 import { currentUserId } from '~client/signals/user';
@@ -15,6 +15,8 @@ import CheckCircleFill from '~icons/check-circle-fill.svg?react';
 import Circle from '~icons/circle.svg?react';
 import Download from '~icons/download.svg?react';
 import { clamp } from '~shared/utilities';
+
+import { filteredBooks } from '../../signals/books/filters';
 
 import ExternalLinks from './ExternalLinks';
 import TagPicker from './TagPicker';
@@ -27,14 +29,14 @@ const formatDuration = (duration: number) => {
   const minutes = Math.floor((duration % (60 * 60)) / 60);
   const seconds = Math.floor(duration % 60);
 
-  return `${hours}:${`0${minutes}`.substr(-2)}:${`0${seconds}`.substr(-2)}`;
+  return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 };
 
 const BookModal = () => {
   const changingRead = useSignal(false);
 
-  const read = useComputed(
-    () => !!selectedBook.value?.UserAudiobooks?.find(({ UserId }) => UserId === currentUserId.value)?.read,
+  const read = useComputed(() =>
+    selectedBookId.value ? readBooks.value?.includes(selectedBookId.value) ?? false : false,
   );
 
   // eslint-disable-next-line prefer-arrow-functions/prefer-arrow-functions
@@ -61,7 +63,7 @@ const BookModal = () => {
     touchSweep.current = new TouchSweep(el);
 
     const moveSelectedBook = (delta: number) => () => {
-      const books = sortedBooks.peek();
+      const books = filteredBooks.peek();
       if (!books?.length) return;
 
       const index = books.findIndex((book) => book.id === selectedBookId.peek()) ?? -1;
