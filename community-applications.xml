@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<Container version="2">
+<Container version="0.5.0-4">
   <Name>audiobook-catalog</Name>
   <Repository>bnsfly/audiobook-catalog</Repository>
   <Registry>https://hub.docker.com/r/bnsfly/audiobook-catalog/</Registry>

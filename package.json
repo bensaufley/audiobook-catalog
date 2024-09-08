@@ -104,5 +104,5 @@
     "version": "sh ./script/build/version.sh"
   },
   "type": "module",
-  "version": "0.5.0-3"
+  "version": "0.5.0-4"
 }
