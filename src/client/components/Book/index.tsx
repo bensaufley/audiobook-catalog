@@ -21,12 +21,7 @@ const Book = ({ bookId }: Props) => {
     Component = StandardBook;
   }
 
-  // TODO: remove extra divs once I figure out a better way around the insertBefore issue
-  return (
-    <div>
-      <Component bookId={bookId} />
-    </div>
-  );
+  return <Component bookId={bookId} />;
 };
 
 export default Book;
