@@ -3,11 +3,18 @@ import clsx from 'clsx';
 import type { JSX } from 'preact';
 
 import { chooseBestContrast } from '~client/shared/colors';
-import { tags } from '~client/signals/books';
+import { bulkTag, tags } from '~client/signals/books';
 import { deleteTag } from '~client/signals/books/tagHelpers';
 import { filterByTag, filterByTagUnionType, search } from '~client/signals/options';
+import Collection from '~icons/collection.svg?react';
+import CollectionFill from '~icons/collection-fill.svg?react';
 import Filter from '~icons/filter.svg?react';
 import X from '~icons/x.svg?react';
+
+const CollectionIcon = ({ name, ...rest }: { name: string } & JSX.SVGAttributes<SVGSVGElement>) => {
+  const Icon = bulkTag.value === name ? CollectionFill : Collection;
+  return <Icon className={rest.class} {...rest} />;
+};
 
 const Filters = () => {
   const open = useSignal(false);
@@ -44,13 +51,14 @@ const Filters = () => {
         <li>
           <h6 class="dropdown-header d-flex flex-flow-row align-items-center">
             <span>Tags</span>
-            {!!filterByTag.value.length && (
+            {(!!filterByTag.value.length || !!bulkTag.value) && (
               <button
                 type="button"
                 class="btn border-0 bg-transparent ms-auto py-0 pe-0"
                 onClick={(e) => {
                   e.preventDefault();
                   filterByTag.value = [];
+                  bulkTag.value = undefined;
                 }}
                 aria-label="Clear"
                 style={{ marginTop: '-0.25rem', marginBottom: '-0.25rem' }}
@@ -101,6 +109,7 @@ const Filters = () => {
                 'dropdown-item',
                 'd-flex',
                 'align-items-center',
+                'gap-2',
                 filterByTag.value.includes(name) && 'active',
               )}
               style={
@@ -125,9 +134,22 @@ const Filters = () => {
                 &nbsp;
               </div>
               <span>{name}</span>
+              <small>{AudiobookTags?.length ?? 0}</small>
+              <CollectionIcon
+                name={name}
+                class="ms-auto"
+                width="1rem"
+                height="1rem"
+                tabIndex={0}
+                aria-label={`Bulk Tag: ${name}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  bulkTag.value = bulkTag.peek() === name ? undefined : name;
+                }}
+              />
               {AudiobookTags?.length === 0 && (
                 <X
-                  className="ms-auto"
                   width="1.5rem"
                   height="1.5rem"
                   onClick={(e) => {

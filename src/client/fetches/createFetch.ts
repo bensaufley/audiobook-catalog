@@ -124,7 +124,7 @@ export default function createFetch<Q, B, P, R = never>(
         method,
         headers: {
           ...(body ? { 'Content-Type': 'application/json' } : {}),
-          'x-audiobook-catalog-user': currentUser.peek()?.id ?? '',
+          ...(currentUser.peek() ? { 'x-audiobook-catalog-user': currentUser.peek()!.id } : {}),
         },
         signal: c.signal,
       });

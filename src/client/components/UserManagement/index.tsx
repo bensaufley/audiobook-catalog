@@ -1,4 +1,4 @@
-import { useSignal } from '@preact/signals';
+import { batch, useSignal } from '@preact/signals';
 import clsx from 'clsx';
 import type { FunctionComponent } from 'preact';
 
@@ -61,7 +61,7 @@ const UserManagement: FunctionComponent = () => {
                   type="button"
                   class={clsx('dropdown-item', showUpNext.value && 'active')}
                   onClick={() => {
-                    showUpNext.value = !showUpNext.value;
+                    showUpNext.value = !showUpNext.peek();
                   }}
                 >
                   Up Next
@@ -77,7 +77,10 @@ const UserManagement: FunctionComponent = () => {
                   class={clsx('dropdown-item', !showUpNext.value && read.value === Read.All && 'active')}
                   onClick={(e: Event) => {
                     e.preventDefault();
-                    read.value = Read.All;
+                    batch(() => {
+                      showUpNext.value = false;
+                      read.value = Read.All;
+                    });
                   }}
                 >
                   All
@@ -89,7 +92,10 @@ const UserManagement: FunctionComponent = () => {
                   class={clsx('dropdown-item', !showUpNext.value && read.value === Read.Unread && 'active')}
                   onClick={(e: Event) => {
                     e.preventDefault();
-                    read.value = Read.Unread;
+                    batch(() => {
+                      showUpNext.value = false;
+                      read.value = Read.Unread;
+                    });
                   }}
                 >
                   Unread
@@ -101,7 +107,10 @@ const UserManagement: FunctionComponent = () => {
                   class={clsx('dropdown-item', !showUpNext.value && read.value === Read.Read && 'active')}
                   onClick={(e: Event) => {
                     e.preventDefault();
-                    read.value = Read.Read;
+                    batch(() => {
+                      showUpNext.value = false;
+                      read.value = Read.Read;
+                    });
                   }}
                 >
                   Read

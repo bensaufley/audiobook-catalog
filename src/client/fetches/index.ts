@@ -9,6 +9,8 @@ export const getBooks = createFetch<{ audiobooks: AudiobookJSON[] }>('GET', '/ap
 
 export const getTags = createFetch<{ tags: TagJSON[] }>('GET', '/api/tags');
 
+export const getRead = createFetch<{ bookIds: string[] }>('GET', '/api/books/read');
+
 export const createTag = createFetch<{ color: string; name: string; bookId?: string | undefined }, { tag: TagJSON }>(
   'POST',
   '/api/tags',
@@ -27,6 +29,12 @@ export const untagBook = createFetch<{ name: string }, string>(
   'DELETE',
   (bookId) => `/api/books/${bookId}/tag`,
   Needs.Query,
+);
+
+export const bulkTagBooks = createFetch<{ tagName: string }, { bookIds: string[] }, { tag: TagJSON }>(
+  'POST',
+  '/api/tags/bulk',
+  [Needs.Query, Needs.Body],
 );
 
 export const getUpNext = createFetch<{ upNexts: Pick<UpNextJSON, 'AudiobookId' | 'order'>[] }>(

@@ -8,7 +8,10 @@ export type UserRequest<
 > = FastifyRequest<T> & (Authenticated extends true ? { user: User } : { user?: User | null });
 
 export const checkForUser =
-  <Req extends FastifyRequest & { user?: User }>(
+  <
+    RG extends RouteGenericInterface = RouteGenericInterface,
+    Req extends FastifyRequest<RG> & { user?: User } = FastifyRequest<RG> & { user?: User },
+  >(
     handler: (req: Req & { user: User }, res: FastifyReply) => void | Promise<void>,
   ): ((req: Req, res: FastifyReply) => Promise<void>) =>
   async (req: Req, res: FastifyReply) => {

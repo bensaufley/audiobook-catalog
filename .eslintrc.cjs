@@ -4,6 +4,7 @@
 const config = {
   extends: ['@bensaufley', require.resolve('@bensaufley/eslint-config/preact.cjs')],
   rules: {
+    camelcase: ['error', { allow: ['OpenAPIV3_1'] }],
     'implicit-arrow-linebreak': 'off',
     'no-redeclare': 'off',
   },

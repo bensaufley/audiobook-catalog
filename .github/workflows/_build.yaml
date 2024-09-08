@@ -34,7 +34,7 @@ jobs:
 
       - name: Build Image
         run: |
-          docker build -t bnsfly/audiobook-catalog:latest -f Dockerfile.prod .
+          docker build --build-arg APP_VERSION="${{ inputs.tag }}" -t bnsfly/audiobook-catalog:latest -f Dockerfile.prod .
           docker tag bnsfly/audiobook-catalog:latest bnsfly/audiobook-catalog:${{ inputs.tag }}
 
       - name: Check that image runs
