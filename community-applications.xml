@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <Container version="2">
   <Name>Audiobook Catalog</Name>
-  <Version>0.5.0-4</Version>
+  <Version>0.5.0-5</Version>
   <Repository>bnsfly/audiobook-catalog</Repository>
   <Registry>https://hub.docker.com/r/bnsfly/audiobook-catalog/</Registry>
   <Network>bridge</Network>
@@ -13,7 +13,7 @@
   <Description>An Unraid image to provide a UI for audiobooks hosted on a NAS&</Description>
   <Category>Tools: Status:Beta</Category>
   <WebUI>http://[IP]:[PORT:6451]/</WebUI>
-  <TemplateURL>https://raw.githubusercontent.com/bensaufley/audiobook-catalog/v0.5.0-4/community-applications.xml</TemplateURL>
+  <TemplateURL>https://raw.githubusercontent.com/bensaufley/audiobook-catalog/v0.5.0-5/community-applications.xml</TemplateURL>
   <Icon>https://raw.githubusercontent.com/bensaufley/audiobook-catalog/main/audiobook-catalog.png</Icon>
   <Network>bridge</Network>
   <Publish />
