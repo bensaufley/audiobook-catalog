@@ -1,5 +1,5 @@
-<img src="https://raw.githubusercontent.com/bensaufley/audiobook-catalog/main/audiobook-catalog.png" alt="Audiobook Catalog logo" style="float: left;margin-right: 1rem; width: 2rem; height: 2rem">
-# Audiobook Catalog
+<h1><img src="https://raw.githubusercontent.com/bensaufley/audiobook-catalog/main/audiobook-catalog.png" alt="Audiobook Catalog logo" style="float: left;margin-right: 1rem; width: 2rem; height: 2rem; vertical-align: middle">
+Audiobook Catalog</h1>
 
 <a href="https://codeclimate.com/github/bensaufley/audiobook-catalog/maintainability"><img src="https://api.codeclimate.com/v1/badges/7d1a08f5078be7a031de/maintainability" /></a>
 <a href="https://codeclimate.com/github/bensaufley/audiobook-catalog/test_coverage"><img src="https://api.codeclimate.com/v1/badges/7d1a08f5078be7a031de/test_coverage" /></a>
