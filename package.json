@@ -100,7 +100,8 @@
     "start": "node .build/server/index.js",
     "script": "runScript() { file=\"$1.ts\"; shift; tsx \"./src/scripts/$file\" \"${@}\"; }; runScript",
     "test": "vitest",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "version": "sh ./script/build/version.sh"
   },
   "type": "module",
   "version": "0.5.0-3"
