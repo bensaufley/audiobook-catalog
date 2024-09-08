@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
-<Container version="0.5.0-4">
-  <Name>audiobook-catalog</Name>
+<Container version="2">
+  <Name>Audiobook Catalog</Name>
+  <Version>0.5.0-4</Version>
   <Repository>bnsfly/audiobook-catalog</Repository>
   <Registry>https://hub.docker.com/r/bnsfly/audiobook-catalog/</Registry>
   <Network>bridge</Network>
-  <MyIP/>
   <Shell>bash</Shell>
   <Privileged>false</Privileged>
   <Support>https://hub.docker.com/r/bnsfly/audiobook-catalog/</Support>
@@ -13,22 +13,12 @@
   <Description>An Unraid image to provide a UI for audiobooks hosted on a NAS&</Description>
   <Category>Tools: Status:Beta</Category>
   <WebUI>http://[IP]:[PORT:6451]/</WebUI>
-  <TemplateURL/>
+  <TemplateURL>https://raw.githubusercontent.com/bensaufley/audiobook-catalog/v0.5.0-4/community-applications.xml</TemplateURL>
   <Icon>https://raw.githubusercontent.com/bensaufley/audiobook-catalog/main/audiobook-catalog.png</Icon>
-  <ExtraParams/>
-  <PostArgs/>
-  <CPUset/>
-  <DonateText/>
-  <DonateLink/>
-  <Networking>
-    <Mode>bridge</Mode>
-    <Publish />
-  </Networking>
-  <Data />
-  <Environment />
-  <Labels/>
-  <Config Name="Audiobooks Mount" Target="/audiobooks" Default="" Mode="rw" Description="Path to directory with audiobooks (audiobooks can be in subdirectories). Mounted to /audiobooks." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/audiobooks/m4a/</Config>
-  <Config Name="Import Mount" Target="/import" Default="" Mode="rw" Description="Path to directory for new books to be imported. Must not be the same or parent of Audiobooks Share. Mounted to /import." Type="Path" Display="always" Required="false" Mask="false">/mnt/user/audiobooks/import/</Config>
-  <Config Name="Database Mount" Target="/db/" Default="" Mode="rw" Description="Directory for sqlite3 database. File will be created if it does not exist. Directory must exist." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/audiobooks/</Config>
-  <Config Name="External Port" Target="3000" Default="6451" Mode="tcp" Description="Port at which UI will be served" Type="Port" Display="always" Required="true" Mask="false">6451</Config>
+  <Network>bridge</Network>
+  <Publish />
+  <Config Name="Audiobooks Mount" Target="/audiobooks" Default="" Mode="rw" Description="Path to directory with audiobooks (audiobooks can be in subdirectories). Mounted to /audiobooks." Type="Path" Display="always" Required="true" Mask="false" />
+  <Config Name="Import Mount" Target="/import" Default="" Mode="rw" Description="Path to directory for new books to be imported. Must not be the same or parent of Audiobooks Share. Mounted to /import." Type="Path" Display="always" Required="false" Mask="false" />
+  <Config Name="Database Mount" Target="/db/" Default="" Mode="rw" Description="Directory for sqlite3 database. File will be created if it does not exist. Directory must exist." Type="Path" Display="always" Required="true" Mask="false" />
+  <Config Name="External Port" Target="3000" Default="6451" Mode="tcp" Description="Port at which UI will be served" Type="Port" Display="always" Required="true" Mask="false" />
 </Container>

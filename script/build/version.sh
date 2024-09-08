@@ -5,5 +5,6 @@ set -eo pipefail
 cd "$(dirname "$0")/../.."
 
 version="$(jq -r .version package.json)"
-sed -i 's|Container version=".*"|Container version="'"$version"'"|' community-applications.xml
+current_version="$(grep -oP '<Version>\K[^<]+' community-applications.xml)"
+sed -i "s|${current_version//\./\\.}|$version|g" community-applications.xml
 git add community-applications.xml
