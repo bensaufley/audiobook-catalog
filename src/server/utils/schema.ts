@@ -1,14 +1,12 @@
 import s, { type Object as AJVObject } from 'ajv-ts';
 
 export const fourOhFour = (text = 'Not Found') => ({
-  404: {
-    schema: s
-      .object({
-        error: s.string(),
-      })
-      .required()
-      .describe(text).schema,
-  },
+  404: s
+    .object({
+      error: s.string(),
+    })
+    .required()
+    .describe(text).schema,
 });
 
 export const bookIdParams = {
@@ -16,11 +14,7 @@ export const bookIdParams = {
 };
 
 export const userHeader = {
-  'x-audiobook-catalog-user': s
-    .string()
-    .describe('User UUID')
-    .format('uuid')
-    .pattern('^[0-9a-fA-F]{8}-?[0-9a-fA-F]{4}-?[14][0-9a-fA-F]{3}-?[89ab][0-9a-fA-F]{3}-?[0-9a-fA-F]{12}$'),
+  'x-audiobook-catalog-user': s.string().describe('User UUID').format('uuid'),
 };
 
 export const onlyUserHeader = (required = true) =>

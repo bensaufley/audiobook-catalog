@@ -3,10 +3,10 @@ import type { FastifyPluginAsync } from 'fastify';
 
 import Audiobook from '~db/models/Audiobook';
 import UpNext from '~db/models/UpNext';
+import UserAudiobook from '~db/models/UserAudiobook';
 import sequelize from '~db/sequelize';
+import { onlyUserHeader } from '~server/utils/schema';
 
-import UserAudiobook from '../../../../db/models/UserAudiobook';
-import { onlyUserHeader } from '../../../utils/schema';
 import { checkForUser, type UserRequest } from '../types';
 
 import book from './book';
@@ -19,7 +19,7 @@ const books: FastifyPluginAsync = async (fastify, _opts) => {
       log.debug('user: %o', user);
       const total = await Audiobook.count();
       const audiobooks = await Audiobook.findAll({
-        attributes: ['id', 'title', 'createdAt', 'duration'],
+        attributes: ['id', 'title', 'createdAt', 'updatedAt', 'duration'],
         include: [Audiobook.associations.Authors, Audiobook.associations.Narrators],
         order: [
           [Audiobook.associations.Authors, 'lastName', 'ASC'],
@@ -30,11 +30,11 @@ const books: FastifyPluginAsync = async (fastify, _opts) => {
 
         logging: (...args) => fastify.log.debug(...args),
       });
-      await res.send({ audiobooks, total, more: page && perPage ? page * perPage < total : false });
+      await res.status(200).send({ audiobooks, total, more: page && perPage ? page * perPage < total : false });
     },
     schema: {
       description: 'Get all audiobooks',
-      headers: onlyUserHeader(),
+      headers: onlyUserHeader(false),
       querystring:
         // TODO: https://github.com/fastify/ajv-compiler/issues/105
         // .dependentRequired({
@@ -48,15 +48,13 @@ const books: FastifyPluginAsync = async (fastify, _opts) => {
           })
           .partial().schema,
       response: {
-        200: {
-          schema: s
-            .object({
-              audiobooks: s.array(s.object().meta({ $ref: 'audiobook-catalog#/components/schemas/Audiobook' })),
-              total: s.integer(),
-              more: s.boolean(),
-            })
-            .required().schema,
-        },
+        200: s
+          .object({
+            audiobooks: s.array(s.object().meta({ $ref: 'audiobook-catalog#/components/schemas/Audiobook' })),
+            total: s.integer(),
+            more: s.boolean(),
+          })
+          .required().schema,
       },
     },
   });

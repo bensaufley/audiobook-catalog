@@ -46,13 +46,11 @@ const tags: FastifyPluginAsync = async (fastify, _opts) => {
       querystring: s.object({ tagName: s.string() }).required().schema,
       body: s.object({ bookIds: s.array(s.string()).minLength(1) }).required().schema,
       response: {
-        200: {
-          schema: s
-            .object({
-              tag: s.object().meta({ $ref: 'audiobook-catalog#/components/schemas/Tag' }),
-            })
-            .requiredFor('tag').schema,
-        },
+        200: s
+          .object({
+            tag: s.object().meta({ $ref: 'audiobook-catalog#/components/schemas/Tag' }),
+          })
+          .requiredFor('tag').schema,
       },
     },
   });
@@ -77,13 +75,11 @@ const tags: FastifyPluginAsync = async (fastify, _opts) => {
         .strict()
         .requiredFor('color', 'name').schema,
       response: {
-        200: {
-          schema: s
-            .object({
-              tag: s.object().meta({ $ref: 'audiobook-catalog#/components/schemas/Tag' }),
-            })
-            .required().schema,
-        },
+        200: s
+          .object({
+            tag: s.object().meta({ $ref: 'audiobook-catalog#/components/schemas/Tag' }),
+          })
+          .required().schema,
       },
     },
   });

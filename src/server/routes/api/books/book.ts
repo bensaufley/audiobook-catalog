@@ -28,7 +28,7 @@ const book: FastifyPluginAsync = async (fastify, _opts) => {
   fastify.get<BookParams>('/', {
     handler: async ({ params: { bookId: id } }, res) => {
       const book = await Audiobook.findOne({
-        attributes: ['id', 'title', 'createdAt', 'duration'],
+        attributes: ['id', 'title', 'createdAt', 'updatedAt', 'duration'],
         include: [Audiobook.associations.Authors, Audiobook.associations.Narrators],
         where: { id },
       });
@@ -44,9 +44,7 @@ const book: FastifyPluginAsync = async (fastify, _opts) => {
       description: 'Get book by id',
       ...bookIdParams,
       response: {
-        200: {
-          schema: s.object().meta({ $ref: 'audiobook-catalog#/components/schemas/Audiobook' }).schema,
-        },
+        200: s.object().meta({ $ref: 'audiobook-catalog#/components/schemas/Audiobook' }).schema,
       },
     },
   });
@@ -128,12 +126,11 @@ const book: FastifyPluginAsync = async (fastify, _opts) => {
       ...bookIdParams,
       headers: onlyUserHeader(),
       response: {
-        204: {
-          schema: s.never().describe('Book marked as read').schema,
-        },
+        204: s.never().schema,
       },
     },
   });
+
   fastify.post('/unread', {
     handler: setBookReadStatus(false),
     schema: {
@@ -141,9 +138,7 @@ const book: FastifyPluginAsync = async (fastify, _opts) => {
       ...bookIdParams,
       headers: onlyUserHeader(),
       response: {
-        204: {
-          schema: s.never().describe('Book marked as unread').schema,
-        },
+        204: s.never().schema,
       },
     },
   });
@@ -161,9 +156,7 @@ const book: FastifyPluginAsync = async (fastify, _opts) => {
       description: 'Add tag to book',
       ...bookIdParams,
       response: {
-        204: {
-          schema: s.never().describe('Tag added to book').schema,
-        },
+        204: s.never().schema,
       },
     },
   });
@@ -182,17 +175,7 @@ const book: FastifyPluginAsync = async (fastify, _opts) => {
       description: 'Remove tag from book',
       ...bookIdParams,
       response: {
-        204: {
-          schema: s.never().describe('Tag removed from book').schema,
-        },
-        400: {
-          schema: s
-            .object({
-              error: s.string(),
-            })
-            .describe('Missing bookId or tag name')
-            .required().schema,
-        },
+        204: s.never().schema,
       },
     },
   });

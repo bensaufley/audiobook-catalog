@@ -31,6 +31,12 @@ export const untagBook = createFetch<{ name: string }, string>(
   Needs.Query,
 );
 
+export const bulkTagBooks = createFetch<{ tagName: string }, { bookIds: string[] }, { tag: TagJSON }>(
+  'POST',
+  '/api/tags/bulk',
+  [Needs.Query, Needs.Body],
+);
+
 export const getUpNext = createFetch<{ upNexts: Pick<UpNextJSON, 'AudiobookId' | 'order'>[] }>(
   'GET',
   '/api/books/up-next',

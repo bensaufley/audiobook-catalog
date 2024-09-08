@@ -3,6 +3,7 @@ import { levenshtein } from 'wuzzy';
 
 import {
   filterByTag,
+  filterByTagUnionType,
   page,
   pages,
   perPage,
@@ -42,32 +43,33 @@ function conditionalBooksMutation(
   cb: BooksMutationWithSignal<any>,
 ): BooksMutation {
   return (books) => {
-    if (opts.if || opts.unless) {
-      const branch = (useCb = true) => {
+    if ('if' in opts || 'unless' in opts) {
+      const conditional = opts.if || opts.unless;
+      const modBooks = (useCb = true) => {
         if (opts.unless) return useCb ? books : cb(books, signal.value);
         return useCb ? cb(books, signal.value) : books;
       };
 
-      if (Array.isArray(opts.if) && Array.isArray(signal.value)) {
-        return equalArray(signal.value, opts.if) ? branch() : branch(false);
+      if (Array.isArray(conditional) && Array.isArray(signal.value)) {
+        return equalArray(signal.value, conditional) ? modBooks() : modBooks(false);
       }
-      if (Array.isArray(opts.if)) return opts.if.includes(signal.value) ? branch() : branch(false);
-      if (Array.isArray(signal.value)) return signal.value.includes(opts.if) ? branch() : branch(false);
-      return opts.if === signal.value ? branch() : branch(false);
+      if (Array.isArray(conditional)) return conditional.includes(signal.value) ? modBooks() : modBooks(false);
+      if (Array.isArray(signal.value)) return signal.value.includes(conditional) ? modBooks() : modBooks(false);
+      return conditional === signal.value ? modBooks() : modBooks(false);
     }
     if (opts.any === true) {
-      return signal.value || (Array.isArray(signal.value) && signal.value.length > 0) ? cb(books, signal.value) : books;
+      return (Array.isArray(signal.value) ? signal.value.length > 0 : !!signal.value) ? cb(books, signal.value) : books;
     }
     if (opts.any === false) {
-      return signal.value || (Array.isArray(signal.value) && signal.value.length > 0) ? books : cb(books, signal.value);
+      return (Array.isArray(signal.value) ? signal.value.length > 0 : !!signal.value) ? books : cb(books, signal.value);
     }
     return books;
   };
 }
 
-export const byTag = conditionalBooksMutation(filterByTag, { any: false }, (books, filterTags) =>
+export const byTag = conditionalBooksMutation(filterByTag, { any: true }, (books, filterTags) =>
   books.filter(({ id }) =>
-    filterTags.some((tag) =>
+    filterTags[filterByTagUnionType.value === 'and' ? 'every' : 'some']((tag) =>
       tags.value?.find(({ name }) => name === tag)?.AudiobookTags?.some(({ AudiobookId }) => AudiobookId === id),
     ),
   ),
@@ -107,10 +109,9 @@ export const bySearchString = conditionalBooksMutation(search, { unless: '' }, (
 });
 
 export const displayUpNext = conditionalBooksMutation(showUpNext, { if: true }, () =>
-  (stagedUpNextReorder.value
-    ? stagedUpNextReorder.value.map((id) => upNext.value.find(({ AudiobookId: i }) => i === id)!)
-    : upNext.value
-  ).map(({ AudiobookId }) => rawBooks.value!.find(({ id }) => id === AudiobookId)!),
+  (stagedUpNextReorder.value?.map((id) => upNext.value.find(({ AudiobookId: i }) => i === id)!) ?? upNext.value).map(
+    ({ AudiobookId }) => rawBooks.value!.find(({ id }) => id === AudiobookId)!,
+  ),
 );
 
 export const sorted = conditionalBooksMutation(showUpNext, { unless: true }, (books) => {

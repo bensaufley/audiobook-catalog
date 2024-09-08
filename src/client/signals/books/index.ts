@@ -46,11 +46,12 @@ const updateSignal = async <T, R>(
 effect(() => {
   // eslint-disable-next-line no-unused-expressions
   refreshToken.value;
-  // eslint-disable-next-line no-unused-expressions
-  currentUser.value;
 
   updateSignal(rawBooks, undefined, getBooks, 'audiobooks');
-  updateSignal(readBooks, [], getRead, 'bookIds');
-  updateSignal(tags, [], getTags, 'tags');
-  updateSignal(upNext, [], getUpNext, 'upNexts');
+
+  if (currentUser.value) {
+    updateSignal(readBooks, [], getRead, 'bookIds');
+    updateSignal(tags, [], getTags, 'tags');
+    updateSignal(upNext, [], getUpNext, 'upNexts');
+  }
 });

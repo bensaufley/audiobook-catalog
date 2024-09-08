@@ -61,7 +61,7 @@ const UserManagement: FunctionComponent = () => {
                   type="button"
                   class={clsx('dropdown-item', showUpNext.value && 'active')}
                   onClick={() => {
-                    showUpNext.value = !showUpNext.value;
+                    showUpNext.value = !showUpNext.peek();
                   }}
                 >
                   Up Next
