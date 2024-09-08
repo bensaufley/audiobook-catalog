@@ -14,7 +14,7 @@
   <Category>Tools: Status:Beta</Category>
   <WebUI>http://[IP]:[PORT:6451]/</WebUI>
   <TemplateURL/>
-  <Icon>/plugins/dynamix.docker.manager/images/question.png</Icon>
+  <Icon>https://raw.githubusercontent.com/bensaufley/audiobook-catalog/main/audiobook-catalog.png</Icon>
   <ExtraParams/>
   <PostArgs/>
   <CPUset/>

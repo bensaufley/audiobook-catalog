@@ -1,3 +1,4 @@
+<img src="https://raw.githubusercontent.com/bensaufley/audiobook-catalog/main/audiobook-catalog.png" alt="Audiobook Catalog logo" style="float: left;margin-right: 1rem; width: 2rem; height: 2rem">
 # Audiobook Catalog
 
 <a href="https://codeclimate.com/github/bensaufley/audiobook-catalog/maintainability"><img src="https://api.codeclimate.com/v1/badges/7d1a08f5078be7a031de/maintainability" /></a>
