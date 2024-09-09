@@ -1,9 +1,9 @@
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 import type { FunctionComponent, Ref } from 'preact';
 import { useEffect, useRef } from 'preact/hooks';
 
 import useEvent from '~client/hooks/useEvent';
-import { mergeRefs } from '~shared/utilities';
+import { mergeRefs } from '~client/shared/preact';
 
 const Modal: FunctionComponent<{ innerRef?: Ref<HTMLDivElement>; onHide?: () => void; show?: boolean }> = ({
   innerRef,

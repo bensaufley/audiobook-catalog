@@ -1,10 +1,10 @@
-import '../db/models';
+import '~db/models';
 
 import minimist from 'minimist';
 import { exit } from 'process';
 
-import AudiobookTag from '../db/models/AudiobookTag';
-import Tag from '../db/models/Tag';
+import AudiobookTag from '~db/models/AudiobookTag';
+import Tag from '~db/models/Tag';
 
 const opts = {
   help: ['h', 'boolean', 'Show this help', false],

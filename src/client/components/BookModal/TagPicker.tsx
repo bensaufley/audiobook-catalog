@@ -1,5 +1,5 @@
 import { Signal, useSignal, useSignalEffect } from '@preact/signals';
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 import type { JSX } from 'preact';
 import { useRef } from 'preact/hooks';
 

@@ -1,5 +1,5 @@
 import { useSignalEffect } from '@preact/signals';
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 import type { FunctionComponent } from 'preact';
 import { useEffect, useRef } from 'preact/hooks';
 import TouchSweep from 'touchsweep';

@@ -1,5 +1,5 @@
 import { useComputed, useSignal } from '@preact/signals';
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 import type { JSX } from 'preact';
 import { useMemo, useRef } from 'preact/hooks';
 

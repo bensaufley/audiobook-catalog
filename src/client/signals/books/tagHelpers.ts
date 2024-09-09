@@ -1,6 +1,6 @@
 import { createTag, deleteTag as delTag, tagBook, untagBook } from '~client/fetches';
 import { tags } from '~client/signals/books';
-import type AudiobookTag from '~db/models/AudiobookTag';
+import type AudiobookTag from '~db/models/AudiobookTag.js';
 
 const sortTags = (a: { name: string }, b: { name: string }) =>
   a.name.localeCompare(b.name, undefined, { caseFirst: 'false' });

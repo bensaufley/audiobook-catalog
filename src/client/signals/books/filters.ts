@@ -15,7 +15,7 @@ import {
 } from '~client/signals/options';
 import { Read } from '~client/signals/options/enums';
 import { sorters, SortOrder } from '~client/signals/options/sort';
-import type { AudiobookJSON } from '~db/models/Audiobook';
+import type { AudiobookJSON } from '~db/models/Audiobook.js';
 
 import { equalArray } from './helpers';
 import { rawBooks, readBooks, stagedUpNextReorder, tags, upNext } from '.';

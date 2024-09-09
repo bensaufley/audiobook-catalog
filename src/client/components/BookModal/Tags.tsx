@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-no-useless-fragment */
 import { Signal } from '@preact/signals';
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 
 import { chooseBestContrast } from '~client/shared/colors';
 import { selectedBookId, tags } from '~client/signals/books';

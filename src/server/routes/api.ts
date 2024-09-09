@@ -1,13 +1,11 @@
 import type { FastifyPluginAsync } from 'fastify';
 import type { OpenAPIV3_1 } from 'openapi-types';
 
-import books from '~server/routes/api/books';
-import tags from '~server/routes/api/tags';
-import users from '~server/routes/api/users';
-
-import { fourOhFour } from '../utils/schema';
-
-import modelSchemas from './api/modelSchema';
+import books from '~server/routes/api/books/index.js';
+import modelSchemas from '~server/routes/api/modelSchema.js';
+import tags from '~server/routes/api/tags.js';
+import users from '~server/routes/api/users.js';
+import { fourOhFour } from '~server/utils/schema.js';
 
 const api: FastifyPluginAsync = async (fastify, _opts) => {
   fastify.addSchema({

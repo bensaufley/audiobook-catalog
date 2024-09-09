@@ -1,16 +1,14 @@
 {
   "compilerOptions": {
+    "composite": true,
     "target": "ESNext",
 
     "module": "ESNext",
-    "baseUrl": "./",
+    "baseUrl": ".",
     "paths": {
-      "~client/*": ["src/client/*"],
-      "~db/*": ["src/db/*"],
-      "~icons/*": ["./node_modules/bootstrap-icons/icons/*"],
-      "~server/*": ["src/server/*"],
-      "~shared/*": ["src/shared/*"],
-      "~test/*": ["test/*"]
+      "~db/*": ["./src/db/*"],
+      "~shared/*": ["./src/shared/*"],
+      "~test/*": ["./test/*"]
     },
     "moduleResolution": "Bundler",
     "resolveJsonModule": true,
@@ -33,6 +31,6 @@
 
     "skipLibCheck": true
   },
-  "include": ["./*.js", "./*.ts", "src", "test"],
+  "include": ["./*.js", "./*.ts", "src/db", "src/shared", "test"],
   "exclude": ["node_modules/@types/react", "node_modules/@types/react-transition-group"]
 }

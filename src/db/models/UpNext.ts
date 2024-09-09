@@ -9,11 +9,10 @@ import {
   type Sequelize,
 } from 'sequelize';
 
-import type Audiobook from './Audiobook';
-import type { InferJSONAttributes } from './types';
-import type User from './User';
-
-import type models from '.';
+import type Audiobook from '~db/models/Audiobook.js';
+import type models from '~db/models/index.js';
+import type { InferJSONAttributes } from '~db/models/types.js';
+import type User from '~db/models/User.js';
 
 export default class UpNext extends Model<InferAttributes<UpNext>, InferCreationAttributes<UpNext>> {
   public declare AudiobookId: string;

@@ -9,11 +9,10 @@ import { readFile } from 'node:fs/promises';
 import type { Server } from 'node:http';
 import { resolve } from 'node:path';
 
-import { umzug } from '~db/migrations';
-import User from '~db/models/User';
-
-import api from './routes/api';
-import type { UserRequest } from './routes/api/types';
+import { umzug } from '~db/migrations/index.js';
+import User from '~db/models/User.js';
+import api from '~server/routes/api.js';
+import type { UserRequest } from '~server/routes/api/types.js';
 
 const logLevels = ['trace', 'debug', 'info', 'warn', 'error'];
 const sanitizeLogLevel = (level?: string) => {

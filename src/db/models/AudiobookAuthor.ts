@@ -1,8 +1,8 @@
 import { type Association, Model, type Sequelize, STRING } from 'sequelize';
 
-import type models from '~db/models';
-import type Audiobook from '~db/models/Audiobook';
-import type Author from '~db/models/Author';
+import type Audiobook from '~db/models/Audiobook.js';
+import type Author from '~db/models/Author.js';
+import type models from '~db/models/index.js';
 
 export interface AudiobookAuthorAttributes {
   AudiobookId: string;

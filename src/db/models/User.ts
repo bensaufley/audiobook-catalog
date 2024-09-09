@@ -13,11 +13,10 @@ import {
   UUIDV4,
 } from 'sequelize';
 
-import type models from '~db/models';
-import type Audiobook from '~db/models/Audiobook';
-import type UserAudiobook from '~db/models/UserAudiobook';
-
-import type UpNext from './UpNext';
+import type Audiobook from '~db/models/Audiobook.js';
+import type models from '~db/models/index.js';
+import type UpNext from '~db/models/UpNext.js';
+import type UserAudiobook from '~db/models/UserAudiobook.js';
 
 export default class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   public declare id: CreationOptional<string>;

@@ -1,5 +1,5 @@
 import { batch, useSignal } from '@preact/signals';
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 import type { FunctionComponent } from 'preact';
 
 import NewUser from '~client/components/UserManagement/NewUser';

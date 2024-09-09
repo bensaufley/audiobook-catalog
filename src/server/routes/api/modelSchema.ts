@@ -1,6 +1,6 @@
 import { JsonSchemaManager, OpenApi3Strategy } from '@alt3/sequelize-to-json-schemas';
 
-import models from '~db/models';
+import models from '~db/models/index.js';
 
 const schemaManager = new JsonSchemaManager();
 

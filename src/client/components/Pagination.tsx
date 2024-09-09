@@ -1,5 +1,5 @@
 import { useComputed } from '@preact/signals';
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 import type { JSX } from 'preact';
 
 import { page, pages, perPage, perPageOptions } from '~client/signals/options';

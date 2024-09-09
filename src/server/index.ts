@@ -3,10 +3,9 @@
 import type { AddressInfo } from 'net';
 import type httpDevServer from 'vavite/http-dev-server';
 
-import sequelize from '~db/sequelize';
-import init from '~server/init';
-
-import watch from './filesystem/watch';
+import sequelize from '~db/sequelize.js';
+import watch from '~server/filesystem/watch.js';
+import init from '~server/init.js';
 
 const server = await init();
 

@@ -1,5 +1,5 @@
 import { addBookToUpNext, readBook, removeBookFromUpNext, reorderBooks, unreadBook } from '~client/fetches';
-import type { AudiobookJSON } from '~db/models/Audiobook';
+import type { AudiobookJSON } from '~db/models/Audiobook.js';
 
 import { currentUserId } from '../user';
 
