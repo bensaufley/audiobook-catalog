@@ -1,6 +1,6 @@
 /// <reference types="vite/client" />
 /* eslint-disable import/no-extraneous-dependencies */
-import preact from '@preact/preset-vite';
+import { preact } from '@preact/preset-vite';
 import { resolve } from 'node:path';
 import { vavite } from 'vavite';
 import { defineConfig, type UserConfig } from 'vite';

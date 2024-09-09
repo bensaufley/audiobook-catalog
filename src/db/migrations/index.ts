@@ -1,9 +1,9 @@
 import { basename } from 'node:path';
-import pino from 'pino';
+import { pino } from 'pino';
 import type { QueryInterface } from 'sequelize';
 import { type RunnableMigration, SequelizeStorage, Umzug } from 'umzug';
 
-import sequelize from '~db/sequelize';
+import sequelize from '~db/sequelize.js';
 
 const migrations = Object.entries(import.meta.glob('./*.*.*.ts', { eager: true })).map(
   ([path, mod]): RunnableMigration<QueryInterface> => {

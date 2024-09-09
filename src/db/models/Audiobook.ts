@@ -14,21 +14,20 @@ import {
   UUIDV4,
 } from 'sequelize';
 
-import type models from '~db/models';
-import type Author from '~db/models/Author';
-import type { AuthorAttributes } from '~db/models/Author';
-import type Narrator from '~db/models/Narrator';
-import type { NarratorAttributes } from '~db/models/Narrator';
-import type User from '~db/models/User';
-import type UserAudiobook from '~db/models/UserAudiobook';
-import type { UserAudiobookJSON } from '~db/models/UserAudiobook';
-
-import type AudiobookAuthor from './AudiobookAuthor';
-import type AudiobookNarrator from './AudiobookNarrator';
-import type AudiobookTag from './AudiobookTag';
-import type Tag from './Tag';
-import type { InferJSONAttributes } from './types';
-import type UpNext from './UpNext';
+import type AudiobookAuthor from '~db/models/AudiobookAuthor.js';
+import type AudiobookNarrator from '~db/models/AudiobookNarrator.js';
+import type AudiobookTag from '~db/models/AudiobookTag.js';
+import type Author from '~db/models/Author.js';
+import type { AuthorAttributes } from '~db/models/Author.js';
+import type models from '~db/models/index.js';
+import type Narrator from '~db/models/Narrator.js';
+import type { NarratorAttributes } from '~db/models/Narrator.js';
+import type Tag from '~db/models/Tag.js';
+import type { InferJSONAttributes } from '~db/models/types.js';
+import type UpNext from '~db/models/UpNext.js';
+import type User from '~db/models/User.js';
+import type UserAudiobook from '~db/models/UserAudiobook.js';
+import type { UserAudiobookJSON } from '~db/models/UserAudiobook.js';
 
 interface NullCoverProps {
   cover: null;

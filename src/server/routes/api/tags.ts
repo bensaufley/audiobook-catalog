@@ -1,9 +1,9 @@
 import s from 'ajv-ts';
 import type { FastifyPluginAsync } from 'fastify';
 
-import Tag from '~db/models/Tag';
-import sequelize from '~db/sequelize';
-import { onlyUserHeader } from '~server/utils/schema';
+import Tag from '~db/models/Tag.js';
+import sequelize from '~db/sequelize.js';
+import { onlyUserHeader } from '~server/utils/schema.js';
 
 const tags: FastifyPluginAsync = async (fastify, _opts) => {
   fastify.get('/', {

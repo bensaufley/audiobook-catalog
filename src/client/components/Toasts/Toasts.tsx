@@ -1,4 +1,4 @@
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 import { useEffect } from 'preact/hooks';
 
 import useEvent from '~client/hooks/useEvent';

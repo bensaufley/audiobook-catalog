@@ -7,7 +7,7 @@ import { chmod, mkdir, readdir, readFile, rm, stat, writeFile } from 'node:fs/pr
 import { basename, extname, resolve } from 'node:path';
 import { rimraf } from 'rimraf';
 
-import tsconfig from '../../tsconfig.json' with { type: 'json' };
+import tsconfig from '../../src/server/tsconfig.json' with { type: 'json' };
 
 const dirname = import.meta.dirname ?? __dirname;
 
@@ -43,6 +43,13 @@ if (Object.values(tsconfig.compilerOptions.paths).some((path) => path.length !==
 
 const nodeVersion = (await readFile(resolve(dirname, '../../.node-version'), 'utf-8')).trim();
 
+const aliases = Object.fromEntries(
+  Object.entries(tsconfig.compilerOptions.paths).map(([alias, target]) => [
+    alias,
+    resolve(dirname, '../../src/server', target[0].replace(/\/\*$/, '')),
+  ]),
+);
+
 await build({
   entryPoints,
   bundle: true,
@@ -53,12 +60,7 @@ await build({
   target: `node${nodeVersion}`,
   plugins: [
     aliasPath({
-      alias: Object.fromEntries(
-        Object.entries(tsconfig.compilerOptions.paths).map(([alias, target]) => [
-          alias,
-          resolve(dirname, '../../', target[0].replace(/\/\*$/, '')),
-        ]),
-      ),
+      alias: aliases,
     }),
   ],
 });

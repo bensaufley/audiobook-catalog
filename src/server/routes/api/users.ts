@@ -1,7 +1,7 @@
 import s from 'ajv-ts';
 import type { FastifyPluginAsync, FastifyRequest } from 'fastify';
 
-import User from '~db/models/User';
+import User from '~db/models/User.js';
 
 const users: FastifyPluginAsync = async (fastify, _opts) => {
   fastify.get('/', {

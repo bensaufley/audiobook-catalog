@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "~server/*": ["./*"],
+      "~db/*": ["../db/*"],
+      "~shared/*": ["../shared/*"]
+    },
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "rootDir": "../../"
+  },
+  "include": ["../../vite.config.ts", "../../vitest.config.ts", "../db", "../shared", "."]
+}

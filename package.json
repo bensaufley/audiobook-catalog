@@ -10,7 +10,7 @@
     "chokidar": "^3.6.0",
     "fastify": "^4.28.1",
     "minimist": "^1.2.8",
-    "music-metadata": "^7.14.0",
+    "music-metadata": "^10.5.0",
     "pino": "^8.21.0",
     "pino-http": "^9.0.0",
     "sequelize": "^6.37.3",
@@ -82,7 +82,7 @@
     "node": ">=22.0.0"
   },
   "license": "MIT",
-  "main": ".build/server/index.js",
+  "exports": "./.build/server/index.js",
   "name": "audiobook-catalog",
   "repository": "https://github.com/bensaufley/audiobook-catalog",
   "scripts": {
@@ -100,7 +100,10 @@
     "start": "node .build/server/index.js",
     "script": "runScript() { file=\"$1.ts\"; shift; tsx \"./src/scripts/$file\" \"${@}\"; }; runScript",
     "test": "vitest",
-    "typecheck": "tsc --noEmit",
+    "typecheck:client": "tsc --noEmit --project ./src/client/tsconfig.json",
+    "typecheck:server": "tsc --noEmit --project ./src/server/tsconfig.json",
+    "typecheck:shared": "tsc --noEmit --project ./tsconfig.json",
+    "typecheck": "npm-run-all --parallel --continue-on-error --aggregate-output typecheck:client typecheck:server typecheck:shared",
     "version": "sh ./script/build/version.sh"
   },
   "type": "module",

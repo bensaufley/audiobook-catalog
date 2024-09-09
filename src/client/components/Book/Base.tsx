@@ -1,5 +1,5 @@
 import { useComputed } from '@preact/signals';
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 import type { ComponentChildren, JSX, Ref } from 'preact';
 
 import { rawBooks } from '~client/signals/books';

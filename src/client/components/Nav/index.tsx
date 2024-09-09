@@ -1,5 +1,5 @@
 import { useSignal } from '@preact/signals';
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 import type { JSX } from 'preact';
 
 import UserManagement from '~client/components/UserManagement';

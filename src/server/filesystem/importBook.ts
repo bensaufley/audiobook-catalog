@@ -1,11 +1,12 @@
 import type { FastifyBaseLogger } from 'fastify';
 import { parseFile } from 'music-metadata';
+import { Buffer } from 'node:buffer';
 import { format } from 'node:util';
 import type { Sequelize } from 'sequelize';
 
-import Audiobook from '~db/models/Audiobook';
-import Author from '~db/models/Author';
-import Narrator from '~db/models/Narrator';
+import Audiobook from '~db/models/Audiobook.js';
+import Author from '~db/models/Author.js';
+import Narrator from '~db/models/Narrator.js';
 
 const importBook = async (
   filepath: string,
@@ -35,7 +36,7 @@ const importBook = async (
 
   const audiobook = await Audiobook.create(
     {
-      cover,
+      cover: cover ? Buffer.from(cover) : null,
       coverType,
       filepath,
       title: name,

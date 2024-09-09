@@ -1,6 +1,6 @@
 import { DATE, INTEGER, UUIDV4 } from 'sequelize';
 
-import type { Migration } from '~db/migrations';
+import type { Migration } from '~db/migrations/index.js';
 
 export const up: Migration = async ({ context: queryInterface }) =>
   queryInterface.sequelize.transaction(async (transaction) => {

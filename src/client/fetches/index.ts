@@ -1,7 +1,7 @@
-import type { AudiobookJSON } from '~db/models/Audiobook';
-import type { TagJSON } from '~db/models/Tag';
-import type { UpNextJSON } from '~db/models/UpNext';
-import type User from '~db/models/User';
+import type { AudiobookJSON } from '~db/models/Audiobook.js';
+import type { TagJSON } from '~db/models/Tag.js';
+import type { UpNextJSON } from '~db/models/UpNext.js';
+import type User from '~db/models/User.js';
 
 import createFetch, { Needs } from './createFetch';
 

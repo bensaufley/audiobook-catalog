@@ -1,7 +1,7 @@
-import pino from 'pino';
+import { pino } from 'pino';
 import { SequelizeStorage, Umzug } from 'umzug';
 
-import sequelize from '~db/sequelize';
+import sequelize from '~db/sequelize.js';
 
 // eslint-disable-next-line import/prefer-default-export
 export const umzug = new Umzug({

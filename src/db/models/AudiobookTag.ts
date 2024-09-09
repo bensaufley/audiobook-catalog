@@ -8,10 +8,9 @@ import {
   type Sequelize,
 } from 'sequelize';
 
-import type Audiobook from './Audiobook';
-import type Tag from './Tag';
-
-import type models from '.';
+import type Audiobook from '~db/models/Audiobook.js';
+import type models from '~db/models/index.js';
+import type Tag from '~db/models/Tag.js';
 
 export default class AudiobookTag extends Model<InferAttributes<AudiobookTag>, InferCreationAttributes<AudiobookTag>> {
   public declare AudiobookId: string;

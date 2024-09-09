@@ -1,6 +1,6 @@
 import type { FastifyReply, FastifyRequest, RouteGenericInterface } from 'fastify';
 
-import type User from '~db/models/User';
+import type User from '~db/models/User.js';
 
 export type UserRequest<
   T extends RouteGenericInterface = RouteGenericInterface,

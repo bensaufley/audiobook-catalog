@@ -1,14 +1,14 @@
-import Audiobook from '~db/models/Audiobook';
-import AudiobookAuthor from '~db/models/AudiobookAuthor';
-import AudiobookNarrator from '~db/models/AudiobookNarrator';
-import AudiobookTag from '~db/models/AudiobookTag';
-import Author from '~db/models/Author';
-import Narrator from '~db/models/Narrator';
-import Tag from '~db/models/Tag';
-import UpNext from '~db/models/UpNext';
-import User from '~db/models/User';
-import UserAudiobook from '~db/models/UserAudiobook';
-import sequelize from '~db/sequelize';
+import Audiobook from '~db/models/Audiobook.js';
+import AudiobookAuthor from '~db/models/AudiobookAuthor.js';
+import AudiobookNarrator from '~db/models/AudiobookNarrator.js';
+import AudiobookTag from '~db/models/AudiobookTag.js';
+import Author from '~db/models/Author.js';
+import Narrator from '~db/models/Narrator.js';
+import Tag from '~db/models/Tag.js';
+import UpNext from '~db/models/UpNext.js';
+import User from '~db/models/User.js';
+import UserAudiobook from '~db/models/UserAudiobook.js';
+import sequelize from '~db/sequelize.js';
 
 const models = {
   Audiobook: Audiobook.generate(sequelize),

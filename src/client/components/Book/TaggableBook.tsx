@@ -1,5 +1,5 @@
 import { useComputed, useSignal } from '@preact/signals';
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 
 import { untagBook } from '~client/fetches';
 import useEvent from '~client/hooks/useEvent';

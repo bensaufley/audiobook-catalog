@@ -3,13 +3,13 @@ import type { FastifyPluginAsync } from 'fastify';
 import { basename } from 'path';
 import { Op } from 'sequelize';
 
-import Audiobook from '~db/models/Audiobook';
-import Tag from '~db/models/Tag';
-import UpNext from '~db/models/UpNext';
-import UserAudiobook from '~db/models/UserAudiobook';
+import Audiobook from '~db/models/Audiobook.js';
+import Tag from '~db/models/Tag.js';
+import UpNext from '~db/models/UpNext.js';
+import UserAudiobook from '~db/models/UserAudiobook.js';
 
-import { bookIdParams, onlyUserHeader } from '../../../utils/schema';
-import { checkForUser, type UserRequest } from '../types';
+import { bookIdParams, onlyUserHeader } from '../../../utils/schema.js';
+import { checkForUser, type UserRequest } from '../types.js';
 
 interface BookParams {
   Params: { bookId: string };

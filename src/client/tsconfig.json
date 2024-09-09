@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "~client/*": ["./*"],
+      "~icons/*": ["../../node_modules/bootstrap-icons/icons/*"],
+      "~db/*": ["../db/*"],
+      "~shared/*": ["../shared/*"]
+    },
+    "rootDir": "../../"
+  },
+  "include": ["../../vite.config.ts", "../../vitest.config.ts", "../db", "../shared", "."]
+}

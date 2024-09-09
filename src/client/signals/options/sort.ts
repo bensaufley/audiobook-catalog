@@ -1,4 +1,4 @@
-import type { AudiobookJSON } from '~db/models/Audiobook';
+import type { AudiobookJSON } from '~db/models/Audiobook.js';
 
 export enum SortBy {
   Author = 'Author',

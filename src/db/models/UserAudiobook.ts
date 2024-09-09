@@ -1,8 +1,8 @@
 import { type Association, BOOLEAN, Model, type Sequelize, STRING } from 'sequelize';
 
-import type models from '~db/models';
-import type Audiobook from '~db/models/Audiobook';
-import type User from '~db/models/User';
+import type Audiobook from '~db/models/Audiobook.js';
+import type models from '~db/models/index.js';
+import type User from '~db/models/User.js';
 
 export interface UserAudiobookAttributes {
   read: boolean;

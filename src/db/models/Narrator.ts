@@ -1,7 +1,7 @@
 import { type Association, Model, type Optional, type Sequelize, STRING, UUID, UUIDV4 } from 'sequelize';
 
-import type models from '~db/models';
-import type Audiobook from '~db/models/Audiobook';
+import type Audiobook from '~db/models/Audiobook.js';
+import type models from '~db/models/index.js';
 
 export interface NarratorAttributes {
   id: string;

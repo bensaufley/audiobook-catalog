@@ -15,10 +15,9 @@ import {
   UUIDV4,
 } from 'sequelize';
 
-import type Audiobook from './Audiobook';
-import type AudiobookTag from './AudiobookTag';
-
-import type models from '.';
+import type Audiobook from '~db/models/Audiobook.js';
+import type AudiobookTag from '~db/models/AudiobookTag.js';
+import type models from '~db/models/index.js';
 
 export default class Tag extends Model<InferAttributes<Tag>, InferCreationAttributes<Tag>> {
   public declare id: CreationOptional<string>;

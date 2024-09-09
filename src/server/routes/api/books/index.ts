@@ -1,15 +1,15 @@
 import s from 'ajv-ts';
 import type { FastifyPluginAsync } from 'fastify';
 
-import Audiobook from '~db/models/Audiobook';
-import UpNext from '~db/models/UpNext';
-import UserAudiobook from '~db/models/UserAudiobook';
-import sequelize from '~db/sequelize';
-import { onlyUserHeader } from '~server/utils/schema';
+import Audiobook from '~db/models/Audiobook.js';
+import UpNext from '~db/models/UpNext.js';
+import UserAudiobook from '~db/models/UserAudiobook.js';
+import sequelize from '~db/sequelize.js';
+import { onlyUserHeader } from '~server/utils/schema.js';
 
-import { checkForUser, type UserRequest } from '../types';
+import { checkForUser, type UserRequest } from '../types.js';
 
-import book from './book';
+import book from './book.js';
 
 type BooksRequest = UserRequest<{ Querystring: { page?: number; perPage?: number } }>;
 

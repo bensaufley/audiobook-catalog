@@ -5,10 +5,9 @@ import { copyFile, mkdir, writeFile } from 'node:fs/promises';
 import { extname } from 'node:path';
 import type { Sequelize } from 'sequelize';
 
-import type Audiobook from '~db/models/Audiobook';
-
-import checksum from './checksum';
-import importBook from './importBook';
+import type Audiobook from '~db/models/Audiobook.js';
+import checksum from '~server/filesystem/checksum.js';
+import importBook from '~server/filesystem/importBook.js';
 
 const extensions = ['.m4a', '.m4b'];
 

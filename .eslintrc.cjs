@@ -7,6 +7,8 @@ const config = {
     camelcase: ['error', { allow: ['OpenAPIV3_1'] }],
     'implicit-arrow-linebreak': 'off',
     'no-redeclare': 'off',
+    'import/extensions': 'off', // handled by typescript
+    'import/no-unresolved': 'off', // handled by typescript
   },
   overrides: [
     {

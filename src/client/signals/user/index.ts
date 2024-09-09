@@ -2,7 +2,7 @@ import { computed, effect, Signal } from '@preact/signals';
 import dayjs from 'dayjs';
 import cookie from 'js-cookie';
 
-import type { UserAttributes } from '~db/models/User';
+import type { UserAttributes } from '~db/models/User.js';
 
 const userCookieName = 'audiobook-catalog-user';
 
