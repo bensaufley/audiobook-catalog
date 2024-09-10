@@ -38,32 +38,41 @@ function conditionalBooksMutation<T>(
   filter: BooksMutationWithSignal<NonNullable<T>>,
 ): BooksMutation;
 function conditionalBooksMutation(
-  signal: Signal<any>,
-  opts: { if?: any; unless?: any; any?: boolean },
-  cb: BooksMutationWithSignal<any>,
+  signal: Signal<unknown>,
+  opts: { if: unknown } | { unless: unknown } | { any: boolean },
+  cb: BooksMutationWithSignal<unknown>,
 ): BooksMutation {
   return (books) => {
-    if ('if' in opts || 'unless' in opts) {
-      const conditional = opts.if || opts.unless;
-      const modBooks = (useCb = true) => {
-        if (opts.unless) return useCb ? books : cb(books, signal.value);
-        return useCb ? cb(books, signal.value) : books;
-      };
+    let matches = false;
+    let inverse = false;
 
-      if (Array.isArray(conditional) && Array.isArray(signal.value)) {
-        return equalArray(signal.value, conditional) ? modBooks() : modBooks(false);
+    const sigVal = signal.value;
+
+    if ('any' in opts) {
+      matches = Array.isArray(sigVal) ? sigVal.length > 0 : !!sigVal;
+      inverse = !opts.any;
+    } else {
+      let comparison: unknown;
+      if ('if' in opts) {
+        comparison = opts.if;
+      } else {
+        comparison = opts.unless;
+        inverse = true;
       }
-      if (Array.isArray(conditional)) return conditional.includes(signal.value) ? modBooks() : modBooks(false);
-      if (Array.isArray(signal.value)) return signal.value.includes(conditional) ? modBooks() : modBooks(false);
-      return conditional === signal.value ? modBooks() : modBooks(false);
+
+      if (Array.isArray(comparison) && Array.isArray(sigVal)) {
+        matches = equalArray(sigVal, comparison);
+      } else if (Array.isArray(comparison)) {
+        matches = comparison.includes(sigVal);
+      } else if (Array.isArray(sigVal)) {
+        matches = sigVal.includes(comparison);
+      } else {
+        matches = comparison === sigVal;
+      }
     }
-    if (opts.any === true) {
-      return (Array.isArray(signal.value) ? signal.value.length > 0 : !!signal.value) ? cb(books, signal.value) : books;
-    }
-    if (opts.any === false) {
-      return (Array.isArray(signal.value) ? signal.value.length > 0 : !!signal.value) ? books : cb(books, signal.value);
-    }
-    return books;
+
+    if (matches) return inverse ? books : cb(books, sigVal);
+    return inverse ? cb(books, sigVal) : books;
   };
 }
 
