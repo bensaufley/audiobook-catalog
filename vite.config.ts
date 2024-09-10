@@ -77,6 +77,7 @@ export default defineConfig({
     }),
     vavite({
       bundleSirv: false,
+      handlerEntry: 'src/server/handler.ts',
       serverEntry: 'src/server/index.ts',
       reloadOn: 'any-change',
       serveClientAssetsInDev: true,

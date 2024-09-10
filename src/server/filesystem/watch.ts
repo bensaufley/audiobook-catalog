@@ -1,4 +1,4 @@
-import { watch } from 'chokidar';
+import { watch as watchFiles } from 'chokidar';
 import type { FastifyBaseLogger } from 'fastify';
 import { existsSync, rmSync } from 'node:fs';
 import { copyFile, mkdir, writeFile } from 'node:fs/promises';
@@ -64,8 +64,8 @@ const addBook = (sequelize: Sequelize, log: FastifyBaseLogger) => async (path: s
     });
 };
 
-const start = (sequelize: Sequelize, log: FastifyBaseLogger) => {
-  const watcher = watch('/import/*', {
+const watch = (sequelize: Sequelize, log: FastifyBaseLogger) => {
+  const watcher = watchFiles('/import/*', {
     awaitWriteFinish: true,
     followSymlinks: false,
   });
@@ -79,4 +79,4 @@ const start = (sequelize: Sequelize, log: FastifyBaseLogger) => {
   };
 };
 
-export default start;
+export default watch;

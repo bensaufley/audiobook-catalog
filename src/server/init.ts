@@ -4,10 +4,10 @@ import fastifyEtag from '@fastify/etag';
 import fastifyStatic from '@fastify/static';
 import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
-import Fastify, { type FastifyBaseLogger, type FastifyServerOptions } from 'fastify';
+import Fastify from 'fastify';
 import { readFile } from 'node:fs/promises';
-import type { Server } from 'node:http';
 import { resolve } from 'node:path';
+import type { PrettyOptions } from 'pino-pretty';
 
 import { umzug } from '~db/migrations/index.js';
 import User from '~db/models/User.js';
@@ -26,18 +26,6 @@ const sanitizeLogLevel = (level?: string) => {
 const init = async () => {
   await umzug.up();
 
-  let devServerOpts: Pick<FastifyServerOptions<Server, FastifyBaseLogger>, 'serverFactory'> | undefined;
-  if (import.meta.env.DEV) {
-    // eslint-disable-next-line import/no-extraneous-dependencies
-    const { default: devServer } = await import('vavite/http-dev-server');
-    devServerOpts = {
-      serverFactory: (handler) => {
-        devServer!.on('request', handler);
-        return devServer!;
-      },
-    };
-  }
-
   const server = Fastify({
     logger: {
       level: sanitizeLogLevel(process.env.LOG_LEVEL),
@@ -45,11 +33,15 @@ const init = async () => {
         ? {
             transport: {
               target: 'pino-pretty',
+              options: {
+                colorize: true,
+                colorizeObjects: true,
+                hideObject: false,
+              } satisfies PrettyOptions,
             },
           }
         : {}),
     },
-    ...devServerOpts,
   });
 
   await server.register(swagger, {
