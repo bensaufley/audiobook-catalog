@@ -1,6 +1,7 @@
 import { batch, useSignal } from '@preact/signals';
 import { clsx } from 'clsx';
 import type { FunctionComponent } from 'preact';
+import { useRef } from 'preact/hooks';
 
 import NewUser from '~client/components/UserManagement/NewUser';
 import useEvent from '~client/hooks/useEvent';
@@ -9,9 +10,14 @@ import { Read } from '~client/signals/options/enums';
 import { currentUser, currentUserId, fetchingUsers, users } from '~client/signals/user';
 import User from '~icons/person-fill.svg?react';
 
+import useEscape from '../../hooks/useEscape';
+
 const UserManagement: FunctionComponent = () => {
+  const ref = useRef<HTMLLIElement>(null);
   const userMenuOpen = useSignal(false);
   const showNewUser = useSignal(false);
+
+  useEscape(userMenuOpen, ref);
 
   const handleSelect = useEvent((value: string) => {
     switch (value) {
@@ -41,7 +47,7 @@ const UserManagement: FunctionComponent = () => {
 
   return (
     <>
-      <li class="nav-item dropdown align-lg-end">
+      <li class="nav-item dropdown align-lg-end" ref={ref}>
         <button
           type="button"
           class="nav-link dropdown-toggle"

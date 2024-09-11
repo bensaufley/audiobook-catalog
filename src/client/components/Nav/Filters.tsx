@@ -1,6 +1,7 @@
 import { useSignal } from '@preact/signals';
 import { clsx } from 'clsx';
 import type { JSX } from 'preact';
+import { useRef } from 'preact/hooks';
 
 import { chooseBestContrast } from '~client/shared/colors';
 import { bulkTag, tags } from '~client/signals/books';
@@ -9,7 +10,11 @@ import { filterByTag, filterByTagUnionType, search } from '~client/signals/optio
 import Collection from '~icons/collection.svg?react';
 import CollectionFill from '~icons/collection-fill.svg?react';
 import Filter from '~icons/filter.svg?react';
+import Plus from '~icons/plus.svg?react';
 import X from '~icons/x.svg?react';
+
+import useEscape from '../../hooks/useEscape';
+import AddTag from '../AddTag';
 
 const CollectionIcon = ({ name, ...rest }: { name: string } & JSX.SVGAttributes<SVGSVGElement>) => {
   const Icon = bulkTag.value === name ? CollectionFill : Collection;
@@ -17,7 +22,12 @@ const CollectionIcon = ({ name, ...rest }: { name: string } & JSX.SVGAttributes<
 };
 
 const Filters = () => {
+  const ref = useRef<HTMLUListElement>(null);
   const open = useSignal(false);
+  const showAddTag = useSignal(false);
+  const addingTag = useSignal(false);
+
+  useEscape(open, ref);
 
   return (
     <li class="nav-item dropdown">
@@ -35,6 +45,7 @@ const Filters = () => {
       </button>
       <ul
         class={clsx('dropdown-menu', open.value && 'show')}
+        ref={ref}
         style={{ minWidth: 'max-content', maxWidth: '100vw', right: 0 }}
       >
         <li class="px-3 py-2">
@@ -169,6 +180,20 @@ const Filters = () => {
             </button>
           </li>
         ))}
+        <li class="dropdown-divider" />
+        <li>
+          <button
+            class="dropdown-item"
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              showAddTag.value = !showAddTag.peek();
+            }}
+          >
+            <Plus /> Add Tag
+          </button>
+        </li>
+        <AddTag disabled={addingTag} shown={showAddTag} />
       </ul>
     </li>
   );
