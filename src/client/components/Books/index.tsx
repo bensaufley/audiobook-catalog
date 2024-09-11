@@ -1,8 +1,5 @@
-import { useSignalEffect } from '@preact/signals';
 import { clsx } from 'clsx';
 import type { FunctionComponent } from 'preact';
-import { useEffect, useRef } from 'preact/hooks';
-import TouchSweep from 'touchsweep';
 
 import Book from '~client/components/Book';
 import BookModal from '~client/components/BookModal';
@@ -11,42 +8,15 @@ import { books } from '~client/signals/books/filters';
 import { page, pages, showUpNext, sizeColumns } from '~client/signals/options';
 import { clamp } from '~shared/utilities';
 
+import useQuickNav from '../../hooks/useQuickNav';
 import Pagination from '../Pagination';
 
 import styles from '~client/components/Books/styles.module.css';
 
 const Books: FunctionComponent = () => {
-  const ref = useRef<HTMLDivElement>(null);
-  const touchSweep = useRef<TouchSweep>();
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return undefined;
-
-    const instance = new TouchSweep(el);
-    touchSweep.current = instance;
-
-    const movePage = (delta: number) => () => {
-      const newVal = clamp(0, page.peek() + delta, pages.peek());
-      if (page.peek() !== newVal) page.value = newVal;
-    };
-
-    const handleSwipeLeft = movePage(1);
-    const handleSwipeRight = movePage(-1);
-
-    el.addEventListener('swipeleft', handleSwipeLeft);
-    el.addEventListener('swiperight', handleSwipeRight);
-
-    return () => {
-      el.removeEventListener('swipeleft', handleSwipeLeft);
-      el.removeEventListener('swiperight', handleSwipeRight);
-      instance.unbind();
-    };
-  }, [books.value]);
-
-  useSignalEffect(() => {
-    if (!selectedBookId.value) touchSweep.current?.bind();
-    else touchSweep.current?.unbind();
+  const ref = useQuickNav<HTMLDivElement>(!selectedBookId.value, (delta: number) => {
+    const newVal = clamp(0, page.peek() + delta, pages.peek());
+    if (page.peek() !== newVal) page.value = newVal;
   });
 
   if (!books.value) {
