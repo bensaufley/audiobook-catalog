@@ -12,6 +12,7 @@ import {
   showUpNext,
   sortBy,
   sortOrder,
+  UNTAGGED,
 } from '~client/signals/options';
 import { Read } from '~client/signals/options/enums';
 import { sorters, SortOrder } from '~client/signals/options/sort';
@@ -79,7 +80,9 @@ function conditionalBooksMutation(
 export const byTag = conditionalBooksMutation(filterByTag, { any: true }, (books, filterTags) =>
   books.filter(({ id }) =>
     filterTags[filterByTagUnionType.value === 'and' ? 'every' : 'some']((tag) =>
-      tags.value?.find(({ name }) => name === tag)?.AudiobookTags?.some(({ AudiobookId }) => AudiobookId === id),
+      tag === UNTAGGED
+        ? !tags.value?.some(({ AudiobookTags = [] }) => AudiobookTags.some(({ AudiobookId }) => AudiobookId === id))
+        : tags.value?.find(({ name }) => name === tag)?.AudiobookTags?.some(({ AudiobookId }) => AudiobookId === id),
     ),
   ),
 );

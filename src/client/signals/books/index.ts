@@ -25,6 +25,13 @@ export const selectedBook = computed(() => {
   return rawBooks.value?.find(({ id }) => id === selectedBookId.value);
 });
 
+export const untaggedBooks = computed(() =>
+  (rawBooks.value ?? [])?.filter(
+    (book) =>
+      !tags.value?.some(({ AudiobookTags = [] }) => AudiobookTags.some(({ AudiobookId }) => AudiobookId === book.id)),
+  ),
+);
+
 /* eslint-disable no-param-reassign */
 const updateSignal = async <T, R>(
   signal: Signal<T>,
@@ -48,10 +55,10 @@ effect(() => {
   refreshToken.value;
 
   updateSignal(rawBooks, undefined, getBooks, 'audiobooks');
+  updateSignal(tags, [], getTags, 'tags');
 
   if (currentUser.value) {
     updateSignal(readBooks, [], getRead, 'bookIds');
-    updateSignal(tags, [], getTags, 'tags');
     updateSignal(upNext, [], getUpNext, 'upNexts');
   }
 });

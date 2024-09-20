@@ -4,13 +4,14 @@ import type { JSX } from 'preact';
 import { useRef } from 'preact/hooks';
 
 import { chooseBestContrast } from '~client/shared/colors';
-import { bulkTag, tags } from '~client/signals/books';
+import { bulkTag, tags, untaggedBooks } from '~client/signals/books';
 import { deleteTag } from '~client/signals/books/tagHelpers';
-import { filterByTag, filterByTagUnionType, search } from '~client/signals/options';
+import { filterByTag, filterByTagUnionType, search, UNTAGGED } from '~client/signals/options';
 import Collection from '~icons/collection.svg?react';
 import CollectionFill from '~icons/collection-fill.svg?react';
 import Filter from '~icons/filter.svg?react';
 import Plus from '~icons/plus.svg?react';
+import QuestionLg from '~icons/question-lg.svg?react';
 import X from '~icons/x.svg?react';
 
 import useEscape from '../../hooks/useEscape';
@@ -98,6 +99,7 @@ const Filters = () => {
             </button>
             <button
               type="button"
+              disabled={filterByTag.value.includes(UNTAGGED)}
               onClick={(e) => {
                 e.preventDefault();
                 filterByTagUnionType.value = 'and';
@@ -145,10 +147,9 @@ const Filters = () => {
                 &nbsp;
               </div>
               <span>{name}</span>
-              <small>{AudiobookTags?.length ?? 0}</small>
+              <small class="ms-auto opacity-75">{AudiobookTags?.length ?? 0}</small>
               <CollectionIcon
                 name={name}
-                class="ms-auto"
                 width="1rem"
                 height="1rem"
                 tabIndex={0}
@@ -180,6 +181,38 @@ const Filters = () => {
             </button>
           </li>
         ))}
+        <li>
+          <button
+            class={clsx(
+              'dropdown-item',
+              'd-flex',
+              'align-items-center',
+              'gap-2',
+              filterByTag.value.includes(UNTAGGED) && 'active',
+            )}
+            onClick={(e) => {
+              e.preventDefault();
+              if (filterByTag.value.includes(UNTAGGED)) {
+                filterByTag.value = filterByTag.peek().filter((v) => v !== UNTAGGED);
+              } else {
+                filterByTagUnionType.value = 'or';
+                filterByTag.value = [...filterByTag.peek(), UNTAGGED];
+              }
+            }}
+            type="button"
+          >
+            <div class="badge me-2 border border-secondary bg-transparent position-relative">
+              &nbsp;
+              <QuestionLg
+                className="position-absolute top-0 bottom-0 start-0 end-0 w-auto h-auto"
+                width="auto"
+                height="auto"
+              />
+            </div>
+            <span>Untagged</span>
+            <small class="ms-auto opacity-75">{untaggedBooks.value.length}</small>
+          </button>
+        </li>
         <li class="dropdown-divider" />
         <li>
           <button

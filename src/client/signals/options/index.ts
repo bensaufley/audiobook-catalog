@@ -11,6 +11,8 @@ export const refresh = () => {
   refreshToken.value = Date.now();
 };
 
+export const UNTAGGED = Symbol.for('ac:untagged');
+
 export const search = new Signal<string>('');
 export const page = new Signal<number>(0);
 export const pages = new Signal<number>(1);
@@ -20,7 +22,7 @@ export const size = new Signal<Size>(Size.Medium);
 export const sortBy = new Signal<SortBy>(SortBy.Author);
 export const sortOrder = new Signal<SortOrder>(SortOrder.Ascending);
 export const filterByTagUnionType = new Signal<'or' | 'and'>('or');
-export const filterByTag = new Signal<string[]>([]);
+export const filterByTag = new Signal<(string | typeof UNTAGGED)[]>([]);
 export const showUpNext = new Signal(false);
 
 effect(() => {
