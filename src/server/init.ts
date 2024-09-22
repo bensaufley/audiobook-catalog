@@ -56,12 +56,10 @@ const init = async () => {
 
   server.register(fastifyEtag);
 
-  if (import.meta.env.PROD) {
-    await server.register(fastifyStatic, {
-      root: resolve(import.meta.dirname, '../client/assets'),
-      prefix: '/assets/',
-    });
-  }
+  await server.register(fastifyStatic, {
+    root: resolve(import.meta.dirname, '../client/assets'),
+    prefix: '/assets/',
+  });
 
   server.decorateRequest<User | undefined>('user', undefined);
   server.addHook('preHandler', async (req: UserRequest) => {

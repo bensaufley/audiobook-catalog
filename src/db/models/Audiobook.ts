@@ -1,13 +1,15 @@
 import {
   type Association,
   type BelongsToManyAddAssociationMixin,
+  type BelongsToManyAddAssociationsMixin,
   type BelongsToManyGetAssociationsMixin,
   BLOB,
+  type CreationOptional,
   FLOAT,
   type HasManyGetAssociationsMixin,
   type InferAttributes,
+  type InferCreationAttributes,
   Model,
-  type Optional,
   type Sequelize,
   STRING,
   UUID,
@@ -46,11 +48,9 @@ export type AudiobookAttributes<HasCover extends boolean = boolean> = {
   duration: number | null;
 } & (HasCover extends true ? CoverProps : HasCover extends false ? NullCoverProps : CoverProps | NullCoverProps);
 
-type AudiobookCreationAttributes = Optional<AudiobookAttributes<boolean>, 'id'>;
-
 export default class Audiobook<HasCover extends boolean = boolean> extends Model<
   AudiobookAttributes<HasCover>,
-  AudiobookCreationAttributes
+  InferCreationAttributes<Audiobook>
 > {
   declare static associations: {
     Authors: Association<Audiobook, Author>;
@@ -61,7 +61,7 @@ export default class Audiobook<HasCover extends boolean = boolean> extends Model
     UserUpNexts: Association<Audiobook, User>;
   };
 
-  public declare id: string;
+  public declare id: CreationOptional<string>;
 
   public declare title: string;
 
@@ -73,9 +73,9 @@ export default class Audiobook<HasCover extends boolean = boolean> extends Model
 
   public declare duration: number | null;
 
-  public declare readonly createdAt: Date;
+  public declare readonly createdAt: CreationOptional<Date>;
 
-  public declare readonly updatedAt: Date;
+  public declare readonly updatedAt: CreationOptional<Date>;
 
   public declare Authors?: Author[];
 
@@ -86,6 +86,8 @@ export default class Audiobook<HasCover extends boolean = boolean> extends Model
   public declare UserAudiobooks?: UserAudiobook[];
 
   public declare addAuthor: BelongsToManyAddAssociationMixin<Author, AuthorAttributes>;
+
+  public declare addAuthors: BelongsToManyAddAssociationsMixin<Author, AuthorAttributes>;
 
   public declare addNarrator: BelongsToManyAddAssociationMixin<Narrator, NarratorAttributes>;
 

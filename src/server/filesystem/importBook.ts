@@ -1,6 +1,7 @@
 import type { FastifyBaseLogger } from 'fastify';
 import { parseFile } from 'music-metadata';
 import { Buffer } from 'node:buffer';
+import { extname } from 'node:path';
 import { format } from 'node:util';
 import type { Sequelize } from 'sequelize';
 
@@ -9,7 +10,7 @@ import Author from '~db/models/Author.js';
 import Narrator from '~db/models/Narrator.js';
 
 const importBook = async (
-  filepath: string,
+  importFile: string,
   sequelize: Sequelize,
   log: FastifyBaseLogger,
 ): Promise<string | Audiobook> => {
@@ -22,17 +23,41 @@ const importBook = async (
       composer: narrators,
     },
     format: { duration = null },
-  } = await parseFile(filepath, { duration: true });
-  log.debug('parsed %s.', filepath);
+  } = await parseFile(importFile, { duration: true });
+  log.debug('parsed %s.', importFile);
 
   const transaction = await sequelize.transaction();
 
   const name = title || album;
   if (!name) {
-    log.error('No title for file %s. Skipping', filepath);
-    return format('No title for file %s. Skipping', filepath);
+    log.error('No title for file %s. Skipping', importFile);
+    return format('No title for file %s. Skipping', importFile);
   }
   log.info('Importing %s...', name);
+
+  if (!authors?.length) throw new Error('Cannot import a book without authors');
+
+  const authorRecords = await Promise.all(
+    authors.map(async (author) => {
+      const names = author.split(/ (?=[^ ]+$)/);
+      const lastName = names.pop()!;
+      const firstName = names[0] || null;
+      const [auth] = await Author.findOrCreate({
+        where: { firstName, lastName },
+        transaction,
+      });
+      return auth;
+    }),
+  );
+
+  const safeTitle = name.replace(/[/\\?%*:|"<>%]/g, '');
+  const authorsString = authorRecords
+    .toSorted((a, b) => a.lastName.localeCompare(b.lastName, undefined, { caseFirst: 'false' }))
+    .map((auth) => [auth.firstName, auth.lastName].join(' ').replace(/[/\\?%*:|"<>%]/g, ''))
+    .join(', ');
+  const dir = `/audiobooks/${authorsString}/${safeTitle}`;
+  const filename = `${safeTitle}${extname(importFile)}`;
+  const filepath = `${dir}/${filename}`;
 
   const audiobook = await Audiobook.create(
     {
@@ -41,21 +66,9 @@ const importBook = async (
       filepath,
       title: name,
       duration: Number.isNaN(duration) ? null : duration,
+      Authors: authorRecords,
     },
     { transaction },
-  );
-
-  await Promise.all(
-    authors?.map(async (author) => {
-      const names = author.split(/ (?=[^ ]+$)/);
-      const lastName = names.pop()!;
-      const firstName = names[0] || null;
-      const [auth] = await Author.findOrCreate({
-        where: { firstName, lastName },
-        transaction,
-      });
-      await audiobook.addAuthor(auth, { transaction });
-    }) || [],
   );
 
   if (narrators?.length) {

@@ -2,7 +2,7 @@ import { watch as watchFiles } from 'chokidar';
 import type { FastifyBaseLogger } from 'fastify';
 import { existsSync, rmSync } from 'node:fs';
 import { copyFile, mkdir, writeFile } from 'node:fs/promises';
-import { extname } from 'node:path';
+import { dirname, extname } from 'node:path';
 import type { Sequelize } from 'sequelize';
 
 import type Audiobook from '~db/models/Audiobook.js';
@@ -25,22 +25,15 @@ const addBook = (sequelize: Sequelize, log: FastifyBaseLogger) => async (path: s
       }
       audiobook = result;
 
-      const safeTitle = result.title.replace(/[/\\?%*:|"<>%]/g, '');
-      const authors = (await result.getAuthors())
-        .toSorted((a, b) => a.lastName.localeCompare(b.lastName, undefined, { caseFirst: 'false' }))
-        .map((auth) => [auth.firstName, auth.lastName].join(' ').replace(/[/\\?%*:|"<>%]/g, ''))
-        .join(', ');
-      const dir = `/audiobooks/${authors}/${safeTitle}`;
-      await mkdir(dir, { recursive: true });
-      const newFile = `${dir}/${safeTitle}${extname(path)}`;
-      await copyFile(path, newFile);
+      await mkdir(dirname(result.filepath), { recursive: true });
+      await copyFile(path, result.filepath);
 
-      log.debug('Copied %s to %s.', path, newFile);
-      const [orig, cp] = await Promise.all([checksum(path, 'sha256'), checksum(newFile, 'sha256')]);
+      log.debug('Copied %s to %s.', path, result.filepath);
+      const [orig, cp] = await Promise.all([checksum(path, 'sha256'), checksum(result.filepath, 'sha256')]);
       log.debug('Checksums: %s, %s', orig, cp);
       if (orig !== cp) {
         log.error('Checksum mismatch for %s. Deleting copy.', path);
-        rmSync(newFile);
+        rmSync(result.filepath);
         await writeFile('/import/errors.txt', `${path} [${new Date().toISOString()}]: Checksum mismatch\n`, {
           flag: 'a',
         });
@@ -49,7 +42,7 @@ const addBook = (sequelize: Sequelize, log: FastifyBaseLogger) => async (path: s
 
       rmSync(path);
 
-      log.info('Imported %s to %s.', path, newFile);
+      log.info('Imported %s to %s.', path, result.filepath);
     })
     .catch(async (err) => {
       log.error({ err }, 'Error importing %s', path);

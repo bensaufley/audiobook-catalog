@@ -90,14 +90,17 @@ const book: FastifyPluginAsync = async (fastify, _opts) => {
   });
 
   fastify.get<BookParams>('/download', {
-    handler: async ({ params: { bookId: id } }, res) => {
+    handler: async ({ params: { bookId: id }, log }, res) => {
+      log.info({ id }, 'Download book');
       const book = await Audiobook.findOne({ attributes: ['filepath'], where: { id } });
 
       if (book === null) {
+        log.warn({ id }, 'Book not found');
         await res.status(404);
         return;
       }
 
+      log.info({ filepath: book.filepath }, 'Sending file');
       const filename = basename(book.filepath);
       await res.header('Content-Disposition', `attachment; filename="${filename}"`).sendFile(book.filepath, '/');
     },
@@ -107,7 +110,7 @@ const book: FastifyPluginAsync = async (fastify, _opts) => {
       response: {
         200: {
           content: {
-            'application/m4b': {
+            '*': {
               schema: {
                 type: 'string',
                 format: 'binary',
