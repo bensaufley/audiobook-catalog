@@ -15,7 +15,7 @@ import {
   UNTAGGED,
 } from '~client/signals/options';
 import { Read } from '~client/signals/options/enums';
-import { sorters, SortOrder } from '~client/signals/options/sort';
+import { SortBy, sorters, SortOrder } from '~client/signals/options/sort';
 import type { AudiobookJSON } from '~db/models/Audiobook.js';
 
 import { equalArray } from './helpers';
@@ -127,8 +127,13 @@ export const displayUpNext = conditionalBooksMutation(showUpNext, { if: true }, 
 );
 
 export const sorted = conditionalBooksMutation(showUpNext, { unless: true }, (books) => {
-  const sortedBooks = books.toSorted(sorters[sortBy.value]);
-  if (sortOrder.value === SortOrder.Descending) return sortedBooks.toReversed();
+  let sortedBooks = books.toSorted(sorters[sortBy.value]);
+  if (sortOrder.value === SortOrder.Descending) sortedBooks.reverse();
+  if (sortBy.value === SortBy.Duration) {
+    sortedBooks = sortedBooks
+      .filter(({ duration }) => !!duration)
+      .concat(sortedBooks.filter(({ duration }) => !duration));
+  }
   return sortedBooks;
 });
 

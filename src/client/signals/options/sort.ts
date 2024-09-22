@@ -1,8 +1,10 @@
 import type { AudiobookJSON } from '~db/models/Audiobook.js';
+import { sortBy } from '~shared/utilities';
 
 export enum SortBy {
   Author = 'Author',
   DateAdded = 'Date Added',
+  Duration = 'Duration',
   Title = 'Title',
 }
 
@@ -24,9 +26,6 @@ export const sorters: { [k in SortBy]: (a: AudiobookJSON, b: AudiobookJSON) => n
     return 0;
   },
   [SortBy.DateAdded]: ({ createdAt: a }, { createdAt: b }) => Date.parse(a) - Date.parse(b),
-  [SortBy.Title]: ({ title: a }, { title: b }) => {
-    if (a < b) return -1;
-    if (a > b) return 1;
-    return 0;
-  },
+  [SortBy.Title]: sortBy('title'),
+  [SortBy.Duration]: sortBy('duration', 'last'),
 };

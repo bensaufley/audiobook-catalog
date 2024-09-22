@@ -86,12 +86,12 @@ const init = async () => {
   server.get('/*', {
     handler: async (req, res) => {
       if (import.meta.env.DEV) {
-        const index = await readFile(resolve(import.meta.dirname, '../client/index.html'), 'utf-8');
+        const index = await readFile(resolve(import.meta.dirname, '../../index.html'), 'utf-8');
         res.header('Content-Type', 'text/html');
         return res.send(await viteDevServer!.transformIndexHtml(req.url, index));
       }
 
-      return res.sendFile('index.html', resolve(import.meta.dirname, '../client/'));
+      return res.sendFile('index.html', resolve(import.meta.dirname, '../../'));
     },
     schema: {
       hide: true,

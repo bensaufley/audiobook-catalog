@@ -218,7 +218,10 @@ const Filters = () => {
             }}
             type="button"
           >
-            <div class="badge me-2 border border-secondary bg-transparent position-relative">
+            <div
+              class="badge me-2 bg-transparent position-relative"
+              style={{ color: 'inherit', border: '1px solid currentColor' }}
+            >
               &nbsp;
               <QuestionLg
                 className="position-absolute top-0 bottom-0 start-0 end-0 w-auto h-auto"

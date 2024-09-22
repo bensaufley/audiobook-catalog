@@ -4,7 +4,6 @@ import { preact } from '@preact/preset-vite';
 import { resolve } from 'node:path';
 import { vavite } from 'vavite';
 import { defineConfig, type UserConfig } from 'vite';
-import { createHtmlPlugin } from 'vite-plugin-html';
 import svgr from 'vite-plugin-svgr';
 
 const dirname = typeof __dirname === 'undefined' ? import.meta.dirname : __dirname;
@@ -81,10 +80,6 @@ export default defineConfig({
       serverEntry: 'src/server/index.ts',
       reloadOn: 'any-change',
       serveClientAssetsInDev: true,
-    }),
-    createHtmlPlugin({
-      entry: resolve(dirname, 'src/client/index.tsx'),
-      template: 'src/client/index.html',
     }),
   ],
 });
