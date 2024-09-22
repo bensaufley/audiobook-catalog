@@ -1,4 +1,4 @@
-import { useSignal } from '@preact/signals';
+import { useSignal, useSignalEffect } from '@preact/signals';
 import { clsx } from 'clsx';
 import type { JSX } from 'preact';
 import { useRef } from 'preact/hooks';
@@ -23,12 +23,21 @@ const CollectionIcon = ({ name, ...rest }: { name: string } & JSX.SVGAttributes<
 };
 
 const Filters = () => {
+  const searchRef = useRef<HTMLInputElement>(null);
   const ref = useRef<HTMLUListElement>(null);
   const open = useSignal(false);
   const showAddTag = useSignal(false);
   const addingTag = useSignal(false);
 
   useEscape(open, ref);
+
+  useSignalEffect(() => {
+    if (open.value) {
+      setTimeout(() => {
+        searchRef.current?.focus();
+      }, 0);
+    }
+  });
 
   return (
     <li class="nav-item dropdown">
@@ -50,15 +59,23 @@ const Filters = () => {
         style={{ minWidth: 'max-content', maxWidth: '100vw', right: 0 }}
       >
         <li class="px-3 py-2">
-          <input
-            class="form-control"
-            type="search"
-            placeholder="Search"
-            aria-label="Search"
-            onChange={({ currentTarget: { value } }: JSX.TargetedInputEvent<HTMLInputElement>) => {
-              search.value = value;
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              open.value = false;
             }}
-          />
+          >
+            <input
+              ref={searchRef}
+              class="form-control"
+              type="search"
+              placeholder="Search"
+              aria-label="Search"
+              onChange={({ currentTarget: { value } }: JSX.TargetedInputEvent<HTMLInputElement>) => {
+                search.value = value;
+              }}
+            />
+          </form>
         </li>
         <li>
           <h6 class="dropdown-header d-flex flex-flow-row align-items-center">
@@ -205,8 +222,8 @@ const Filters = () => {
               &nbsp;
               <QuestionLg
                 className="position-absolute top-0 bottom-0 start-0 end-0 w-auto h-auto"
-                width="auto"
-                height="auto"
+                width={undefined}
+                height={undefined}
               />
             </div>
             <span>Untagged</span>

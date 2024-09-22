@@ -1,4 +1,5 @@
 import '~client/components/App/styles.css';
+import '~client/favicon.ico';
 
 import type { FunctionComponent } from 'preact';
 
