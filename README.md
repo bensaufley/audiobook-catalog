@@ -4,7 +4,9 @@ Audiobook Catalog</h1>
 <a href="https://codeclimate.com/github/bensaufley/audiobook-catalog/maintainability"><img src="https://api.codeclimate.com/v1/badges/7d1a08f5078be7a031de/maintainability" /></a>
 <a href="https://codeclimate.com/github/bensaufley/audiobook-catalog/test_coverage"><img src="https://api.codeclimate.com/v1/badges/7d1a08f5078be7a031de/test_coverage" /></a>
 
-A Docker container for cataloging audiobooks, intended for use on an [Unraid] server.
+A Docker container for cataloging audiobooks, intended for use on an [Unraid]
+server. Uses [Sequelize] with a [SQLite] database and [Fastify] on the backend,
+and [Preact] on the frontend.
 
 # Environment Variables
 
@@ -13,9 +15,10 @@ A Docker container for cataloging audiobooks, intended for use on an [Unraid] se
 
 # Mount Paths
 
-Audiobooks should be mounted at `/audiobooks`.
-
-The database will be placed in `/db/` or the directory mounted at `DB_DIR`.
+- The directory for audiobooks to be organized and stored should be mounted at
+  `/audiobooks`.
+- The directory where the database will be stored should be mounted at `/db`.
+- The directory where imports go should be mounted at `/import`.
 
 # Utilities
 
@@ -28,13 +31,16 @@ Certain command-line utilities are included in the container (located at
 
 # Development
 
-`.audiobooks` will be mounted at `/audiobooks` and is gitignored; you can use it
-to work in a local environment.
+`.audiobooks` and `.import` will be mounted at `/audiobooks` and `/import`
+respectively, and are gitignored; you can use them to work in a local
+environment.
 
 ## Scripts
 
 This repo adhere's to GitHub's [Scripts to Rule Them All] pattern.
 
+- `script/cmd`: executes a Docker command with all the extra configuration
+  needed for this project. Most other scripts use `script/cmd` under the hood.
 - `script/setup`: creates a new Docker image for dev, ignoring cache
 - `script/update`: builds the dev Docker image, using cache if possible. In most
   cases, `script/update` is all you need and `script/setup` is unnecessary.
@@ -46,6 +52,10 @@ This repo adhere's to GitHub's [Scripts to Rule Them All] pattern.
   arguments will be passed as arguments to `npm test`, e.g. `script/test -u` to
   update Jest snapshots.
 
+[sequelize]: https://sequelize.org
+[sqlite]: https://www.sqlite.org
+[fastify]: https://www.fastify.io
+[preact]: https://preactjs.com
 [unraid]: https://unraid.net
 [scripts to rule them all]: https://github.com/github/scripts-to-rule-them-all
 [umzug]: https://github.com/sequelize/umzug
