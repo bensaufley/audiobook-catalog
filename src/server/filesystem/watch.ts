@@ -50,9 +50,8 @@ const addBook = (sequelize: Sequelize, log: FastifyBaseLogger) => async (path: s
         log.error({ err: e }, 'Error deleting audiobook');
       });
       const msg = err instanceof Error ? err.message : String(err);
-      const flag = existsSync('/import/errors.txt') ? 'a' : 'w';
       await writeFile('/import/errors.txt', `${path} [${new Date().toISOString()}]: Error when importing: ${msg}\n`, {
-        flag,
+        flag: 'a',
       });
     });
 };

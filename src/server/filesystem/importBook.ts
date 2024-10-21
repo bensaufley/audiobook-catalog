@@ -10,11 +10,45 @@ import Author from '~db/models/Author.js';
 import Narrator from '~db/models/Narrator.js';
 import withLock from '~shared/withLock.js';
 
-const importBook = async (
+const importQueue = {
+  queue: <
+    [
+      importFile: string,
+      sequelize: Sequelize,
+      log: FastifyBaseLogger,
+      promise: PromiseWithResolvers<string | Audiobook>,
+    ][]
+  >[],
+  processing: false,
+  add(importFile: string, sequelize: Sequelize, log: FastifyBaseLogger): Promise<string | Audiobook> {
+    const withResolvers = Promise.withResolvers<string | Audiobook>();
+    this.queue.push([importFile, sequelize, log, withResolvers]);
+    this.process();
+    return withResolvers.promise;
+  },
+  async process() {
+    if (this.processing) return;
+
+    this.processing = true;
+    while (this.queue.length) {
+      const [importFile, sequelize, log, { resolve, reject }] = this.queue.shift()!;
+      try {
+        // eslint-disable-next-line no-await-in-loop
+        const result = await handleBookImport([importFile, sequelize, log]);
+        resolve(result);
+      } catch (err) {
+        reject(err);
+      }
+    }
+    this.processing = false;
+  },
+};
+
+const handleBookImport = async ([importFile, sequelize, log]: [
   importFile: string,
   sequelize: Sequelize,
   log: FastifyBaseLogger,
-): Promise<string | Audiobook> => {
+]): Promise<string | Audiobook> => {
   const {
     common: {
       album,
@@ -100,5 +134,8 @@ const importBook = async (
     return audiobook;
   });
 };
+
+const importBook = (importFile: string, sequelize: Sequelize, log: FastifyBaseLogger) =>
+  importQueue.add(importFile, sequelize, log);
 
 export default importBook;
