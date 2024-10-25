@@ -98,7 +98,7 @@ const BookModal = () => {
                 )}
               </small>
             )}
-            {selectedBook.value?.duration && <small>Duration: {formatDuration(selectedBook.value?.duration)}</small>}
+            {!!selectedBook.value?.duration && <small>Duration: {formatDuration(selectedBook.value?.duration)}</small>}
             <hr />
             <Tags />
             <TagPicker />
