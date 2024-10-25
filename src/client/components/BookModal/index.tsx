@@ -82,7 +82,7 @@ const BookModal = () => {
           </div>
           <div class="col-8">
             {selectedBook.value?.title}
-            {selectedBook.value?.Authors?.length && (
+            {!!selectedBook.value?.Authors?.length && (
               <small class="d-block">
                 by{' '}
                 {selectedBook.value?.Authors.map(({ firstName, lastName }) => `${firstName || ''} ${lastName}`).join(
@@ -98,7 +98,7 @@ const BookModal = () => {
                 )}
               </small>
             )}
-            {selectedBook.value?.duration && <small>Duration: {formatDuration(selectedBook.value?.duration)}</small>}
+            {!!selectedBook.value?.duration && <small>Duration: {formatDuration(selectedBook.value?.duration)}</small>}
             <hr />
             <Tags />
             <TagPicker />
