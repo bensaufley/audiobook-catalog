@@ -20,6 +20,7 @@
     "jsxImportSource": "preact",
 
     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
 
     "strict": true,

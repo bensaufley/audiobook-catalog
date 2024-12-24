@@ -13,6 +13,7 @@ import type { PrettyOptions } from 'pino-pretty';
 
 import { umzug } from '~db/migrations/index.js';
 import User from '~db/models/User.js';
+import sequelize from '~db/sequelize.js';
 import api from '~server/routes/api.js';
 import type { UserRequest } from '~server/routes/api/types.js';
 import withLock from '~shared/withLock.js';
@@ -64,6 +65,10 @@ const baseTransport: pino.TransportTargetOptions = {
 
 const init = async () => {
   await umzug.up();
+
+  await sequelize.query('PRAGMA journal_mode = WAL;', {
+    raw: true,
+  });
 
   const server = Fastify({
     logger: {

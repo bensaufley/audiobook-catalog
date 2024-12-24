@@ -1,6 +1,7 @@
 import { watch as watchFiles } from 'chokidar';
 import type { FastifyBaseLogger } from 'fastify';
-import { existsSync, rmSync } from 'node:fs';
+import type { Dirent } from 'node:fs';
+import { existsSync, globSync, rmSync } from 'node:fs';
 import { copyFile, mkdir, writeFile } from 'node:fs/promises';
 import { dirname, extname } from 'node:path';
 import type { Sequelize } from 'sequelize';
@@ -8,6 +9,33 @@ import type { Sequelize } from 'sequelize';
 import type Audiobook from '~db/models/Audiobook.js';
 import checksum from '~server/filesystem/checksum.js';
 import importBook from '~server/filesystem/importBook.js';
+
+declare module 'node:fs' {
+  // https://nodejs.org/api/fs.html#fsglobsyncpattern-options
+  // Experimental - Stability: 1
+  export function globSync(
+    pattern: string | string[],
+    options: {
+      /** current working directory. **Default:** `process.cwd()` */
+      cwd?: string;
+      /** Function to filter out files/directories. Return `true` to exclude the item, `false` to include it. **Default:** `undefined`. */
+      exclude?: (file: string) => boolean;
+      /** `true` if the glob should return paths as Dirents, `false` otherwise. **Default:** `false`. */
+      withFileTypes: true;
+    },
+  ): Dirent[];
+  export function globSync(
+    pattern: string | string[],
+    options?: {
+      /** current working directory. **Default:** `process.cwd()` */
+      cwd?: string;
+      /** Function to filter out files/directories. Return `true` to exclude the item, `false` to include it. **Default:** `undefined`. */
+      exclude?: (file: string) => boolean;
+      /** `true` if the glob should return paths as Dirents, `false` otherwise. **Default:** `false`. */
+      withFileTypes?: false;
+    },
+  ): string[];
+}
 
 const extensions = ['.m4a', '.m4b'];
 
@@ -61,6 +89,10 @@ const watch = (sequelize: Sequelize, log: FastifyBaseLogger) => {
     awaitWriteFinish: true,
     followSymlinks: false,
   });
+
+  const existing = globSync(`/import/*.{${extensions.join(',')}}`);
+  log.info({ existing }, 'Existing files in /import');
+  existing.map(addBook(sequelize, log));
 
   watcher.on('add', addBook(sequelize, log));
 
