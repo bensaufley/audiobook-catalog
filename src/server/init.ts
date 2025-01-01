@@ -122,7 +122,6 @@ const init = async () => {
         return res.send(await viteDevServer!.transformIndexHtml(req.url, index));
       }
 
-      req.log.debug('Serving index.html from %s', process.env.INDEX_HTML_PATH);
       return res.sendFile('index.html', process.env.INDEX_HTML_PATH);
     },
     schema: {
