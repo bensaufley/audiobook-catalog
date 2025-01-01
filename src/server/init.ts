@@ -7,12 +7,15 @@ import swaggerUi from '@fastify/swagger-ui';
 import Fastify from 'fastify';
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
+import { pino } from 'pino';
+import type { LokiOptions } from 'pino-loki';
 import type { PrettyOptions } from 'pino-pretty';
 
 import { umzug } from '~db/migrations/index.js';
 import User from '~db/models/User.js';
 import api from '~server/routes/api.js';
 import type { UserRequest } from '~server/routes/api/types.js';
+import withLock from '~shared/withLock.js';
 
 const logLevels = ['trace', 'debug', 'info', 'warn', 'error'];
 const sanitizeLogLevel = (level?: string) => {
@@ -23,24 +26,46 @@ const sanitizeLogLevel = (level?: string) => {
   return logLevels.includes(standardized) ? standardized : 'info';
 };
 
+const prettyTransport = pino.transport({
+  target: 'pino-pretty',
+  options: {
+    colorize: true,
+    colorizeObjects: true,
+    hideObject: false,
+  } satisfies PrettyOptions,
+});
+
+const lokiTransport =
+  process.env.LOKI_HOST &&
+  pino.transport<LokiOptions>({
+    target: 'pino-loki',
+    options: {
+      batching: true,
+      interval: 5,
+
+      labels: Object.fromEntries(process.env.LOKI_LABELS?.split(',').map((v) => v.split(':')) ?? []),
+      host: process.env.LOKI_HOST,
+      ...(process.env.LOKI_USER &&
+        process.env.LOKI_PASSWORD && {
+          basicAuth: {
+            username: process.env.LOKI_USER,
+            password: process.env.LOKI_PASSWORD,
+          },
+        }),
+    },
+  });
+
+const baseTransport = pino.transport({ target: 'pino' });
+
 const init = async () => {
   await umzug.up();
 
   const server = Fastify({
     logger: {
       level: sanitizeLogLevel(process.env.LOG_LEVEL),
-      ...(import.meta.env.DEV
-        ? {
-            transport: {
-              target: 'pino-pretty',
-              options: {
-                colorize: true,
-                colorizeObjects: true,
-                hideObject: false,
-              } satisfies PrettyOptions,
-            },
-          }
-        : {}),
+      transport: {
+        targets: [import.meta.env.DEV && prettyTransport, lokiTransport, baseTransport].filter((x) => x),
+      },
     },
   });
 
@@ -73,7 +98,7 @@ const init = async () => {
     if (!userId) return;
 
     try {
-      req.user = await User.findOne({ where: { id: userId } });
+      req.user = await withLock('db', () => User.findOne({ where: { id: userId } }));
     } catch (err) {
       req.log.error(err);
     }

@@ -6,6 +6,7 @@ import UpNext from '~db/models/UpNext.js';
 import UserAudiobook from '~db/models/UserAudiobook.js';
 import sequelize from '~db/sequelize.js';
 import { onlyUserHeader } from '~server/utils/schema.js';
+import withLock from '~shared/withLock.js';
 
 import { checkForUser, type UserRequest } from '../types.js';
 
@@ -15,23 +16,24 @@ type BooksRequest = UserRequest<{ Querystring: { page?: number; perPage?: number
 
 const books: FastifyPluginAsync = async (fastify, _opts) => {
   fastify.get<{ Querystring: { page?: number; perPage?: number } }>('/', {
-    handler: async ({ log, user, query: { page, perPage } }: BooksRequest, res) => {
-      log.debug('user: %o', user);
-      const total = await Audiobook.count();
-      const audiobooks = await Audiobook.findAll({
-        attributes: ['id', 'title', 'createdAt', 'updatedAt', 'duration'],
-        include: [Audiobook.associations.Authors, Audiobook.associations.Narrators],
-        order: [
-          [Audiobook.associations.Authors, 'lastName', 'ASC'],
-          [Audiobook.associations.Authors, 'firstName', 'ASC'],
-          ['title', 'ASC'],
-        ],
-        ...(page && perPage ? { offset: (page - 1) * perPage, limit: perPage } : {}),
+    handler: async ({ log, user, query: { page, perPage } }: BooksRequest, res) =>
+      withLock('db', async () => {
+        log.debug('user: %o', user);
+        const total = await Audiobook.count();
+        const audiobooks = await Audiobook.findAll({
+          attributes: ['id', 'title', 'createdAt', 'updatedAt', 'duration'],
+          include: [Audiobook.associations.Authors, Audiobook.associations.Narrators],
+          order: [
+            [Audiobook.associations.Authors, 'lastName', 'ASC'],
+            [Audiobook.associations.Authors, 'firstName', 'ASC'],
+            ['title', 'ASC'],
+          ],
+          ...(page && perPage ? { offset: (page - 1) * perPage, limit: perPage } : {}),
 
-        logging: (...args) => fastify.log.debug(...args),
-      });
-      await res.status(200).send({ audiobooks, total, more: page && perPage ? page * perPage < total : false });
-    },
+          logging: (...args) => fastify.log.debug(...args),
+        });
+        await res.status(200).send({ audiobooks, total, more: page && perPage ? page * perPage < total : false });
+      }),
     schema: {
       description: 'Get all audiobooks',
       headers: onlyUserHeader(false),
@@ -74,15 +76,16 @@ const books: FastifyPluginAsync = async (fastify, _opts) => {
   });
 
   fastify.get('/up-next', {
-    handler: async ({ user }: UserRequest, res) => {
-      if (!user) {
-        await res.send({ upNexts: [] });
-        return;
-      }
+    handler: async ({ user }: UserRequest, res) =>
+      withLock('db', async () => {
+        if (!user) {
+          await res.send({ upNexts: [] });
+          return;
+        }
 
-      const upNexts = await user.getUpNexts({ attributes: ['AudiobookId', 'order'] });
-      await res.send({ upNexts });
-    },
+        const upNexts = await user.getUpNexts({ attributes: ['AudiobookId', 'order'] });
+        await res.send({ upNexts });
+      }),
     schema: {
       description: 'Get up next list for user',
       headers: onlyUserHeader(),
