@@ -7,7 +7,7 @@ import swaggerUi from '@fastify/swagger-ui';
 import Fastify from 'fastify';
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
-import { pino } from 'pino';
+import type { pino } from 'pino';
 import type { LokiOptions } from 'pino-loki';
 import type { PrettyOptions } from 'pino-pretty';
 
@@ -25,46 +25,52 @@ const sanitizeLogLevel = (level?: string) => {
 
   return logLevels.includes(standardized) ? standardized : 'info';
 };
+const logLevel = sanitizeLogLevel(process.env.LOG_LEVEL);
 
-const prettyTransport = pino.transport({
+const prettyTransport: pino.TransportTargetOptions<PrettyOptions> = {
   target: 'pino-pretty',
+  level: logLevel,
   options: {
     colorize: true,
     colorizeObjects: true,
     hideObject: false,
-  } satisfies PrettyOptions,
-});
+  },
+};
 
-const lokiTransport =
-  process.env.LOKI_HOST &&
-  pino.transport<LokiOptions>({
-    target: 'pino-loki',
-    options: {
-      batching: true,
-      interval: 5,
+const lokiTransport: pino.TransportTargetOptions<LokiOptions> = {
+  target: 'pino-loki',
+  level: logLevel,
+  options: {
+    batching: true,
+    interval: 5,
 
-      labels: Object.fromEntries(process.env.LOKI_LABELS?.split(',').map((v) => v.split(':')) ?? []),
-      host: process.env.LOKI_HOST,
-      ...(process.env.LOKI_USER &&
-        process.env.LOKI_PASSWORD && {
-          basicAuth: {
-            username: process.env.LOKI_USER,
-            password: process.env.LOKI_PASSWORD,
-          },
-        }),
-    },
-  });
+    labels: Object.fromEntries(process.env.LOKI_LABELS?.split(',').map((v) => v.split(':')) ?? []),
+    host: process.env.LOKI_HOST ?? '',
+    ...(process.env.LOKI_USER &&
+      process.env.LOKI_PASSWORD && {
+        basicAuth: {
+          username: process.env.LOKI_USER,
+          password: process.env.LOKI_PASSWORD,
+        },
+      }),
+  },
+};
 
-const baseTransport = pino.transport({ target: 'pino' });
+const baseTransport: pino.TransportTargetOptions = {
+  target: 'pino/file',
+  level: logLevel,
+  options: { destination: 1 }, // writes to stdout
+};
 
 const init = async () => {
   await umzug.up();
 
   const server = Fastify({
     logger: {
-      level: sanitizeLogLevel(process.env.LOG_LEVEL),
       transport: {
-        targets: [import.meta.env.DEV && prettyTransport, lokiTransport, baseTransport].filter((x) => x),
+        targets: [import.meta.env.DEV && prettyTransport, process.env.LOKI_HOST && lokiTransport, baseTransport].filter(
+          (x) => !!x,
+        ),
       },
     },
   });
