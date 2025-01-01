@@ -6,7 +6,7 @@ import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
 import Fastify from 'fastify';
 import { readFile } from 'node:fs/promises';
-import { dirname, resolve } from 'node:path';
+import { resolve } from 'node:path';
 import type { pino } from 'pino';
 import type { LokiOptions } from 'pino-loki';
 import type { PrettyOptions } from 'pino-pretty';
@@ -117,14 +117,13 @@ const init = async () => {
   server.get('/*', {
     handler: async (req, res) => {
       if (import.meta.env.DEV) {
-        const index = await readFile(resolve(import.meta.dirname, '../../index.html'), 'utf-8');
+        const index = await readFile(resolve(process.env.INDEX_HTML_PATH, 'index.html'), 'utf-8');
         res.header('Content-Type', 'text/html');
         return res.send(await viteDevServer!.transformIndexHtml(req.url, index));
       }
 
-      const indexPath = import.meta.resolve('~client/index.html');
-      req.log.debug('Serving index.html from %s', indexPath);
-      return res.sendFile('index.html', dirname(indexPath));
+      req.log.debug('Serving index.html from %s', process.env.INDEX_HTML_PATH);
+      return res.sendFile('index.html', process.env.INDEX_HTML_PATH);
     },
     schema: {
       hide: true,

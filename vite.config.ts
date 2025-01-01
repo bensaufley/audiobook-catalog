@@ -39,6 +39,9 @@ export default defineConfig({
       name: 'server',
       config: {
         define: {
+          'process.env.INDEX_HTML_PATH': JSON.stringify(
+            process.env.NODE_ENV === 'production' ? resolve(dirname, '.build/client') : dirname,
+          ),
           'process.env.DB_NAME': JSON.stringify(process.env.DB_NAME || 'books'),
           'process.env.APP_VERSION': JSON.stringify(process.env.APP_VERSION || 'unknown'),
         },
