@@ -12,7 +12,7 @@
   <Overview>An Unraid image to provide a UI for audiobooks hosted on a NAS</Overview>
   <Category>Tools: Status:Beta</Category>
   <WebUI>http://[IP]:[PORT:6451]/</WebUI>
-  <TemplateURL>https://raw.githubusercontent.com/bensaufley/audiobook-catalog/v0.5.0-12/community-applications.xml</TemplateURL>
+  <TemplateURL>https://raw.githubusercontent.com/bensaufley/audiobook-catalog/blob/main/community-applications.xml</TemplateURL>
   <Icon>https://raw.githubusercontent.com/bensaufley/audiobook-catalog/main/audiobook-catalog.png</Icon>
   <ExtraParams/>
   <PostArgs/>
@@ -20,30 +20,14 @@
   <DonateText/>
   <DonateLink/>
   <Requires/>
-  <Environment>
-    <Variable Description="Log level for the application">
-      <Name>LOG_LEVEL</Name>
-      <Value>info</Value>
-    </Variable>
-    <Variable Description="Host URL, including Port, of the Loki instance to publish Loki logs">
-      <Name>LOKI_HOST</Name>
-      <Value />
-    </Variable>
-    <Variable Description="Any labels to be added to all Loki log lines, formatted key1:value,key2:value">
-      <Name>LOKI_LABELS</Name>
-      <Value />
-    </Variable>
-    <Variable Description="If Basic Auth is used in the Loki instance, the username to use in the request">
-      <Name>LOKI_USER</Name>
-      <Value />
-    </Variable>
-    <Variable Description="If Basic Auth is used in the Loki instance, the password to use in the request">
-      <Name>LOKI_PASSWORD</Name>
-      <Value />
-    </Variable>
-  </Environment>
-  <Config Name="Audiobooks Mount" Target="/audiobooks" Default="" Mode="rw" Description="Path to directory with audiobooks (audiobooks can be in subdirectories). Mounted to /audiobooks." Type="Path" Display="always" Required="true" Mask="false"/>
-  <Config Name="Import Mount" Target="/import" Default="" Mode="rw" Description="Path to directory for new books to be imported. Must not be the same or parent of Audiobooks Share. Mounted to /import." Type="Path" Display="always" Required="false" Mask="false"/>
-  <Config Name="Database Mount" Target="/db/" Default="" Mode="rw" Description="Directory for sqlite3 database. File will be created if it does not exist. Directory must exist." Type="Path" Display="always" Required="true" Mask="false"/>
-  <Config Name="External Port" Target="3000" Default="6451" Mode="tcp" Description="Port at which UI will be served" Type="Port" Display="always" Required="true" Mask="false"/>
+  <Config Name="Audiobooks Mount" Target="/audiobooks" Default="" Mode="rw" Description="Path to directory with audiobooks (audiobooks can be in subdirectories). Mounted to /audiobooks." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/audiobooks/m4a/</Config>
+  <Config Name="Import Mount" Target="/import" Default="" Mode="rw" Description="Path to directory for new books to be imported. Must not be the same or parent of Audiobooks Share. Mounted to /import." Type="Path" Display="always" Required="false" Mask="false">/mnt/user/audiobooks/import/</Config>
+  <Config Name="Database Mount" Target="/db/" Default="" Mode="rw" Description="Directory for sqlite3 database. File will be created if it does not exist. Directory must exist." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/audiobooks/</Config>
+  <Config Name="External Port" Target="3000" Default="6451" Mode="tcp" Description="Port at which UI will be served" Type="Port" Display="always" Required="true" Mask="false">6451</Config>
+
+  <Config Name="Log Level" Target="LOG_LEVEL" Default="info" Mode="" Description="Log level for the application" Type="Variable" Display="advanced" Required="true" Mask="false">debug</Config>
+  <Config Name="Loki Host" Target="LOKI_HOST" Default="" Mode="" Description="Host URL, including Port, of the Loki instance to publish Loki logs" Type="Variable" Display="advanced" Required="false" Mask="false"/>
+  <Config Name="Loki Labels" Target="LOKI_LABELS" Default="" Mode="" Description="Any labels to be added to all Loki log lines, formatted key1:value,key2:value" Type="Variable" Display="advanced" Required="false" Mask="false"/>
+  <Config Name="Loki Username" Target="LOKI_USER" Default="" Mode="" Description="If Basic Auth is used in the Loki instance, the username to use in the request" Type="Variable" Display="advanced" Required="false" Mask="false"/>
+  <Config Name="Loki Password" Target="LOK_PASSWORD" Default="" Mode="" Description="If Basic Auth is used in the Loki instance, the password to use in the request" Type="Variable" Display="advanced" Required="false" Mask="false"/>
 </Container>
