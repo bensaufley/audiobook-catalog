@@ -23,7 +23,7 @@ on:
 
 jobs:
   build:
-    name: Build${{ inputs.push && ', Check, and Push' || 'and Check' }} Image
+    name: Build${{ inputs.push && ', Check, and Push' || ' and Check' }} Image
     runs-on: ubuntu-latest
 
     steps:

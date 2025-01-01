@@ -6,6 +6,7 @@ declare namespace NodeJS {
     DB_NAME: string;
     LOG_LEVEL?: 'trace' | 'debug' | 'info' | 'warn' | 'error';
     POLL_PERIOD?: string;
+    INDEX_HTML_PATH: string;
   }
 }
 

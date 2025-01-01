@@ -68,7 +68,7 @@ const init = async () => {
   const server = Fastify({
     logger: {
       transport: {
-        targets: [import.meta.env.DEV && prettyTransport, process.env.LOKI_HOST && lokiTransport, baseTransport].filter(
+        targets: [import.meta.env.DEV ? prettyTransport : baseTransport, process.env.LOKI_HOST && lokiTransport].filter(
           (x) => !!x,
         ),
       },
@@ -122,7 +122,7 @@ const init = async () => {
         return res.send(await viteDevServer!.transformIndexHtml(req.url, index));
       }
 
-      return res.sendFile('index.html', resolve(import.meta.dirname, '../../'));
+      return res.sendFile('index.html', resolve(import.meta.dirname, '../../.build/client'));
     },
     schema: {
       hide: true,
