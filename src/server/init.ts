@@ -6,7 +6,7 @@ import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
 import Fastify from 'fastify';
 import { readFile } from 'node:fs/promises';
-import { resolve } from 'node:path';
+import { dirname, resolve } from 'node:path';
 import type { pino } from 'pino';
 import type { LokiOptions } from 'pino-loki';
 import type { PrettyOptions } from 'pino-pretty';
@@ -122,7 +122,9 @@ const init = async () => {
         return res.send(await viteDevServer!.transformIndexHtml(req.url, index));
       }
 
-      return res.sendFile('index.html', resolve(import.meta.dirname, '../../'));
+      const indexPath = import.meta.resolve('~client/index.html');
+      req.log.debug('Serving index.html from %s', indexPath);
+      return res.sendFile('index.html', dirname(indexPath));
     },
     schema: {
       hide: true,
