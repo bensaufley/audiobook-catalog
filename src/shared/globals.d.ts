@@ -25,3 +25,7 @@ declare module '*.svg?react' {
   const Svg: FunctionComponent<JSX.HTMLAttributes<SVGSVGElement>>;
   export default Svg;
 }
+
+declare global {
+  declare type ArrayElement<ArrayType extends readonly unknown[]> = ArrayType[number];
+}

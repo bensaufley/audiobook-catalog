@@ -1,10 +1,11 @@
-import '~db/models';
+import '../db/models';
 
 import minimist from 'minimist';
 import { exit } from 'process';
 
-import AudiobookTag from '~db/models/AudiobookTag';
-import Tag from '~db/models/Tag';
+import AudiobookTag from '../db/models/AudiobookTag';
+import Tag from '../db/models/Tag';
+import withLock from '../shared/withLock';
 
 const opts = {
   help: ['h', 'boolean', 'Show this help', false],
@@ -63,18 +64,20 @@ if (args.debug) {
 const responses = await Promise.allSettled(
   tags.map(async (tag) => {
     console.log(`Removing tag "${tag}"...`);
-    const entry = await Tag.findOne({
-      where: { name: tag },
-      include: [Tag.associations.AudiobookTags!, Tag.associations.Audiobooks!],
-      logging: !!args.debug,
-    });
+    const entry = await withLock('db', () =>
+      Tag.findOne({
+        where: { name: tag },
+        include: [Tag.associations.AudiobookTags!, Tag.associations.Audiobooks!],
+        logging: !!args.debug,
+      }),
+    );
     if (!entry) {
       throw new Error(`Tag "${tag}" not found`);
     }
     if (entry.AudiobookTags?.length || entry.Audiobooks?.length) {
       if (force) {
         console.warn(`Tag "${tag}" is in use, removing anyway`);
-        await AudiobookTag.destroy({ where: { TagId: entry.id }, logging: !!args.debug });
+        await withLock('db', () => AudiobookTag.destroy({ where: { TagId: entry.id }, logging: !!args.debug }));
       } else {
         throw new Error(`Tag "${tag}" is in use`);
       }
