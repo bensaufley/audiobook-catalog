@@ -26,7 +26,7 @@
   <Config Name="External Port" Target="3000" Default="6451" Mode="tcp" Description="Port at which UI will be served" Type="Port" Display="always" Required="true" Mask="false">6451</Config>
 
   <Config Name="Log Level" Target="LOG_LEVEL" Default="info" Mode="" Description="Log level for the application" Type="Variable" Display="advanced" Required="true" Mask="false">debug</Config>
-  <Config Name="Loki Host" Target="LOKI_HOST" Default="" Mode="" Description="Host URL, including Port, of the Loki instance to publish Loki logs" Type="Variable" Display="advanced" Required="false" Mask="false"/>
+  <Config Name="Loki Host" Target="LOKI_HOST" Default="" Mode="" Description="Hostname, including Port, of the Loki instance to publish Loki logs" Type="Variable" Display="advanced" Required="false" Mask="false"/>
   <Config Name="Loki Labels" Target="LOKI_LABELS" Default="" Mode="" Description="Any labels to be added to all Loki log lines, formatted key1:value,key2:value" Type="Variable" Display="advanced" Required="false" Mask="false"/>
   <Config Name="Loki Username" Target="LOKI_USER" Default="" Mode="" Description="If Basic Auth is used in the Loki instance, the username to use in the request" Type="Variable" Display="advanced" Required="false" Mask="false"/>
   <Config Name="Loki Password" Target="LOK_PASSWORD" Default="" Mode="" Description="If Basic Auth is used in the Loki instance, the password to use in the request" Type="Variable" Display="advanced" Required="false" Mask="false"/>
