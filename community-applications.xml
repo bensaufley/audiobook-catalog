@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <Container version="2">
   <Name>AudiobookCatalog</Name>
-  <Repository>bnsfly/audiobook-catalog:v0.5.0-12</Repository>
+  <Repository>bnsfly/audiobook-catalog:v0.5.0-13</Repository>
   <Registry>https://hub.docker.com/r/bnsfly/audiobook-catalog/</Registry>
   <Network>bridge</Network>
   <MyIP/>
