@@ -118,16 +118,9 @@ const init = async () => {
   await server.register(api, { prefix: '/api' });
 
   // eslint-disable-next-line import/no-extraneous-dependencies
-  const viteDevServer = import.meta.env.DEV ? (await import('vavite/vite-dev-server')).default : undefined;
   server.get('/*', {
     handler: async (req, res) => {
-      if (import.meta.env.DEV) {
-        const index = await readFile(resolve(import.meta.dirname, '../../index.html'), 'utf-8');
-        res.header('Content-Type', 'text/html');
-        return res.send(await viteDevServer!.transformIndexHtml(req.url, index));
-      }
-
-      return res.sendFile('index.html', resolve(import.meta.dirname, '../../.build/client'));
+      return res.sendFile('index.html', resolve(import.meta.dirname, '../../'));
     },
     schema: {
       hide: true,

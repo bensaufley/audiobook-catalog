@@ -2,7 +2,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { preact } from '@preact/preset-vite';
 import { resolve } from 'node:path';
-import { vavite } from 'vavite';
 import { defineConfig, type UserConfig } from 'vite';
 import svgr from 'vite-plugin-svgr';
 
@@ -22,34 +21,28 @@ const viteResolve: UserConfig['resolve'] = {
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  buildSteps: [
-    {
-      name: 'client',
-      config: {
-        build: {
-          manifest: true,
-          outDir: '.build/client',
-        },
-        resolve: viteResolve,
-        root: '.',
-        plugins: [],
+  environments: {
+    client: {
+      build: {
+        manifest: true,
+        outDir: '.build/client',
       },
     },
-    {
-      name: 'server',
-      config: {
-        define: {
-          'process.env.DB_NAME': JSON.stringify(process.env.DB_NAME || 'books'),
-          'process.env.APP_VERSION': JSON.stringify(process.env.APP_VERSION || 'unknown'),
-        },
-        build: {
-          outDir: '.build/server',
-          ssr: 'src/server',
-          target: 'node22',
+    server: {
+      define: {
+        'process.env.DB_NAME': JSON.stringify(process.env.DB_NAME || 'books'),
+        'process.env.APP_VERSION': JSON.stringify(process.env.APP_VERSION || 'unknown'),
+      },
+      build: {
+        outDir: '.build/server',
+        ssr: 'src/server',
+        target: 'node22',
+        rollupOptions: {
+          input: 'src/server/index.ts',
         },
       },
     },
-  ],
+  },
   resolve: viteResolve,
   clearScreen: false,
   server: {
@@ -74,13 +67,6 @@ export default defineConfig({
       //   jsxFactory: 'h',
       //   jsxFragment: 'Fragment',
       // },
-    }),
-    vavite({
-      bundleSirv: false,
-      handlerEntry: 'src/server/handler.ts',
-      serverEntry: 'src/server/index.ts',
-      reloadOn: 'any-change',
-      serveClientAssetsInDev: true,
     }),
   ],
 });
