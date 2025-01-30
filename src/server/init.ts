@@ -19,12 +19,12 @@ import withLock from '~shared/withLock.js';
 import { bareLogger } from './logging.js';
 
 const init = async () => {
+  const db = (await sequelize.connectionManager.getConnection({ type: 'read', useMaster: true })) as Database;
   if (process.env.DB_VERBOSE) {
     bareLogger.info('Enabling SQLite3 verbose mode');
-    const db = (await sequelize.connectionManager.getConnection({ type: 'read', useMaster: true })) as Database;
     bareLogger.debug({ db }, 'Retrieved DB connection');
     db.on('trace', (sql) => {
-      bareLogger.debug({ sql }, 'Executing query');
+      bareLogger.debug({ sql }, 'Executing query: %s', sql);
     });
     db.on('profile', (sql, time) => {
       bareLogger.debug({ sql }, 'Execution time: %dms', time);
@@ -33,6 +33,7 @@ const init = async () => {
       bareLogger.error(err, 'sqlite3 error');
     });
   }
+  db.exec('PRAGMA journal_mode=WAL;');
 
   const server = Fastify({
     logger: bareLogger,
