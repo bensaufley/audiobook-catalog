@@ -30,7 +30,7 @@ const importBook = async (
   importing = true;
 
   try {
-    return withRetries(3, async () => {
+    const resp = await withRetries(async () => {
       const {
         common: {
           album,
@@ -113,7 +113,9 @@ const importBook = async (
       log.info('Done importing %s.', name);
 
       return audiobook;
-    });
+    }, 5);
+
+    return resp;
   } finally {
     importing = false;
   }
