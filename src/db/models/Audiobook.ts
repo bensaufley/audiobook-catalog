@@ -91,6 +91,8 @@ export default class Audiobook<HasCover extends boolean = boolean> extends Model
 
   public declare addNarrator: BelongsToManyAddAssociationMixin<Narrator, NarratorAttributes>;
 
+  public declare addNarrators: BelongsToManyAddAssociationsMixin<Narrator, NarratorAttributes>;
+
   public declare addTag: BelongsToManyAddAssociationMixin<Tag, InferAttributes<Tag>>;
 
   public declare getAudiobookAuthors: HasManyGetAssociationsMixin<AudiobookAuthor>;

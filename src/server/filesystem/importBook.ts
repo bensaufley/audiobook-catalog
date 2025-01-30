@@ -3,7 +3,7 @@ import { parseFile } from 'music-metadata';
 import { Buffer } from 'node:buffer';
 import { extname } from 'node:path';
 import { format } from 'node:util';
-import type { Sequelize } from 'sequelize';
+import { Op, type Sequelize } from 'sequelize';
 
 import Audiobook from '~db/models/Audiobook.js';
 import Author from '~db/models/Author.js';
@@ -54,18 +54,18 @@ const importBook = async (
 
       if (!authors?.length) throw new Error('Cannot import a book without authors');
 
-      const authorRecords = await Promise.all(
-        authors.map(async (author) => {
-          const names = author.split(/ (?=[^ ]+$)/);
-          const lastName = names.pop()!;
-          const firstName = names[0] || null;
-          const [auth] = await Author.findOrCreate({
-            where: { firstName, lastName },
-            transaction,
-          });
-          return auth;
-        }),
+      const auths = authors.map((author) => {
+        const names = author.split(/ (?=[^ ]+$)/);
+        const lastName = names.pop()!;
+        const firstName = names[0] || null;
+        return { firstName, lastName };
+      });
+      const existingAuthors = await Author.findAll({ where: { [Op.or]: auths } });
+      const authorsToAdd = auths.filter(
+        (auth) => !existingAuthors.some((a) => a.firstName === auth.firstName && a.lastName === auth.lastName),
       );
+      const addedAuthors = await Author.bulkCreate(authorsToAdd, { transaction });
+      const authorRecords = [...existingAuthors, ...addedAuthors];
 
       const safeTitle = name.replace(/[/\\?%*:|"<>%]/g, '');
       const authorsString = authorRecords
@@ -76,6 +76,28 @@ const importBook = async (
       const filename = `${safeTitle}${extname(importFile)}`;
       const filepath = `${dir}/${filename}`;
 
+      let narratorRecords: Narrator[] = [];
+
+      if (narrators?.length) {
+        let nars = narrators;
+        if (nars.length === 1) {
+          nars = nars[0]!.split(/,(?! *(?:jr\.?|sr\.?|junior|senior|i+v?|vi+)\b)/i);
+        }
+
+        const narrs = nars.map((narrator) => {
+          const names = narrator.split(/ (?=[^ ]+$)/);
+          const lastName = names.pop()!;
+          const firstName = names[0] || null;
+          return { firstName, lastName };
+        });
+        const existingNarrators = await Narrator.findAll({ where: { [Op.or]: narrs } });
+        const narratorsToAdd = narrs.filter(
+          (auth) => !existingNarrators.some((a) => a.firstName === auth.firstName && a.lastName === auth.lastName),
+        );
+        const addedNarrators = await Narrator.bulkCreate(narratorsToAdd, { transaction });
+        narratorRecords = [...existingNarrators, ...addedNarrators];
+      }
+
       const audiobook = await Audiobook.create(
         {
           cover: cover ? Buffer.from(cover) : null,
@@ -84,29 +106,10 @@ const importBook = async (
           title: name,
           duration: Number.isNaN(duration) ? null : duration,
           Authors: authorRecords,
+          Narrators: narratorRecords,
         },
         { transaction },
       );
-
-      if (narrators?.length) {
-        let nars = narrators;
-        if (nars.length === 1) {
-          nars = nars[0]!.split(/,(?! *(?:jr\.?|sr\.?|junior|senior|i+v?|vi+)\b)/i);
-        }
-
-        await Promise.all(
-          nars.map(async (narrator) => {
-            const names = narrator.split(/ (?=[^ ]+$)/);
-            const lastName = names.pop()!;
-            const firstName = names[0] || null;
-            const [narr] = await Narrator.findOrCreate({
-              where: { firstName, lastName },
-              transaction,
-            });
-            await audiobook.addNarrator(narr, { transaction });
-          }),
-        );
-      }
 
       await transaction.commit();
 
