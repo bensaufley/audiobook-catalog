@@ -109,7 +109,7 @@ const importBook = async (
             Authors: authorRecords,
             Narrators: narratorRecords,
           },
-          { transaction },
+          { transaction, include: [Author, Narrator] },
         );
 
         await transaction.commit();
