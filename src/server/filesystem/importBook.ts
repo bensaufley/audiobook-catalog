@@ -8,7 +8,6 @@ import { Op, type Sequelize, type Transaction } from 'sequelize';
 import Audiobook from '~db/models/Audiobook.js';
 import Author from '~db/models/Author.js';
 import Narrator from '~db/models/Narrator.js';
-import withRetries from '~server/utils/withRetries.js';
 
 const buildAuthors = async (raw: string[], transaction: Transaction) => {
   const names = raw.map((author) => {
@@ -63,67 +62,63 @@ const importBook = async (
   importing = true;
 
   try {
-    const resp = await withRetries(async () => {
-      const {
-        common: {
-          album,
-          title,
-          picture: [{ data: cover, format: coverType } = { data: null, format: null }] = [],
-          artists: authors,
-          composer: narrators,
-        },
-        format: { duration = null },
-      } = await parseFile(importFile, { duration: true });
-      log.debug('parsed %s.', importFile);
+    const {
+      common: {
+        album,
+        title,
+        picture: [{ data: cover, format: coverType } = { data: null, format: null }] = [],
+        artists: authors,
+        composer: narrators,
+      },
+      format: { duration = null },
+    } = await parseFile(importFile, { duration: true });
+    log.debug('parsed %s.', importFile);
 
-      const transaction = await sequelize.transaction();
-      try {
-        const name = title || album;
-        if (!name) {
-          log.error('No title for file %s. Skipping', importFile);
-          return format('No title for file %s. Skipping', importFile);
-        }
-        log.info('Importing %s...', name);
-
-        if (!authors?.length) throw new Error('Cannot import a book without authors');
-
-        const authorRecords = await buildAuthors(authors, transaction);
-        const narratorRecords: Narrator[] = await buildNarrators(narrators, transaction);
-
-        const safeTitle = name.replace(/[/\\?%*:|"<>%]/g, '');
-        const authorsString = authorRecords
-          .toSorted((a, b) => a.lastName.localeCompare(b.lastName, undefined, { caseFirst: 'false' }))
-          .map((auth) => [auth.firstName, auth.lastName].join(' ').replace(/[/\\?%*:|"<>%]/g, ''))
-          .join(', ');
-        const dir = `/audiobooks/${authorsString}/${safeTitle}`;
-        const filename = `${safeTitle}${extname(importFile)}`;
-        const filepath = `${dir}/${filename}`;
-
-        const audiobook = await Audiobook.create(
-          {
-            cover: cover ? Buffer.from(cover) : null,
-            coverType,
-            filepath,
-            title: name,
-            duration: Number.isNaN(duration) ? null : duration,
-          },
-          { transaction },
-        );
-        await audiobook.addAuthors(authorRecords, { transaction });
-        if (narratorRecords.length) await audiobook.addNarrators(narratorRecords, { transaction });
-
-        await transaction.commit();
-
-        log.info('Done importing %s.', name);
-
-        return audiobook;
-      } catch (err) {
-        await transaction.rollback();
-        throw err;
+    const transaction = await sequelize.transaction();
+    try {
+      const name = title || album;
+      if (!name) {
+        log.error('No title for file %s. Skipping', importFile);
+        return format('No title for file %s. Skipping', importFile);
       }
-    }, 5);
+      log.info('Importing %s...', name);
 
-    return resp;
+      if (!authors?.length) throw new Error('Cannot import a book without authors');
+
+      const authorRecords = await buildAuthors(authors, transaction);
+      const narratorRecords: Narrator[] = await buildNarrators(narrators, transaction);
+
+      const safeTitle = name.replace(/[/\\?%*:|"<>%]/g, '');
+      const authorsString = authorRecords
+        .toSorted((a, b) => a.lastName.localeCompare(b.lastName, undefined, { caseFirst: 'false' }))
+        .map((auth) => [auth.firstName, auth.lastName].join(' ').replace(/[/\\?%*:|"<>%]/g, ''))
+        .join(', ');
+      const dir = `/audiobooks/${authorsString}/${safeTitle}`;
+      const filename = `${safeTitle}${extname(importFile)}`;
+      const filepath = `${dir}/${filename}`;
+
+      const audiobook = await Audiobook.create(
+        {
+          cover: cover ? Buffer.from(cover) : null,
+          coverType,
+          filepath,
+          title: name,
+          duration: Number.isNaN(duration) ? null : duration,
+        },
+        { transaction },
+      );
+      await audiobook.addAuthors(authorRecords, { transaction });
+      if (narratorRecords.length) await audiobook.addNarrators(narratorRecords, { transaction });
+
+      await transaction.commit();
+
+      log.info('Done importing %s.', name);
+
+      return audiobook;
+    } catch (err) {
+      await transaction.rollback();
+      throw err;
+    }
   } finally {
     importing = false;
   }
