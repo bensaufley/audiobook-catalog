@@ -54,7 +54,10 @@ export const pinoTargets = [
 ].filter((x) => !!x);
 
 export const bareLogger = pino({
+  level: logLevel,
   transport: {
     targets: pinoTargets,
   },
 });
+
+bareLogger.info({ level: logLevel }, 'Logging initialized');
