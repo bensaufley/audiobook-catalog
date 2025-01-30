@@ -106,11 +106,11 @@ const importBook = async (
             filepath,
             title: name,
             duration: Number.isNaN(duration) ? null : duration,
-            Authors: authorRecords,
-            Narrators: narratorRecords,
           },
-          { transaction, include: [Author, Narrator] },
+          { transaction },
         );
+        await audiobook.addAuthors(authorRecords, { transaction });
+        if (narratorRecords.length) await audiobook.addNarrators(narratorRecords, { transaction });
 
         await transaction.commit();
 
