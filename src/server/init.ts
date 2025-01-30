@@ -10,9 +10,11 @@ import { resolve } from 'node:path';
 import type { pino } from 'pino';
 import type { LokiOptions } from 'pino-loki';
 import type { PrettyOptions } from 'pino-pretty';
+import sqlite3 from 'sqlite3';
 
 import { umzug } from '~db/migrations/index.js';
 import User from '~db/models/User.js';
+import sequelize from '~db/sequelize.js';
 import api from '~server/routes/api.js';
 import type { UserRequest } from '~server/routes/api/types.js';
 import withLock from '~shared/withLock.js';
@@ -63,8 +65,6 @@ const baseTransport: pino.TransportTargetOptions = {
 };
 
 const init = async () => {
-  await umzug.up();
-
   const server = Fastify({
     logger: {
       transport: {
@@ -74,6 +74,24 @@ const init = async () => {
       },
     },
   });
+
+  if (process.env.DB_VERBOSE) {
+    sqlite3.verbose();
+    sequelize.connectionManager.getConnection({ type: 'read', useMaster: true }).then((conn) => {
+      const db = conn as sqlite3.Database;
+      db.on('trace', (sql) => {
+        server.log.debug({ sql }, 'Executing query');
+      })
+        .on('profile', (sql, time) => {
+          server.log.debug({ sql }, 'Execution time: %dms', time);
+        })
+        .on('error', (err) => {
+          server.log.error(err, 'sqlite3 error');
+        });
+    });
+  }
+
+  await umzug.up();
 
   await server.register(swagger, {
     openapi: {
