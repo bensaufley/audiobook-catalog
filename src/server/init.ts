@@ -21,17 +21,16 @@ import { bareLogger } from './logging.js';
 const init = async () => {
   if (process.env.DB_VERBOSE) {
     bareLogger.info('Enabling SQLite3 verbose mode');
-    sequelize.connectionManager.getConnection({ type: 'read', useMaster: true }).then((conn) => {
-      const db = conn as Database;
-      db.on('trace', (sql) => {
-        bareLogger.debug({ sql }, 'Executing query');
-      })
-        .on('profile', (sql, time) => {
-          bareLogger.debug({ sql }, 'Execution time: %dms', time);
-        })
-        .on('error', (err) => {
-          bareLogger.error(err, 'sqlite3 error');
-        });
+    const db = (await sequelize.connectionManager.getConnection({ type: 'read', useMaster: true })) as Database;
+    bareLogger.debug({ db }, 'Retrieved DB connection');
+    db.on('trace', (sql) => {
+      bareLogger.debug({ sql }, 'Executing query');
+    });
+    db.on('profile', (sql, time) => {
+      bareLogger.debug({ sql }, 'Execution time: %dms', time);
+    });
+    db.on('error', (err) => {
+      bareLogger.error(err, 'sqlite3 error');
     });
   }
 
