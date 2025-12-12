@@ -7,6 +7,7 @@
     "baseUrl": ".",
     "paths": {
       "~db/*": ["./src/db/*"],
+      "~server/*": ["./src/server/*"],
       "~shared/*": ["./src/shared/*"],
       "~test/*": ["./test/*"]
     },
@@ -32,6 +33,6 @@
 
     "skipLibCheck": true
   },
-  "include": ["./*.js", "./*.ts", "src/db", "src/shared", "test"],
+  "include": ["./*.js", "./*.ts", "src/db", "src/shared", "test", "src/server"],
   "exclude": ["node_modules/@types/react", "node_modules/@types/react-transition-group"]
 }

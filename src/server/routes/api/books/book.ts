@@ -7,7 +7,6 @@ import Audiobook from '~db/models/Audiobook.js';
 import Tag from '~db/models/Tag.js';
 import UpNext from '~db/models/UpNext.js';
 import UserAudiobook from '~db/models/UserAudiobook.js';
-import withLock from '~shared/withLock.js';
 
 import { bookIdParams, onlyUserHeader } from '../../../utils/schema.js';
 import { checkForUser, type UserRequest } from '../types.js';
@@ -17,20 +16,19 @@ interface BookParams {
 }
 
 const setBookReadStatus = (read: boolean) =>
-  checkForUser(async ({ params: { bookId }, user }: UserRequest<BookParams, true>, res) =>
-    withLock('db', async () => {
-      const [userAudiobook] = await UserAudiobook.findOrCreate({ where: { UserId: user.id, AudiobookId: bookId } });
+  checkForUser(async ({ params: { bookId }, user }: UserRequest<BookParams, true>, res) => {
+    const [userAudiobook] = await UserAudiobook.findOrCreate({ where: { UserId: user.id, AudiobookId: bookId } });
 
-      await userAudiobook.update({ read });
+    await userAudiobook.update({ read });
 
-      await res.status(204).send();
-    }),
-  );
+    await res.status(204).send();
+  });
 
 const book: FastifyPluginAsync = async (fastify, _opts) => {
   fastify.get<BookParams>('/', {
-    handler: async ({ params: { bookId: id } }, res) =>
-      withLock('db', async () => {
+    handler:
+      async ({ params: { bookId: id } }, res) =>
+      async () => {
         const book = await Audiobook.findOne({
           attributes: ['id', 'title', 'createdAt', 'updatedAt', 'duration'],
           include: [Audiobook.associations.Authors, Audiobook.associations.Narrators],
@@ -43,7 +41,7 @@ const book: FastifyPluginAsync = async (fastify, _opts) => {
         }
 
         await res.send(book);
-      }),
+      },
     schema: {
       description: 'Get book by id',
       ...bookIdParams,
@@ -54,8 +52,9 @@ const book: FastifyPluginAsync = async (fastify, _opts) => {
   });
 
   fastify.get<BookParams>('/cover', {
-    handler: async ({ params: { bookId: id } }, res) =>
-      withLock('db', async () => {
+    handler:
+      async ({ params: { bookId: id } }, res) =>
+      async () => {
         const book = (await Audiobook.findOne({
           attributes: ['cover', 'coverType'],
           where: { id, cover: { [Op.ne]: null } },
@@ -69,7 +68,7 @@ const book: FastifyPluginAsync = async (fastify, _opts) => {
         res.header('Cache-Control', 'public, max-age=31536000');
         res.header('Content-Type', book.coverType);
         await res.send(book.cover);
-      }),
+      },
     schema: {
       description: 'Book cover image',
       ...bookIdParams,
@@ -95,8 +94,9 @@ const book: FastifyPluginAsync = async (fastify, _opts) => {
   });
 
   fastify.get<BookParams>('/download', {
-    handler: async ({ params: { bookId: id }, log }, res) =>
-      withLock('db', async () => {
+    handler:
+      async ({ params: { bookId: id }, log }, res) =>
+      async () => {
         log.info({ id }, 'Download book');
         const book = await Audiobook.findOne({ attributes: ['filepath'], where: { id } });
 
@@ -109,7 +109,7 @@ const book: FastifyPluginAsync = async (fastify, _opts) => {
         log.info({ filepath: book.filepath }, 'Sending file');
         const filename = basename(book.filepath);
         await res.header('Content-Disposition', `attachment; filename="${filename}"`).sendFile(book.filepath, '/');
-      }),
+      },
     schema: {
       description: 'Download Audiobook',
       ...bookIdParams,
@@ -153,15 +153,16 @@ const book: FastifyPluginAsync = async (fastify, _opts) => {
   });
 
   fastify.post<BookParams & { Querystring: { name: string } }>('/tag', {
-    handler: async ({ query: { name }, params: { bookId } }, res) =>
-      withLock('db', async () => {
+    handler:
+      async ({ query: { name }, params: { bookId } }, res) =>
+      async () => {
         const tag = await Tag.findOne({ where: { name } });
         if (!tag) {
           return res.status(404).send({ error: 'Tag not found' });
         }
         await tag.addAudiobook(bookId);
         return res.status(204).send();
-      }),
+      },
     schema: {
       description: 'Add tag to book',
       ...bookIdParams,
@@ -172,8 +173,9 @@ const book: FastifyPluginAsync = async (fastify, _opts) => {
   });
 
   fastify.delete<BookParams & { Querystring: { name: string } }>('/tag', {
-    handler: async ({ query: { name }, params: { bookId } }, res) =>
-      withLock('db', async () => {
+    handler:
+      async ({ query: { name }, params: { bookId } }, res) =>
+      async () => {
         if (!bookId || !name) return res.status(400).send({ error: 'Missing bookId or tag name' });
 
         const tag = await Tag.findOne({ where: { name } });
@@ -181,7 +183,7 @@ const book: FastifyPluginAsync = async (fastify, _opts) => {
 
         await tag.removeAudiobook(bookId);
         return res.status(204).send();
-      }),
+      },
     schema: {
       description: 'Remove tag from book',
       ...bookIdParams,

@@ -5,6 +5,8 @@ import { resolve } from 'node:path';
 import { defineConfig, type UserConfig } from 'vite';
 import svgr from 'vite-plugin-svgr';
 
+import init from './src/server/init.js';
+
 const dirname = typeof __dirname === 'undefined' ? import.meta.dirname : __dirname;
 
 const viteResolve: UserConfig['resolve'] = {
@@ -18,6 +20,8 @@ const viteResolve: UserConfig['resolve'] = {
   ],
   extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json'],
 };
+
+const { server } = await init();
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -51,6 +55,7 @@ export default defineConfig({
     strictPort: true,
     hmr: {
       port: 6453,
+      server,
     },
   },
   plugins: [

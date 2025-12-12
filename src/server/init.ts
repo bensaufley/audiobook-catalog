@@ -5,7 +5,6 @@ import fastifyStatic from '@fastify/static';
 import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
 import Fastify from 'fastify';
-import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import type { pino } from 'pino';
 import type { LokiOptions } from 'pino-loki';
@@ -13,10 +12,8 @@ import type { PrettyOptions } from 'pino-pretty';
 
 import { umzug } from '~db/migrations/index.js';
 import User from '~db/models/User.js';
-import sequelize from '~db/sequelize.js';
 import api from '~server/routes/api.js';
 import type { UserRequest } from '~server/routes/api/types.js';
-import withLock from '~shared/withLock.js';
 
 const logLevels = ['trace', 'debug', 'info', 'warn', 'error'];
 const sanitizeLogLevel = (level?: string) => {
@@ -66,10 +63,6 @@ const baseTransport: pino.TransportTargetOptions = {
 const init = async () => {
   await umzug.up();
 
-  await sequelize.query('PRAGMA journal_mode = WAL;', {
-    raw: true,
-  });
-
   const server = Fastify({
     logger: {
       transport: {
@@ -109,7 +102,7 @@ const init = async () => {
     if (!userId) return;
 
     try {
-      req.user = await withLock('db', () => User.findOne({ where: { id: userId } }));
+      req.user = await User.findOne({ where: { id: userId } });
     } catch (err) {
       req.log.error(err);
     }
@@ -120,6 +113,7 @@ const init = async () => {
   // eslint-disable-next-line import/no-extraneous-dependencies
   server.get('/*', {
     handler: async (req, res) => {
+      req.log.info('Wildcard match');
       return res.sendFile('index.html', resolve(import.meta.dirname, '../../'));
     },
     schema: {
